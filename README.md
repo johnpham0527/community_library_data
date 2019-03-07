@@ -1,2 +1,2 @@
 # community_library_data
-Queens Library Community Library Information
+This webpage requests data from NYC Open Data and the American Community Survey to generate a brief profile for a selected Queens Library branch.
