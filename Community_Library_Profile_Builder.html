@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Queens Library Community Library Information</title>
+        <meta charset="UTF-8"> 
+        <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
+        <script>
+            /* Sample view of the API endpoint:
+            https://data.cityofnewyork.us/resource/b67a-vkqb.json?name=Arverne&$$apptoken=QoQet97KEDYpMW4x4Manaflkp 
+            */
+            /* To-Do: I need to refactor the code so that it can support asynchronous calls */
+            
+            var schoolsInZIPCode = 0;
+
+            function getLibraryZIPCode(libraryName) { //given a library's name, return the ZIP code
+                var ZIPCode = 0;
+                var buildURL = "https://data.cityofnewyork.us/resource/b67a-vkqb.json?name=" + libraryName; //build a URL that queries the selected library from the API endpoint
+                $.ajax({
+                    url: buildURL,
+                    async: false,
+                    type: "GET",
+                    data: {
+                        "$limit" : 5000,
+                        "$$app_token" : "QoQet97KEDYpMW4x4Manaflkp" //This is my (John Pham's) app token
+                    },
+                }).done(function(data) {
+                    // alert("Retrieved " + data.length + " records from the dataset!");
+                    // console.log(data);
+                    ZIPCode = data[0]["postcode"];
+                    //$("#ZIP").append(globalZIPCode);
+                });
+                
+                //$('#ZIP').append(ZipCodeValue);
+                return ZIPCode;
+            }
+
+            function getNYCDOEPovertyRateByZIPCode(ZIPCode, datasetYear) {
+                var povertyCountSum = 0;
+                var enrollmentSum = 0;
+                var buildURL = "https://data.cityofnewyork.us/resource/r2nx-nhxe.json?location_1_zip=" + ZIPCode; //this dataset contains general information about all NYC DOE schools. See https://data.cityofnewyork.us/Education/2017-2018-School-Locations/p6h4-mpyy
+                $.ajax({
+                    url: buildURL,
+                    async: false,
+                    type: "GET",
+                    data: {
+                        "$limit" : 5000,
+                        "$$app_token" : "QoQet97KEDYpMW4x4Manaflkp" //This is my (John Pham's) app token
+                    },
+                }).done(function(data) {
+                    //alert("Retrieved " + data.length + " records from the dataset!");
+                    // console.log(data);
+                    
+                    schoolsInZIPCode = data.length; //store the number of schools in the global variable
+
+                    /* At this point, we have now retrieved an array of schools filtered by the given ZIP code. Here is the pseudocode for the below section:
+                        Run a for-loop through this array. For each school in the school array:
+                            Make an AJAX request on that school's record from the NYC DOE Demographic Snapshot dataset
+                            Obtain the school's total enrollment and add it to an enrollment sum variable
+                            Obtain the number of students in the school who meet the DOE's poverty criteria. Add this number to a poverty count sum variable.
+                        Divide the poverty count sum by the enrollment sum. Append this response to the web page.
+                    */
+                    $.each(data, function(school) {
+                        var schoolDBN = data[school]["ats_system_code"];
+                        var modifiedSchoolDBN = $.trim(schoolDBN); //remove white space from school DBN
+
+                        var selectDatasetYear = "2017-18"; //this is the default dataset to use
+                        switch(datasetYear) {
+                            case "2017-2018 School Year":
+                                selectDatasetYear = "2017-18";
+                                break;
+                            case "2016-2017 School Year":
+                                selectDatasetYear = "2016-17";
+                                break;
+                        }
+
+                        buildURL = "https://data.cityofnewyork.us/resource/s52a-8aq6.json?dbn=" + modifiedSchoolDBN + "&year=" + selectDatasetYear; //this dataset contains the NYC DOE's Demographic Snapshot.
+                        $.ajax({
+                            url: buildURL,
+                            async: false,
+                            type: "GET",
+                            data: {
+                                "$limit" : 5000,
+                                "$$app_token" : "QoQet97KEDYpMW4x4Manaflkp" //This is my (John Pham's) app token
+                            },
+                        }).done(function(data) {
+                            //alert("Retrieved " + data.length + " records from the dataset!");
+                            //console.log(data);
+                            schoolPovertyCount = parseInt(data[0]["poverty_1"]);
+                            povertyCountSum += schoolPovertyCount;
+                            schoolEnrollment = parseInt(data[0]["total_enrollment"]);
+                            enrollmentSum += schoolEnrollment;
+                            //$("#Test").append("School DBN: " + data[0]["dbn"] + " Poverty: " + schoolPovertyCount + " Enrollment: " + schoolEnrollment + " <br />");
+                            
+                        });
+                    });
+
+                });                
+                
+                //$("#Test").append(" Poverty: " + povertyCountSum + " Enrollment: " + enrollmentSum + " ");
+                
+                //$("#DOEPoverty").append(NYCDOEPovertyRate);
+                return (povertyCountSum/enrollmentSum*100).toFixed(1);
+            }
+
+                function getUnemploymentRate(datasetYear, zipCode) {
+                    var selectDatasetYear = "17"; //this is the default dataset year to use
+                    var unemployment = 0;
+
+                    switch(datasetYear) {
+                        case "2017 Five-Year Estimates":
+                            selectDatasetYear = "17";
+                            break;
+                        case "2016 Five-Year Estimates":
+                            selectDatasetYear = "16";
+                            break;
+                        }
+
+                    var buildURL = "http://factfinder.census.gov/service/data/v1/en/programs/ACS/datasets/" + selectDatasetYear + "_5YR/tables/S2301/data/8600000US" + zipCode + "?maxResults=1&key=" + "ea46e190165e1ee608d643fba987f8b3620ec1a9";
+                   
+                    $.ajax( 
+                        {
+                            //url: "https://factfinder.census.gov/service/data/v1/en/programs/ACS/datasets/17_5YR/tables/S2301/data/8600000US11432?maxResults=1&key=ea46e190165e1ee608d643fba987f8b3620ec1a9",
+                            url: buildURL,
+                            async: false,
+                            type: "GET",
+                            success: function(data) {
+                                //$("#Test").append("Success<br />");
+                                //$("#Test").append(data.data.rows[0].categories.GEO.id);
+                                //$("#Test").append("<br />");
+                                //$("#Test").append(data.data.rows[0].cells.C7.value);
+                                unemployment = data.data.rows[0].cells.C7.value;
+                                //$("#Test").append("<br />The unemployment rate for 11432 is ");
+                                //$("#Test").append(unemployment);
+                                }
+                        }
+
+                    )
+                    //$("#Test").append("<br />The unemployment rate for 11432 is ");
+                    //$("#Test").append(unemployment);
+                    return unemployment;
+                }
+
+            $(document).ready(function(){
+                $("input[type='button']").click(function() {
+                    
+                    //$("#Profile").html(""); //clear previous results after the button is clicked each time
+                    $("#Intro").html("Please wait...");
+                    $("#ZIP").html(""); 
+                    $("#DOESnapshotA").html(""); 
+                    $("#DOEPoverty").html(""); 
+                    $("#DOESnapshotB").html(""); 
+                    $("#NumSchools").html("");
+                    $("#DOESnapshotC").html(""); 
+                    $("#Test").html("");
+                    $("#DOESnapshotD").html(""); 
+                    $("#ACS1").html("");
+                    $("#ACSdataset").html("");
+                    $("#ACS2").html("");
+                    $("#Unemployment").html("");
+                    $("#ACS3").html("");
+                    
+                    var NYCDOEDataset = $("input[name='NYCDOEDataset']:checked").val();
+                    var ACSdataset = $("input[name='ACSDataset']:checked").val();
+                    var shortLibraryName = $("select.communityLibrary").val();
+                    var fullLibraryName = shortLibraryName;
+                    if (shortLibraryName != "Central Library") {
+                        fullLibraryName = shortLibraryName + " Community Library"; //generate the library's full name if it is not the Central Library
+                    }
+
+                    var ZipCodeValue = getLibraryZIPCode(shortLibraryName); //Query the NYC DOE data to obtain the ZIP code.
+                    var NYCDOEPovertyRate = getNYCDOEPovertyRateByZIPCode(ZipCodeValue, NYCDOEDataset); //Query the NYC DOE data to obtain the student poverty percentage.
+                    var unemploymentRate = getUnemploymentRate(ACSdataset, ZipCodeValue); //S2301 is the table number for the unemployment rate
+                    //$("#Test").append(unemploymentRate);
+
+                    $("#Intro").html(fullLibraryName + " is located in ZIP Code ");
+                    
+                    $('#ZIP').append(ZipCodeValue);
+                    //getLibraryZIPCode(shortLibraryName)
+                    
+                    $("#DOESnapshotA").append(". According to the NYC Department of Education's " + NYCDOEDataset + " Demographic Snapshot, ");
+                    
+                    $("#DOEPoverty").append(NYCDOEPovertyRate);
+                    //getNYCDOEPovertyRateByZIPCode(ZipCodeValue, NYCDOEDataset);
+                    
+                    $("#DOESnapshotB").append("% of the students who attend the ");
+                    $("#NumSchools").append(schoolsInZIPCode); 
+                    
+                    //TO-DO: insert code here to check whether there is only 1 school or there is more than 1 school in the ZIP code.
+                    
+                    $("#DOESnapshotD").append(" public schools located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.");
+                    
+                    $("#ACS1").append(" According to the American Community Survey ");
+                    $("#ACSdataset").append(ACSdataset);
+                    $("#ACS2").append(", the ZIP code's unemployment rate is ");
+                    $("#Unemployment").append(unemploymentRate);
+                    $("#ACS3").append("%.");
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <form>
+            
+            <h3>Queens Library Community Library Information</h3>
+            <h4>Please select a community library to view.</h4>
+            <select class="communityLibrary">
+                <option value="Arverne">Arverne Community Library</option>
+                <option value="Astoria">Astoria Community Library</option>
+                <option value="Auburndale">Auburndale Community Library</option>
+                <option value="Baisley Park">Baisley Park Community Library</option>
+                <option value="Bay Terrace">Bay Terrace Community Library</option>
+                <option value="Bayside">Bayside Community Library</option>
+                <option value="Bellerose">Bellerose Community Library</option>
+                <option value="Briarwood">Briarwood Community Library</option>
+                <option value="Broad Channel">Broad Channel Community Library</option>
+                <option value="Broadway">Broadway Community Library</option>
+                <option value="Cambria Heights">Cambria Heights Community Library</option>
+                <option value="Central Library">Central Library</option>
+                <option value="Corona">Corona Community Library</option>
+                <option value="Court Square">Court Square Community Library</option>
+                <option value="Douglaston/Little Neck">Douglaston/Little Neck Community Library</option>
+                <option value="East Elmhurst">East Elmhurst Community Library</option>
+                <option value="East Flushing">East Flushing Community Library</option>
+                <option value="Elmhurst">Elmhurst Community Library</option>
+                <option value="Far Rockaway">Far Rockaway Community Library</option>
+                <option value="Flushing">Flushing Community Library</option>
+                <option value="Forest Hills">Forest Hills Community Library</option>
+                <option value="Fresh Meadows">Fresh Meadows Community Library</option>
+                <option value="Glen Oaks">Glen Oaks Community Library</option>
+                <option value="Glendale">Glendale Community Library</option>
+                <option value="Hillcrest">Hillcrest Community Library</option>
+                <option value="Hollis">Hollis Community Library</option>
+                <option value="Howard Beach">Howard Beach Community Library</option>
+                <option value="Jackson Heights">Jackson Heights Community Library</option>
+                <option value="Kew Gardens Hills">Kew Gardens Hills Community Library</option>
+                <option value="Langston Hughes">Langston Hughes Community Library</option>
+                <option value="Laurelton">Laurelton Community Library</option>
+                <option value="Lefferts">Lefferts Community Library</option>
+                <option value="Lefrak City">Lefrak City Community Library</option>
+                <option value="Long Island City">Long Island City Community Library</option>
+                <option value="Maspeth">Maspeth Community Library</option>
+                <option value="McGoldrick">McGoldrick Community Library</option>
+                <option value="Middle Village">Middle Village Community Library</option>
+                <option value="Mitchell-Linden">Mitchell-Linden Community Library</option>
+                <option value="North Forest Park">North Forest Park Community Library</option>
+                <option value="North Hills">North Hills Community Library</option>
+                <option value="Ozone Park">Ozone Park Community Library</option>
+                <option value="Peninsula">Peninsula Community Library</option>
+                <option value="Pomonok">Pomonok Community Library</option>
+                <option value="Poppenhusen">Poppenhusen Community Library</option>
+                <option value="Queens Village">Queens Village Community Library</option>
+                <option value="Queensboro Hill">Queensboro Hill Community Library</option>
+                <option value="Rego Park">Rego Park Community Library</option>
+                <option value="Richmond Hill">Richmond Hill Community Library</option>
+                <option value="Ridgewood">Ridgewood Community Library</option>
+                <option value="Rochdale Village">Rochdale Village Community Library</option>
+                <option value="Rosedale">Rosedale Community Library</option>
+                <option value="Seaside">Seaside Community Library</option>
+                <option value="South Hollis">South Hollis Community Library</option>
+                <option value="South Jamaica">South Jamaica Community Library</option>
+                <option value="South Ozone Park">South Ozone Park Community Library</option>
+                <option value="St. Albans">St. Albans Community Library</option>
+                <option value="Steinway">Steinway Community Library</option>
+                <option value="Sunnyside">Sunnyside Community Library</option>
+                <option value="Whitestone">Whitestone Community Library</option>
+                <option value="Windsor Park">Windsor Park Community Library</option>
+                <option value="Woodhaven">Woodhaven Community Library</option>
+                <option value="Woodside">Woodside Community Library</option>
+            </select>
+            <br /><br />
+            <h4>Learn about the students who attending the selected library's nearby schools. Please choose a NYC Department of Education dataset.</h4>
+                <label><input type="radio" name="NYCDOEDataset" value="2017-2018 School Year" checked>2017-2018 School Year</label> 
+                <label><input type="radio" name="NYCDOEDataset" value="2016-2017 School Year">2016-2017 School Year</label> 
+            <!-- I will implement this code at a later date. -->
+            <br /><br />
+            <h4>Discover demographic, social, and economic information about the selected library's neighborhood. Please select an American Community Survey dataset.</h4>
+            <p> 
+                <label><input type="radio" name="ACSDataset" value="2017 Five-Year Estimates" checked>2017 Five-Year Estimates</label> 
+                <label><input type="radio" name="ACSDataset" value="2016 Five-Year Estimates">2016 Five-Year Estimates</label>
+            </p>
+            <p><br /><input type="button" value="View Community Profile"><br /><br /></p>
+        </form>
+        <div id="Profile">
+            <span id="Intro"></span><span id="ZIP"></span><span id="DOESnapshotA"></span><span id="DOEPoverty"></span><span id="DOESnapshotB"></span><span id="NumSchools"></span><span id="DOESnapshotC"></span><span id="DOESnapshotD"></span><span id="ACS1"></span><span id="ACSdataset"></span><span id="ACS2"></span><span id="Unemployment"></span><span id="ACS3"></span>
+        </div>
+        <div id="Test"></div>
+    </body>
+</html>
