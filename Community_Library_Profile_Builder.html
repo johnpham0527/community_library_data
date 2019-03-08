@@ -8,7 +8,6 @@
             /* Sample view of the API endpoint:
             https://data.cityofnewyork.us/resource/b67a-vkqb.json?name=Arverne&$$apptoken=QoQet97KEDYpMW4x4Manaflkp 
             */
-            /* To-Do: I need to refactor the code so that it can support asynchronous calls */
             
             var schoolsInZIPCode = 0;
 
@@ -27,12 +26,9 @@
                     // alert("Retrieved " + data.length + " records from the dataset!");
                     // console.log(data);
                     ZIPCode = data[0]["postcode"];
-                    //$("#ZIP").append(globalZIPCode);
                 });
-                
-                //$('#ZIP').append(ZipCodeValue);
                 return ZIPCode;
-            }
+            };
 
             function getNYCDOEPovertyRateByZIPCode(ZIPCode, datasetYear) {
                 var povertyCountSum = 0;
@@ -47,9 +43,6 @@
                         "$$app_token" : "QoQet97KEDYpMW4x4Manaflkp" //This is my (John Pham's) app token
                     },
                 }).done(function(data) {
-                    //alert("Retrieved " + data.length + " records from the dataset!");
-                    // console.log(data);
-                    
                     schoolsInZIPCode = data.length; //store the number of schools in the global variable
 
                     /* At this point, we have now retrieved an array of schools filtered by the given ZIP code. Here is the pseudocode for the below section:
@@ -83,69 +76,98 @@
                                 "$$app_token" : "QoQet97KEDYpMW4x4Manaflkp" //This is my (John Pham's) app token
                             },
                         }).done(function(data) {
-                            //alert("Retrieved " + data.length + " records from the dataset!");
-                            //console.log(data);
                             schoolPovertyCount = parseInt(data[0]["poverty_1"]);
                             povertyCountSum += schoolPovertyCount;
                             schoolEnrollment = parseInt(data[0]["total_enrollment"]);
                             enrollmentSum += schoolEnrollment;
-                            //$("#Test").append("School DBN: " + data[0]["dbn"] + " Poverty: " + schoolPovertyCount + " Enrollment: " + schoolEnrollment + " <br />");
-                            
                         });
                     });
 
-                });                
-                
-                //$("#Test").append(" Poverty: " + povertyCountSum + " Enrollment: " + enrollmentSum + " ");
-                
-                //$("#DOEPoverty").append(NYCDOEPovertyRate);
-                return (povertyCountSum/enrollmentSum*100).toFixed(1);
-            }
+                });
+                return (povertyCountSum/enrollmentSum*100).toFixed(1); //return a whole number, not a number less than 1
+            };
 
-                function getUnemploymentRate(datasetYear, zipCode) {
-                    var selectDatasetYear = "17"; //this is the default dataset year to use
-                    var unemployment = 0;
+            function getUnemploymentRate(datasetYear, zipCode) {
+                var selectDatasetYear = "17"; //this is the default dataset year to use
+                var unemployment = 0;
 
-                    switch(datasetYear) {
-                        case "2017 Five-Year Estimates":
-                            selectDatasetYear = "17";
-                            break;
-                        case "2016 Five-Year Estimates":
-                            selectDatasetYear = "16";
-                            break;
-                        }
-
-                    var buildURL = "http://factfinder.census.gov/service/data/v1/en/programs/ACS/datasets/" + selectDatasetYear + "_5YR/tables/S2301/data/8600000US" + zipCode + "?maxResults=1&key=" + "ea46e190165e1ee608d643fba987f8b3620ec1a9";
-                   
-                    $.ajax( 
-                        {
-                            //url: "https://factfinder.census.gov/service/data/v1/en/programs/ACS/datasets/17_5YR/tables/S2301/data/8600000US11432?maxResults=1&key=ea46e190165e1ee608d643fba987f8b3620ec1a9",
-                            url: buildURL,
-                            async: false,
-                            type: "GET",
-                            success: function(data) {
-                                //$("#Test").append("Success<br />");
-                                //$("#Test").append(data.data.rows[0].categories.GEO.id);
-                                //$("#Test").append("<br />");
-                                //$("#Test").append(data.data.rows[0].cells.C7.value);
-                                unemployment = data.data.rows[0].cells.C7.value;
-                                //$("#Test").append("<br />The unemployment rate for 11432 is ");
-                                //$("#Test").append(unemployment);
-                                }
-                        }
-
-                    )
-                    //$("#Test").append("<br />The unemployment rate for 11432 is ");
-                    //$("#Test").append(unemployment);
-                    return unemployment;
+                switch(datasetYear) {
+                    case "2017 Five-Year Estimates":
+                        selectDatasetYear = "17";
+                        break;
+                    case "2016 Five-Year Estimates":
+                        selectDatasetYear = "16";
+                        break;
                 }
 
+                var buildURL = "http://factfinder.census.gov/service/data/v1/en/programs/ACS/datasets/" + selectDatasetYear + "_5YR/tables/S2301/data/8600000US" + zipCode + "?maxResults=1&key=" + "ea46e190165e1ee608d643fba987f8b3620ec1a9";
+                   
+                $.ajax({
+                        //url: "https://factfinder.census.gov/service/data/v1/en/programs/ACS/datasets/17_5YR/tables/S2301/data/8600000US11432?maxResults=1&key=ea46e190165e1ee608d643fba987f8b3620ec1a9",
+                        url: buildURL,
+                        async: false,
+                        type: "GET",
+                        success: function(data) {
+                            unemployment = data.data.rows[0].cells.C7.value;
+                        }
+                })
+                return unemployment;
+            };
+
+    
+            function getAmericanCommunitySurvey5YearEstimateValue(datasetYear, tableNumber, zipCode) {
+                var selectDatasetYear = "17"; //this is the default dataset year to use
+                var returnValue = 0;
+            
+                switch(datasetYear) {
+                    case "2017 Five-Year Estimates":
+                        selectDatasetYear = "17";
+                        break;
+                    case "2016 Five-Year Estimates":
+                        selectDatasetYear = "16";
+                break;
+                }
+                
+                var buildURL1 = "http://factfinder.census.gov/service/data/v1/en/programs/ACS/datasets/" + selectDatasetYear + "_5YR/tables/";
+                var buildURL2 = "/data/8600000US" + zipCode + "?maxResults=1&key=" + "ea46e190165e1ee608d643fba987f8b3620ec1a9";
+                var buildURLFinal = buildURL1 + tableNumber.toString() + buildURL2;
+                
+                $.ajax({
+                   url: buildURLFinal,
+                   async: false,
+                   type: "GET",
+                   success: function(data) {
+                       
+                       switch(tableNumber) {
+                        case "S2301": //American Community Survey dataset for unemployment rate
+                            returnValue = data.data.rows[0].cells.C7.value;
+                            break;
+                        case "S1501": //American Community Survey dataset for educational attainment
+                            var value1 = data.data.rows[0].cells.C75.value; //the percentage of people age 25+ who have less than a 9th grade education
+                            var value2 = data.data.rows[0].cells.C87.value; //the percentage of people age 25+ who have a 9th-12th grade education but lack a high school diploma or its equivalent
+                            var value3 = parseFloat(value1) + parseFloat(value2); //add the two values together
+                            returnValue = value3.toFixed(1);
+                            break;
+                        case "S1701": //American Community Survey dataset for poverty
+                            returnValue = data.data.rows[0].cells.C5.value; //percentage of population for whom poverty status is determined who earned an income at the poverty level or lower
+                            break;
+                        case "DP02": //American Community Survey dataset called "Selected Social Characteristics in the United States"
+                            returnValue = data.data.rows[0].cells.C411.value; //percentage of people age 5 and older who speak English less than "very well," among those people who speak a language other than English
+                            break;
+                        }//closes the switch statement
+                       
+                       } //closes success
+                       })//closes the AJAX call's property list
+                return returnValue;
+            }; //closes the function
+        
             $(document).ready(function(){
                 $("input[type='button']").click(function() {
                     
-                    //$("#Profile").html(""); //clear previous results after the button is clicked each time
                     $("#Intro").html("Please wait...");
-                    $("#ZIP").html(""); 
+                                                
+                    //clear previous results after the button is clicked each time
+                    $("#ZIP").html("");
                     $("#DOESnapshotA").html(""); 
                     $("#DOEPoverty").html(""); 
                     $("#DOESnapshotB").html(""); 
@@ -158,6 +180,8 @@
                     $("#ACS2").html("");
                     $("#Unemployment").html("");
                     $("#ACS3").html("");
+                    $("#NoHS").html("");
+                    $("#ACS4").html("");
                     
                     var NYCDOEDataset = $("input[name='NYCDOEDataset']:checked").val();
                     var ACSdataset = $("input[name='ACSDataset']:checked").val();
@@ -169,18 +193,17 @@
 
                     var ZipCodeValue = getLibraryZIPCode(shortLibraryName); //Query the NYC DOE data to obtain the ZIP code.
                     var NYCDOEPovertyRate = getNYCDOEPovertyRateByZIPCode(ZipCodeValue, NYCDOEDataset); //Query the NYC DOE data to obtain the student poverty percentage.
-                    var unemploymentRate = getUnemploymentRate(ACSdataset, ZipCodeValue); //S2301 is the table number for the unemployment rate
-                    //$("#Test").append(unemploymentRate);
+                    //var unemploymentRate = getUnemploymentRate(ACSdataset, ZipCodeValue); //S2301 is the table number for the unemployment rate
+                    var unemploymentRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S2301",ZipCodeValue);
+                    var percentageNoHSDiploma = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S1501",ZipCodeValue); //S1501 is the table number for educational attainment
 
                     $("#Intro").html(fullLibraryName + " is located in ZIP Code ");
                     
                     $('#ZIP').append(ZipCodeValue);
-                    //getLibraryZIPCode(shortLibraryName)
                     
                     $("#DOESnapshotA").append(". According to the NYC Department of Education's " + NYCDOEDataset + " Demographic Snapshot, ");
                     
                     $("#DOEPoverty").append(NYCDOEPovertyRate);
-                    //getNYCDOEPovertyRateByZIPCode(ZipCodeValue, NYCDOEDataset);
                     
                     $("#DOESnapshotB").append("% of the students who attend the ");
                     $("#NumSchools").append(schoolsInZIPCode); 
@@ -193,7 +216,9 @@
                     $("#ACSdataset").append(ACSdataset);
                     $("#ACS2").append(", the ZIP code's unemployment rate is ");
                     $("#Unemployment").append(unemploymentRate);
-                    $("#ACS3").append("%.");
+                    $("#ACS3").append("%, and ");
+                    $("#NoHS").append(percentageNoHSDiploma);
+                    $("#ACS4").append("% of residents do not possess a high school diploma or its equivalent.");
                 });
             });
         </script>
@@ -270,8 +295,7 @@
             <br /><br />
             <h4>Learn about the students who attending the selected library's nearby schools. Please choose a NYC Department of Education dataset.</h4>
                 <label><input type="radio" name="NYCDOEDataset" value="2017-2018 School Year" checked>2017-2018 School Year</label> 
-                <label><input type="radio" name="NYCDOEDataset" value="2016-2017 School Year">2016-2017 School Year</label> 
-            <!-- I will implement this code at a later date. -->
+                <label><input type="radio" name="NYCDOEDataset" value="2016-2017 School Year">2016-2017 School Year</label>
             <br /><br />
             <h4>Discover demographic, social, and economic information about the selected library's neighborhood. Please select an American Community Survey dataset.</h4>
             <p> 
@@ -281,7 +305,7 @@
             <p><br /><input type="button" value="View Community Profile"><br /><br /></p>
         </form>
         <div id="Profile">
-            <span id="Intro"></span><span id="ZIP"></span><span id="DOESnapshotA"></span><span id="DOEPoverty"></span><span id="DOESnapshotB"></span><span id="NumSchools"></span><span id="DOESnapshotC"></span><span id="DOESnapshotD"></span><span id="ACS1"></span><span id="ACSdataset"></span><span id="ACS2"></span><span id="Unemployment"></span><span id="ACS3"></span>
+            <span id="Intro"></span><span id="ZIP"></span><span id="DOESnapshotA"></span><span id="DOEPoverty"></span><span id="DOESnapshotB"></span><span id="NumSchools"></span><span id="DOESnapshotC"></span><span id="DOESnapshotD"></span><span id="ACS1"></span><span id="ACSdataset"></span><span id="ACS2"></span><span id="Unemployment"></span><span id="ACS3"></span><span id="NoHS"></span><span id="ACS4"></span>
         </div>
         <div id="Test"></div>
     </body>
