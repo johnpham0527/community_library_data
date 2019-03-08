@@ -87,7 +87,7 @@
                 return (povertyCountSum/enrollmentSum*100).toFixed(1); //return a whole number, not a number less than 1
             };
 
-            function getUnemploymentRate(datasetYear, zipCode) {
+            function getUnemploymentRate(datasetYear, zipCode) { //I no longer need this function. The function below this one supersedes it.
                 var selectDatasetYear = "17"; //this is the default dataset year to use
                 var unemployment = 0;
 
@@ -155,7 +155,6 @@
                             returnValue = data.data.rows[0].cells.C411.value; //percentage of people age 5 and older who speak English less than "very well," among those people who speak a language other than English
                             break;
                         }//closes the switch statement
-                       
                        } //closes success
                        })//closes the AJAX call's property list
                 return returnValue;
@@ -182,6 +181,10 @@
                     $("#ACS3").html("");
                     $("#NoHS").html("");
                     $("#ACS4").html("");
+                    $("#ACSPoverty").html("");
+                    $("#ACS5").html("");
+                    $("#LimitedEnglish").html("");
+                    $("#ACS6").html("");
                     
                     var NYCDOEDataset = $("input[name='NYCDOEDataset']:checked").val();
                     var ACSdataset = $("input[name='ACSDataset']:checked").val();
@@ -193,32 +196,33 @@
 
                     var ZipCodeValue = getLibraryZIPCode(shortLibraryName); //Query the NYC DOE data to obtain the ZIP code.
                     var NYCDOEPovertyRate = getNYCDOEPovertyRateByZIPCode(ZipCodeValue, NYCDOEDataset); //Query the NYC DOE data to obtain the student poverty percentage.
-                    //var unemploymentRate = getUnemploymentRate(ACSdataset, ZipCodeValue); //S2301 is the table number for the unemployment rate
+                    //var unemploymentRate = getUnemploymentRate(ACSdataset, ZipCodeValue); //S2301 is the American Community Survey table number for the unemployment rate
                     var unemploymentRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S2301",ZipCodeValue);
-                    var percentageNoHSDiploma = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S1501",ZipCodeValue); //S1501 is the table number for educational attainment
+                    var percentageNoHSDiploma = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S1501",ZipCodeValue); //S1501 is the American Community Survey table number for educational attainment
+                    var ACSPovertyRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset, "S1701", ZipCodeValue); //S1701 is the American Community Survey table number for poverty
+                    var limitedEnglishProfiencyRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset, "DP02", ZipCodeValue); //DP02 is the American Community Survey for U.S. general social characteristics
 
                     $("#Intro").html(fullLibraryName + " is located in ZIP Code ");
-                    
                     $('#ZIP').append(ZipCodeValue);
-                    
                     $("#DOESnapshotA").append(". According to the NYC Department of Education's " + NYCDOEDataset + " Demographic Snapshot, ");
-                    
                     $("#DOEPoverty").append(NYCDOEPovertyRate);
-                    
                     $("#DOESnapshotB").append("% of the students who attend the ");
                     $("#NumSchools").append(schoolsInZIPCode); 
                     
                     //TO-DO: insert code here to check whether there is only 1 school or there is more than 1 school in the ZIP code.
                     
                     $("#DOESnapshotD").append(" public schools located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.");
-                    
                     $("#ACS1").append(" According to the American Community Survey ");
                     $("#ACSdataset").append(ACSdataset);
                     $("#ACS2").append(", the ZIP code's unemployment rate is ");
                     $("#Unemployment").append(unemploymentRate);
-                    $("#ACS3").append("%, and ");
+                    $("#ACS3").append("%; ");
                     $("#NoHS").append(percentageNoHSDiploma);
-                    $("#ACS4").append("% of residents do not possess a high school diploma or its equivalent.");
+                    $("#ACS4").append("% of residents do not possess a high school diploma or its equivalent; ");
+                    $("#ACSPoverty").append(ACSPovertyRate);
+                    $("#ACS5").append("% of residents live below the poverty line; and ");
+                    $("#LimitedEnglish").append(limitedEnglishProfiencyRate);
+                    $("#ACS6").append("% of residents speak English less than very well.");            
                 });
             });
         </script>
@@ -305,7 +309,7 @@
             <p><br /><input type="button" value="View Community Profile"><br /><br /></p>
         </form>
         <div id="Profile">
-            <span id="Intro"></span><span id="ZIP"></span><span id="DOESnapshotA"></span><span id="DOEPoverty"></span><span id="DOESnapshotB"></span><span id="NumSchools"></span><span id="DOESnapshotC"></span><span id="DOESnapshotD"></span><span id="ACS1"></span><span id="ACSdataset"></span><span id="ACS2"></span><span id="Unemployment"></span><span id="ACS3"></span><span id="NoHS"></span><span id="ACS4"></span>
+            <span id="Intro"></span><span id="ZIP"></span><span id="DOESnapshotA"></span><span id="DOEPoverty"></span><span id="DOESnapshotB"></span><span id="NumSchools"></span><span id="DOESnapshotC"></span><span id="DOESnapshotD"></span><span id="ACS1"></span><span id="ACSdataset"></span><span id="ACS2"></span><span id="Unemployment"></span><span id="ACS3"></span><span id="NoHS"></span><span id="ACS4"></span><span id="ACSPoverty"></span><span id="ACS5"></span><span id="LimitedEnglish"></span><span id="ACS6"></span>
         </div>
         <div id="Test"></div>
     </body>
