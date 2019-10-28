@@ -154,8 +154,8 @@
            }; //closes the function
        
            $(document).ready(function(){
-               $("input[type='button']").click(function() {
-                   
+               //$("input[type='button']").click(function() {
+                $("input[id='ViewCommunityProfile']").click(function() {
                    $("#Intro").html("Please wait...");
                                                
                    //clear previous results after the button is clicked each time
@@ -218,3 +218,19 @@
                    $("#ACS6").append("% of residents speak English less than very well.");            
                });
            });
+
+function changeZipCode() {
+    var ZIPCode = 0;
+    var buildURL = "https://data.cityofnewyork.us/resource/b67a-vkqb.json?name=" + $("select.communityLibrary").val(); //build a URL that queries the selected library from the API endpoint
+    $.ajax({
+        url: buildURL,
+        async: true,
+        type: "GET",
+        data: {
+            "$limit" : 5000,
+            "$$app_token" : "QoQet97KEDYpMW4x4Manaflkp" //This is my (John Pham's) app token
+        },
+    }).done(function(data) {
+        document.getElementById("ZIP").innerHTML = data[0]["postcode"];
+    });
+}
