@@ -234,3 +234,5 @@ function changeZipCode() {
         document.getElementById("ZIP").innerHTML = data[0]["postcode"];
     });
 }
+
+//I should implement React for this project. I need to keep a state: ZIP Code, unemployment rate, etc.
