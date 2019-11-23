@@ -1,7 +1,11 @@
-            /* Sample view of the API endpoint:
+
+
+/* Sample view of the API endpoint:
             https://data.cityofnewyork.us/resource/b67a-vkqb.json?name=Arverne&$$apptoken=QoQet97KEDYpMW4x4Manaflkp 
             */
-            
+          
+
+
            var schoolsInZIPCode = 0;
 
            function getLibraryZIPCode(libraryName) { //given a library's name, return the ZIP code
@@ -38,6 +42,8 @@
                }).done(function(data) {
                    schoolsInZIPCode = data.length; //store the number of schools in the global variable
 
+
+
                    /* At this point, we have now retrieved an array of schools filtered by the given ZIP code. Here is the pseudocode for the below section:
                        Run a for-loop through this array. For each school in the school array:
                            Make an AJAX request on that school's record from the NYC DOE Demographic Snapshot dataset
@@ -45,6 +51,9 @@
                            Obtain the number of students in the school who meet the DOE's poverty criteria. Add this number to a poverty count sum variable.
                        Divide the poverty count sum by the enrollment sum. Append this response to the web page.
                    */
+
+ 
+
                    $.each(data, function(school) {
                        var schoolDBN = data[school]["ats_system_code"];
                        var modifiedSchoolDBN = $.trim(schoolDBN); //remove white space from school DBN
@@ -236,3 +245,4 @@ function changeZipCode() {
 }
 
 //I should implement React for this project. I need to keep a state: ZIP Code, unemployment rate, etc.
+
