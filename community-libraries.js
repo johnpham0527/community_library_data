@@ -140,7 +140,7 @@ $(document).ready(function(){
 
         getLibraryZipCode(shortLibraryName) //query the NYC DOE data to obtain the ZIP code.
             .then(zipCode => {
-                getNYCDOEPovertyRateByZIPCode(zipCode, nycDoeDataset, function(nycDoePovertyRate) {
+                getNYCDOEPovertyRateByZIPCode(zipCode, nycDoeDataset, function(nycDoePovertyRate) { //pass an anonymous function to output data after the poverty rate is calculated
                     $('#Profile').html(`${fullLibraryName} is located in ZIP code ${zipCode}. According to the NYC Department of Education's ${nycDoeDataset} School Demographic Snapshot, ${nycDoePovertyRate}% of the students who attend the ${schoolsInZIPCode} public school${schoolsInZIPCode === 1 ? '' : 's'} located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.`);
                 })
             })
