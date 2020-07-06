@@ -30,8 +30,8 @@ async function getNycDoeSchoolsDataByZipCode(zipCode) { //return data on the pub
 }
 
 async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear) {
-    var povertyCountSum = 0;
-    var enrollmentSum = 0;
+    let povertyCountSum = 0;
+    let enrollmentSum = 0;
 
     let data = await getNycDoeSchoolsDataByZipCode(zipCode);
 
@@ -86,8 +86,8 @@ async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear) {
 };
 
 function getAmericanCommunitySurvey5YearEstimateValue(datasetYear, tableNumber, zipCode) {
-    var selectDatasetYear = "17"; //this is the default dataset year to use
-    var returnValue = 0;
+    let selectDatasetYear = "17"; //this is the default dataset year to use
+    let returnValue = 0;
 
     switch(datasetYear) {
         case "2017 Five-Year Estimates":
@@ -98,9 +98,9 @@ function getAmericanCommunitySurvey5YearEstimateValue(datasetYear, tableNumber, 
     break;
     }
     
-    var buildURL1 = "http://factfinder.census.gov/service/data/v1/en/programs/ACS/datasets/" + selectDatasetYear + "_5YR/tables/";
-    var buildURL2 = "/data/8600000US" + zipCode + "?maxResults=1&key=" + "ea46e190165e1ee608d643fba987f8b3620ec1a9";
-    var buildURLFinal = buildURL1 + tableNumber.toString() + buildURL2;
+    let buildURL1 = "http://factfinder.census.gov/service/data/v1/en/programs/ACS/datasets/" + selectDatasetYear + "_5YR/tables/";
+    let buildURL2 = "/data/8600000US" + zipCode + "?maxResults=1&key=" + "ea46e190165e1ee608d643fba987f8b3620ec1a9";
+    let buildURLFinal = buildURL1 + tableNumber.toString() + buildURL2;
     
     $.ajax({
         url: buildURLFinal,
@@ -156,10 +156,10 @@ $(document).ready(function(){
         $("#LimitedEnglish").html("");
         $("#ACS6").html("");
         
-        var NYCDOEDataset = $("input[name='NYCDOEDataset']:checked").val();
-        var ACSdataset = $("input[name='ACSDataset']:checked").val();
-        var shortLibraryName = $("select.communityLibrary").val();
-        var fullLibraryName = shortLibraryName;
+        let NYCDOEDataset = $("input[name='NYCDOEDataset']:checked").val();
+        let ACSdataset = $("input[name='ACSDataset']:checked").val();
+        let shortLibraryName = $("select.communityLibrary").val();
+        let fullLibraryName = shortLibraryName;
         if (shortLibraryName != "Central Library") {
             fullLibraryName = shortLibraryName + " Community Library"; //generate the library's full name if it is not the Central Library
         }
@@ -168,10 +168,10 @@ $(document).ready(function(){
             .then(zipCode => {
                 getNYCDOEPovertyRateByZIPCode(zipCode, NYCDOEDataset)
                 .then(nycDoePovertyRate => {           
-                    var unemploymentRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S2301",zipCode);
-                    var percentageNoHSDiploma = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S1501",zipCode); //S1501 is the American Community Survey table number for educational attainment
-                    var ACSPovertyRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset, "S1701", zipCode); //S1701 is the American Community Survey table number for poverty
-                    var limitedEnglishProfiencyRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset, "DP02", zipCode); //DP02 is the American Community Survey for U.S. general social characteristics
+                    let unemploymentRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S2301",zipCode);
+                    let percentageNoHSDiploma = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S1501",zipCode); //S1501 is the American Community Survey table number for educational attainment
+                    let ACSPovertyRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset, "S1701", zipCode); //S1701 is the American Community Survey table number for poverty
+                    let limitedEnglishProfiencyRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset, "DP02", zipCode); //DP02 is the American Community Survey for U.S. general social characteristics
             
                     $("#Intro").html(fullLibraryName + " is located in ZIP Code ");
                     $('#ZIP').append(zipCode); 
