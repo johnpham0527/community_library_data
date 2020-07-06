@@ -27,7 +27,7 @@ async function getNycDoeSchoolsDataByZipCode(zipCode) { //return data on the pub
 
 async function getSchoolDataByDbn(dbn, year) {
     return await $.ajax({
-        url: `${nycOpenData}s52a-8aq6.json?dbn=${dbn}&year=${year}`,
+        url: `${nycOpenData}45j8-f6um.json?dbn=${dbn}&year=${year}`,
         type: 'GET',
         data: {
             '$limit': 1,
@@ -50,7 +50,7 @@ async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear, callback) {
         let selectDatasetYear = datasetYear.slice(0,5) + datasetYear.slice(7); //slice the dataset year; format is '2018-19'
         promises.push(getSchoolDataByDbn(modifiedSchoolDBN, selectDatasetYear) //fetch that school's record from the NYC DOE Demographic Snapshot dataset
             .then(schoolData => { //sum up the povertyCount and enrollment for each school
-                povertyCountSum += parseInt(schoolData[0]["poverty_1"]); //obtain the number of students in the school who meet the DOE's poverty criteria. Add this number to a poverty count sum variable.
+                povertyCountSum += parseInt(schoolData[0]["poverty"]); //obtain the number of students in the school who meet the DOE's poverty criteria. Add this number to a poverty count sum variable.
                 enrollmentSum += parseInt(schoolData[0]["total_enrollment"]); //obtain the school's total enrollment and add it to an enrollment sum variable
             })
         )
