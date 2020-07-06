@@ -16,7 +16,7 @@ async function getLibraryZipCode(libraryName) { //given a library's name, return
 
 async function getNycDoeSchoolsDataByZipCode(zipCode) { //return data on the public schools located in a given ZIP code
     return await $.ajax({
-        url: `https://data.cityofnewyork.us/resource/r2nx-nhxe.json?location_1_zip=${zipCode}`, //this dataset contains general information about all NYC DOE schools.
+        url: `${nycOpenData}r2nx-nhxe.json?location_1_zip=${zipCode}`, //this dataset contains general information about all NYC DOE schools.
         type: 'GET',
         data: {
             '$limit': 5000,
@@ -27,7 +27,7 @@ async function getNycDoeSchoolsDataByZipCode(zipCode) { //return data on the pub
 
 async function getSchoolDataByDbn(dbn, year) {
     return await $.ajax({
-        url: `https://data.cityofnewyork.us/resource/s52a-8aq6.json?dbn=${dbn}&year=${year}`,
+        url: `${nycOpenData}s52a-8aq6.json?dbn=${dbn}&year=${year}`,
         type: 'GET',
         data: {
             '$limit': 1,
@@ -61,6 +61,29 @@ async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear, callback) {
             callback((povertyCountSum/enrollmentSum*100).toFixed(1)) //calculate the poverty percentage to one decimal place and pass it into the callback
         )
 };
+
+$(document).ready(function(){
+    $("input[id='ViewCommunityProfile']").click(function() {
+        $("#Profile").html("Please wait...");
+
+        let nycDoeDataset = $("input[name='NYCDOEDataset']:checked").val();
+        //let ACSdataset = $("input[name='ACSDataset']:checked").val();
+        let shortLibraryName = $("select.communityLibrary").val();
+        let fullLibraryName = shortLibraryName;
+        if (shortLibraryName != "Central Library") {
+            fullLibraryName = shortLibraryName + " Community Library"; //generate the library's full name if it is not the Central Library
+        }
+
+        getLibraryZipCode(shortLibraryName) //query the NYC DOE data to obtain the ZIP code.
+            .then(zipCode => {
+                getNYCDOEPovertyRateByZIPCode(zipCode, nycDoeDataset, function(nycDoePovertyRate) { //pass an anonymous function to output data after the poverty rate is calculated
+                    $('#Profile').html(`${fullLibraryName} is located in ZIP code ${zipCode}. According to the NYC Department of Education's ${nycDoeDataset} School Demographic Snapshot, ${nycDoePovertyRate}% of the students who attend the ${schoolsInZIPCode} public school${schoolsInZIPCode === 1 ? '' : 's'} located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.`);
+                })
+            })
+    });
+});
+
+
 
 function updatePage(zipCode, nycDoeDataset, fullLibraryName, nycDoePovertyRate) {
     // let unemploymentRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S2301",zipCode);
@@ -125,24 +148,3 @@ function getAmericanCommunitySurvey5YearEstimateValue(datasetYear, tableNumber, 
             })//closes the AJAX call's property list
     return returnValue;
 }; //closes the function
-
-$(document).ready(function(){
-    $("input[id='ViewCommunityProfile']").click(function() {
-        $("#Profile").html("Please wait...");
-
-        let nycDoeDataset = $("input[name='NYCDOEDataset']:checked").val();
-        //let ACSdataset = $("input[name='ACSDataset']:checked").val();
-        let shortLibraryName = $("select.communityLibrary").val();
-        let fullLibraryName = shortLibraryName;
-        if (shortLibraryName != "Central Library") {
-            fullLibraryName = shortLibraryName + " Community Library"; //generate the library's full name if it is not the Central Library
-        }
-
-        getLibraryZipCode(shortLibraryName) //query the NYC DOE data to obtain the ZIP code.
-            .then(zipCode => {
-                getNYCDOEPovertyRateByZIPCode(zipCode, nycDoeDataset, function(nycDoePovertyRate) { //pass an anonymous function to output data after the poverty rate is calculated
-                    $('#Profile').html(`${fullLibraryName} is located in ZIP code ${zipCode}. According to the NYC Department of Education's ${nycDoeDataset} School Demographic Snapshot, ${nycDoePovertyRate}% of the students who attend the ${schoolsInZIPCode} public school${schoolsInZIPCode === 1 ? '' : 's'} located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.`);
-                })
-            })
-    });
-});
