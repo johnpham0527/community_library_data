@@ -87,34 +87,6 @@ function getNYCDOEPovertyRateByZIPCode(ZIPCode, datasetYear) {
     return (povertyCountSum/enrollmentSum*100).toFixed(1); //return a whole number, not a number less than 1
 };
 
-function getUnemploymentRate(datasetYear, zipCode) { //I no longer need this function. The function below this one supersedes it.
-    var selectDatasetYear = "17"; //this is the default dataset year to use
-    var unemployment = 0;
-
-    switch(datasetYear) {
-        case "2017 Five-Year Estimates":
-            selectDatasetYear = "17";
-            break;
-        case "2016 Five-Year Estimates":
-            selectDatasetYear = "16";
-            break;
-    }
-
-    var buildURL = "http://factfinder.census.gov/service/data/v1/en/programs/ACS/datasets/" + selectDatasetYear + "_5YR/tables/S2301/data/8600000US" + zipCode + "?maxResults=1&key=" + "ea46e190165e1ee608d643fba987f8b3620ec1a9";
-        
-    $.ajax({
-            //url: "https://factfinder.census.gov/service/data/v1/en/programs/ACS/datasets/17_5YR/tables/S2301/data/8600000US11432?maxResults=1&key=ea46e190165e1ee608d643fba987f8b3620ec1a9",
-            url: buildURL,
-            async: false,
-            type: "GET",
-            success: function(data) {
-                unemployment = data.data.rows[0].cells.C7.value;
-            }
-    })
-    return unemployment;
-};
-
-
 function getAmericanCommunitySurvey5YearEstimateValue(datasetYear, tableNumber, zipCode) {
     var selectDatasetYear = "17"; //this is the default dataset year to use
     var returnValue = 0;
@@ -196,7 +168,6 @@ $(document).ready(function(){
 
         var ZipCodeValue = getLibraryZIPCode(shortLibraryName); //Query the NYC DOE data to obtain the ZIP code.
         var NYCDOEPovertyRate = getNYCDOEPovertyRateByZIPCode(ZipCodeValue, NYCDOEDataset); //Query the NYC DOE data to obtain the student poverty percentage.
-        //var unemploymentRate = getUnemploymentRate(ACSdataset, ZipCodeValue); //S2301 is the American Community Survey table number for the unemployment rate
         var unemploymentRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S2301",ZipCodeValue);
         var percentageNoHSDiploma = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S1501",ZipCodeValue); //S1501 is the American Community Survey table number for educational attainment
         var ACSPovertyRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset, "S1701", ZipCodeValue); //S1701 is the American Community Survey table number for poverty
