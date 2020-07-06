@@ -39,12 +39,12 @@ async function getSchoolDataByDbn(dbn, year) {
 async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear, callback) {
     let povertyCountSum = 0;
     let enrollmentSum = 0;
+    let promises = []; //we will populate this promises array with promises returned by getSchoolDataByDbn
+
     let schools = await getNycDoeSchoolsDataByZipCode(zipCode); //retrieve an array of schools filtered by the given ZIP code
     schoolsInZIPCode = schools.length; //store the number of schools in the global variable
 
-    let promises = []; //we will populate this promises array with promises returned by getSchoolDataByDbn
-
-    for (let i = 0; i < schools.length; i++) { //run a for-loop through this array. For each school in the school array:
+    for (let i = 0; i < schools.length; i++) { //run a for-loop through the schools array. For each school in the school array:
         let schoolDBN = schools[i]['ats_system_code']; //find the schoolDBN for each school
         let modifiedSchoolDBN = $.trim(schoolDBN); //remove white space from school DBN
         let selectDatasetYear = datasetYear.slice(0,5) + datasetYear.slice(7); //slice the dataset year; format is '2018-19'
