@@ -3,12 +3,19 @@ https://data.cityofnewyork.us/resource/b67a-vkqb.json?name=Arverne&$$apptoken=Qo
 */
           
 let schoolsInZIPCode = 0;
-let nycOpenData = 'https://data.cityofnewyork.us/resource/';
+const nycOpenData = 'https://data.cityofnewyork.us/resource/';
+const appToken = 'QoQet97KEDYpMW4x4Manaflkp'; //This is my (John Pham's) NYC Open Data app token
 
 async function getLibraryZipCode(libraryName) { //given a library's name, return the ZIP code
-    let response = await fetch(`${nycOpenData}b67a-vkqb.json?name=${libraryName}`); //fetch the library from the API
-    let data = await response.json(); //convert the data into JSON format
-    return data[0]["postcode"]; //return the ZIP code
+    let data = await $.ajax({ //fetch the library from the API
+        url: `${nycOpenData}b67a-vkqb.json?name=${libraryName}`,
+        type: "GET",
+        data: {
+            "$limit" : 1,
+            "$$app_token": appToken 
+        }
+    });
+    return data[0]["postcode"];
 };
 
 function getNYCDOEPovertyRateByZIPCode(ZIPCode, datasetYear) {
