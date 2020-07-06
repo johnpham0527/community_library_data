@@ -51,13 +51,13 @@ async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear) {
 
         let selectDatasetYear = "2017-18"; //this is the default dataset to use
         switch(datasetYear) {
-            case '2018-2019 School Year':
+            case '2018-2019':
                 selectDatasetYear = '2018-2019';
                 break;
-            case '2017-2018 School Year':
+            case '2017-2018':
                 selectDatasetYear = "2017-18";
                 break;
-            case '2016-2017 School Year':
+            case '2016-2017':
                 selectDatasetYear = "2016-17";
                 break;
         }
@@ -156,7 +156,7 @@ $(document).ready(function(){
         $("#LimitedEnglish").html("");
         $("#ACS6").html("");
         
-        let NYCDOEDataset = $("input[name='NYCDOEDataset']:checked").val();
+        let nycDoeDataset = $("input[name='NYCDOEDataset']:checked").val();
         let ACSdataset = $("input[name='ACSDataset']:checked").val();
         let shortLibraryName = $("select.communityLibrary").val();
         let fullLibraryName = shortLibraryName;
@@ -166,7 +166,7 @@ $(document).ready(function(){
 
         getLibraryZipCode(shortLibraryName) //Query the NYC DOE data to obtain the ZIP code.
             .then(zipCode => {
-                getNYCDOEPovertyRateByZIPCode(zipCode, NYCDOEDataset)
+                getNYCDOEPovertyRateByZIPCode(zipCode, nycDoeDataset)
                 .then(nycDoePovertyRate => {           
                     let unemploymentRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S2301",zipCode);
                     let percentageNoHSDiploma = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S1501",zipCode); //S1501 is the American Community Survey table number for educational attainment
@@ -175,7 +175,7 @@ $(document).ready(function(){
             
                     $("#Intro").html(fullLibraryName + " is located in ZIP Code ");
                     $('#ZIP').append(zipCode); 
-                    $("#DOESnapshotA").append(". According to the NYC Department of Education's " + NYCDOEDataset + " Demographic Snapshot, ");
+                    $("#DOESnapshotA").append(". According to the NYC Department of Education's " + nycDoeDataset + " Demographic Snapshot, ");
                     $("#DOEPoverty").append(nycDoePovertyRate);
                     $("#DOESnapshotB").append("% of the students who attend the ");
                     $("#NumSchools").append(schoolsInZIPCode); 
