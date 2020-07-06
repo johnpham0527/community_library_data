@@ -22,6 +22,7 @@ function getNYCDOEPovertyRateByZIPCode(ZIPCode, datasetYear) {
     var povertyCountSum = 0;
     var enrollmentSum = 0;
     var buildURL = "https://data.cityofnewyork.us/resource/r2nx-nhxe.json?location_1_zip=" + ZIPCode; //this dataset contains general information about all NYC DOE schools. See https://data.cityofnewyork.us/Education/2017-2018-School-Locations/p6h4-mpyy
+    //var buildURL = "https://data.cityofnewyork.us/resource/45j8-f6um.json?location_1_zip=" + ZIPCode; //this dataset contains general information about all NYC DOE schools. See https://data.cityofnewyork.us/Education/2017-2018-School-Locations/p6h4-mpyy
     $.ajax({
         url: buildURL,
         async: false,
