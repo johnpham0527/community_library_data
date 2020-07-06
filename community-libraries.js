@@ -30,6 +30,9 @@ async function getNycDoeSchoolsDataByZipCode(zipCode) { //return data on the pub
 }
 
 async function getSchoolDataByDbn(dbn, year) {
+    let url = `https://data.cityofnewyork.us/resource/s52a-8aq6.json?dbn=${dbn}&year=${year}`;
+    console.log(`url is ${url}`);
+
     let data2 = await $.ajax({
         url: `https://data.cityofnewyork.us/resource/s52a-8aq6.json?dbn=${dbn}&year=${year}`,
         type: 'GET',
@@ -59,7 +62,7 @@ async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear) {
     */
 
     //use map reduce here
-    console.log(`data is ${JSON.stringify(data)} and data length is ${data.length}`);
+    //console.log(`data is ${JSON.stringify(data)} and data length is ${data.length}`);
 
     for (let i = 0; i < data.length; i++) {
         let schoolDBN = data[i]['ats_system_code'];
