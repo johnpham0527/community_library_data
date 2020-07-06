@@ -61,45 +61,29 @@ async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear) {
         Divide the poverty count sum by the enrollment sum. Append this response to the web page.
     */
 
-    //use map reduce here
     //console.log(`data is ${JSON.stringify(data)} and data length is ${data.length}`);
 
+    let promises = []; //We will populate this array with promises returned by getSchoolDataByDbn
+
     for (let i = 0; i < data.length; i++) {
-        let schoolDBN = data[i]['ats_system_code'];
+        let schoolDBN = data[i]['ats_system_code']; //find the schoolDBN for each school
         let modifiedSchoolDBN = $.trim(schoolDBN); //remove white space from school DBN
         let selectDatasetYear = datasetYear.slice(0,5) + datasetYear.slice(7); //slice the dataset year; format is '2018-19'
-        getSchoolDataByDbn(modifiedSchoolDBN, selectDatasetYear)
-            .then(data2 => {
-                console.log(`data2 is ${data2}`);
+        promises.push(getSchoolDataByDbn(modifiedSchoolDBN, selectDatasetYear) //fetch school data by DBN
+            .then(data2 => { //We will sum up the povertyCount and enrollment for each school
+                let schoolPovertyCount = parseInt(data2[0]["poverty_1"]);
+                povertyCountSum += schoolPovertyCount;
+                let schoolEnrollment = parseInt(data2[0]["total_enrollment"]);
+                enrollmentSum += schoolEnrollment;
             })
+        )
     }
 
-    // data.forEach(school => {
-    //     let schoolDBN = school['ats_system_code'];
-    //     let modifiedSchoolDBN = $.trim(schoolDBN); //remove white space from school DBN
-    //     let selectDatasetYear = datasetYear.slice(0,5) + datasetYear.slice(7); //slice the dataset year; format is '2018-19'
-    //     getSchoolDataByDbn(modifiedSchoolDBN, selectDatasetYear)
-    //     .then(data2 => {
-    //         let schoolPovertyCount = parseInt(data2[0]["poverty_1"]);
-    //         povertyCountSum += schoolPovertyCount;
-    //         let schoolEnrollment = parseInt(data2[0]["total_enrollment"]);
-    //         enrollmentSum += schoolEnrollment;
-    //         console.log(`povertyCountSum is ${povertyCountSum} and enrollmentSum is ${enrollmentSum}`);
-    //     })
-    //     return 0;
-    // }) 
-    // .then(() => {
-    //     let num = (povertyCountSum/enrollmentSum*100).toFixed(1);
-    //     console.log(`num is ${num}`);
-    //     return num;
-    // })
-
-
-
-    // .map(sum => {
-    //     let result = (sum.povertyCount/sum.enrollmentSum*100).toFixed(1)
-    //     return result;
-    // });
+    Promise.all(promises) //We will execute all of the promises in the array
+        .then(() => {
+            console.log(`Poverty percentage is ${(povertyCountSum/enrollmentSum*100).toFixed(1)}`);
+            return (povertyCountSum/enrollmentSum*100).toFixed(1); //We will calculate the poverty percentage after 
+        })
 
     // $.each(data, function(school) {
     //     let schoolDBN = data[school]['ats_system_code'];
@@ -217,7 +201,8 @@ $(document).ready(function(){
         getLibraryZipCode(shortLibraryName) //Query the NYC DOE data to obtain the ZIP code.
             .then(zipCode => {
                 getNYCDOEPovertyRateByZIPCode(zipCode, nycDoeDataset)
-                .then(nycDoePovertyRate => {           
+                .then(nycDoePovertyRate => { 
+                    console.log(`Poverty rate is ${nycDoePovertyRate}`);
                     let unemploymentRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S2301",zipCode);
                     let percentageNoHSDiploma = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S1501",zipCode); //S1501 is the American Community Survey table number for educational attainment
                     let ACSPovertyRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset, "S1701", zipCode); //S1701 is the American Community Survey table number for poverty
