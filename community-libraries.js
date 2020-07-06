@@ -167,37 +167,36 @@ $(document).ready(function(){
             fullLibraryName = shortLibraryName + " Community Library"; //generate the library's full name if it is not the Central Library
         }
 
-        let ZipCodeValue; 
         getLibraryZIPCode(shortLibraryName) //Query the NYC DOE data to obtain the ZIP code.
-            .then(data => {
-                ZipCodeValue = data;
-                $('#ZIP').append(data); 
+            .then(ZipCodeValue => {
+                var NYCDOEPovertyRate = getNYCDOEPovertyRateByZIPCode(ZipCodeValue, NYCDOEDataset); //Query the NYC DOE data to obtain the student poverty percentage.
+                var unemploymentRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S2301",ZipCodeValue);
+                var percentageNoHSDiploma = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S1501",ZipCodeValue); //S1501 is the American Community Survey table number for educational attainment
+                var ACSPovertyRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset, "S1701", ZipCodeValue); //S1701 is the American Community Survey table number for poverty
+                var limitedEnglishProfiencyRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset, "DP02", ZipCodeValue); //DP02 is the American Community Survey for U.S. general social characteristics
+        
+                $("#Intro").html(fullLibraryName + " is located in ZIP Code ");
+                $('#ZIP').append(ZipCodeValue); 
+                $("#DOESnapshotA").append(". According to the NYC Department of Education's " + NYCDOEDataset + " Demographic Snapshot, ");
+                $("#DOEPoverty").append(NYCDOEPovertyRate);
+                $("#DOESnapshotB").append("% of the students who attend the ");
+                $("#NumSchools").append(schoolsInZIPCode); 
+                
+                //TO-DO: insert code here to check whether there is only 1 school or there is more than 1 school in the ZIP code.
+                
+                $("#DOESnapshotD").append(" public schools located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.");
+                $("#ACS1").append(" According to the American Community Survey ");
+                $("#ACSdataset").append(ACSdataset);
+                $("#ACS2").append(", the ZIP code's unemployment rate is ");
+                $("#Unemployment").append(unemploymentRate);
+                $("#ACS3").append("%; ");
+                $("#NoHS").append(percentageNoHSDiploma);
+                $("#ACS4").append("% of residents do not possess a high school diploma or its equivalent; ");
+                $("#ACSPoverty").append(ACSPovertyRate);
+                $("#ACS5").append("% of residents live below the poverty line; and ");
+                $("#LimitedEnglish").append(limitedEnglishProfiencyRate);
+                $("#ACS6").append("% of residents speak English less than very well."); 
             })
-        var NYCDOEPovertyRate = getNYCDOEPovertyRateByZIPCode(ZipCodeValue, NYCDOEDataset); //Query the NYC DOE data to obtain the student poverty percentage.
-        var unemploymentRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S2301",ZipCodeValue);
-        var percentageNoHSDiploma = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S1501",ZipCodeValue); //S1501 is the American Community Survey table number for educational attainment
-        var ACSPovertyRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset, "S1701", ZipCodeValue); //S1701 is the American Community Survey table number for poverty
-        var limitedEnglishProfiencyRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset, "DP02", ZipCodeValue); //DP02 is the American Community Survey for U.S. general social characteristics
 
-        $("#Intro").html(fullLibraryName + " is located in ZIP Code ");
-        $("#DOESnapshotA").append(". According to the NYC Department of Education's " + NYCDOEDataset + " Demographic Snapshot, ");
-        $("#DOEPoverty").append(NYCDOEPovertyRate);
-        $("#DOESnapshotB").append("% of the students who attend the ");
-        $("#NumSchools").append(schoolsInZIPCode); 
-        
-        //TO-DO: insert code here to check whether there is only 1 school or there is more than 1 school in the ZIP code.
-        
-        $("#DOESnapshotD").append(" public schools located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.");
-        $("#ACS1").append(" According to the American Community Survey ");
-        $("#ACSdataset").append(ACSdataset);
-        $("#ACS2").append(", the ZIP code's unemployment rate is ");
-        $("#Unemployment").append(unemploymentRate);
-        $("#ACS3").append("%; ");
-        $("#NoHS").append(percentageNoHSDiploma);
-        $("#ACS4").append("% of residents do not possess a high school diploma or its equivalent; ");
-        $("#ACSPoverty").append(ACSPovertyRate);
-        $("#ACS5").append("% of residents live below the poverty line; and ");
-        $("#LimitedEnglish").append(limitedEnglishProfiencyRate);
-        $("#ACS6").append("% of residents speak English less than very well.");            
     });
 });
