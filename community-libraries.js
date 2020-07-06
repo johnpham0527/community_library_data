@@ -43,25 +43,23 @@ async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear, callback) {
     let schools = await getNycDoeSchoolsDataByZipCode(zipCode); //retrieve an array of schools filtered by the given ZIP code
     schoolsInZIPCode = schools.length; //store the number of schools in the global variable
 
-    let promises = []; //We will populate this array with promises returned by getSchoolDataByDbn
+    let promises = []; //we will populate this promises array with promises returned by getSchoolDataByDbn
 
     for (let i = 0; i < schools.length; i++) { //run a for-loop through this array. For each school in the school array:
         let schoolDBN = schools[i]['ats_system_code']; //find the schoolDBN for each school
         let modifiedSchoolDBN = $.trim(schoolDBN); //remove white space from school DBN
         let selectDatasetYear = datasetYear.slice(0,5) + datasetYear.slice(7); //slice the dataset year; format is '2018-19'
-        promises.push(getSchoolDataByDbn(modifiedSchoolDBN, selectDatasetYear) //Make an AJAX request on that school's record from the NYC DOE Demographic Snapshot dataset
+        promises.push(getSchoolDataByDbn(modifiedSchoolDBN, selectDatasetYear) //fetch that school's record from the NYC DOE Demographic Snapshot dataset
             .then(schoolData => { //sum up the povertyCount and enrollment for each school
-                let schoolPovertyCount = parseInt(schoolData[0]["poverty_1"]);
-                povertyCountSum += schoolPovertyCount; //Obtain the school's total enrollment and add it to an enrollment sum variable
-                let schoolEnrollment = parseInt(schoolData[0]["total_enrollment"]);
-                enrollmentSum += schoolEnrollment; //Obtain the number of students in the school who meet the DOE's poverty criteria. Add this number to a poverty count sum variable.
+                povertyCountSum += parseInt(schoolData[0]["poverty_1"]); //obtain the number of students in the school who meet the DOE's poverty criteria. Add this number to a poverty count sum variable.
+                enrollmentSum += parseInt(schoolData[0]["total_enrollment"]); //obtain the school's total enrollment and add it to an enrollment sum variable
             })
         )
     }
 
-    Promise.all(promises) //We will execute all of the promises in the array
+    Promise.all(promises) //execute all of the promises in the array
         .then(() => 
-            callback((povertyCountSum/enrollmentSum*100).toFixed(1)) //Calculate the poverty percentage and pass it into the callback
+            callback((povertyCountSum/enrollmentSum*100).toFixed(1)) //calculate the poverty percentage to one decimal place and pass it into the callback
         )
 };
 
