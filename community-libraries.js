@@ -22,7 +22,6 @@ function getNYCDOEPovertyRateByZIPCode(ZIPCode, datasetYear) {
     var povertyCountSum = 0;
     var enrollmentSum = 0;
     var buildURL = "https://data.cityofnewyork.us/resource/r2nx-nhxe.json?location_1_zip=" + ZIPCode; //this dataset contains general information about all NYC DOE schools. See https://data.cityofnewyork.us/Education/2017-2018-School-Locations/p6h4-mpyy
-    //var buildURL = "https://data.cityofnewyork.us/resource/45j8-f6um.json?location_1_zip=" + ZIPCode; //this dataset contains general information about all NYC DOE schools. See https://data.cityofnewyork.us/Education/2017-2018-School-Locations/p6h4-mpyy
     $.ajax({
         url: buildURL,
         async: false,
@@ -56,7 +55,8 @@ function getNYCDOEPovertyRateByZIPCode(ZIPCode, datasetYear) {
                     break;
             }
 
-            buildURL = "https://data.cityofnewyork.us/resource/s52a-8aq6.json?dbn=" + modifiedSchoolDBN + "&year=" + selectDatasetYear; //this dataset contains the NYC DOE's Demographic Snapshot.
+            //buildURL = "https://data.cityofnewyork.us/resource/s52a-8aq6.json?dbn=" + modifiedSchoolDBN + "&year=" + selectDatasetYear; //this dataset contains the NYC DOE's Demographic Snapshot through the 2018 school year. See https://data.cityofnewyork.us/Education/2013-2018-Demographic-Snapshot-School/s52a-8aq6
+            buildURL = "https://data.cityofnewyork.us/resource/45j8-f6um.json?dbn=" + modifiedSchoolDBN + "&year=" + selectDatasetYear; //this dataset contains the NYC DOE's Demographic Snapshot through the 2019 school year
             $.ajax({
                 url: buildURL,
                 async: false,
