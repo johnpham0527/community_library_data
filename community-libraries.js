@@ -26,7 +26,7 @@ async function getNycDoeSchoolsDataByZipCode(zipCode) { //return data on the pub
 }
 
 async function getSchoolDataByDbn(dbn, year) {
-    let data = await $.ajax({
+    return await $.ajax({
         url: `https://data.cityofnewyork.us/resource/s52a-8aq6.json?dbn=${dbn}&year=${year}`,
         type: 'GET',
         data: {
@@ -34,7 +34,6 @@ async function getSchoolDataByDbn(dbn, year) {
             '$$app_token': appToken
         }
     });
-    return data;
 }
 
 async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear, callback) {
