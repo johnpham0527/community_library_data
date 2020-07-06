@@ -29,6 +29,17 @@ async function getNycDoeSchoolsDataByZipCode(zipCode) { //return data on the pub
     });
 }
 
+async function getSchoolDataByDbn(dbn, year) {
+    return await $.ajax({
+        url: `https://data.cityofnewyork.us/resource/s52a-8aq6.json?dbn=${dbn}&year=${year}`,
+        type: 'GET',
+        data: {
+            '$limit': 1,
+            '$$app_token': appToken
+        }
+    });
+}
+
 async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear) {
     let povertyCountSum = 0;
     let enrollmentSum = 0;
@@ -45,32 +56,65 @@ async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear) {
         Divide the poverty count sum by the enrollment sum. Append this response to the web page.
     */
 
-    $.each(data, function(school) {
-        let schoolDBN = data[school]['ats_system_code'];
+    //use map reduce here
+    console.log(`data is ${data}`);
+    data.forEach(school => {
+        let schoolDBN = school['ats_system_code'];
         let modifiedSchoolDBN = $.trim(schoolDBN); //remove white space from school DBN
         let selectDatasetYear = datasetYear.slice(0,5) + datasetYear.slice(7); //slice the dataset year; format is '2018-19'
-
-        let buildURL = "https://data.cityofnewyork.us/resource/s52a-8aq6.json?dbn=" + modifiedSchoolDBN + "&year=" + selectDatasetYear; //this dataset contains the NYC DOE's Demographic Snapshot through the 2018 school year. See https://data.cityofnewyork.us/Education/2013-2018-Demographic-Snapshot-School/s52a-8aq6
-        // buildURL = "https://data.cityofnewyork.us/resource/45j8-f6um.json?dbn=" + modifiedSchoolDBN + "&year=" + selectDatasetYear; //this dataset contains the NYC DOE's Demographic Snapshot through the 2019 school year
-        $.ajax({
-            url: buildURL,
-            async: false,
-            type: "GET",
-            data: {
-                "$limit" : 5000,
-                "$$app_token" : appToken 
-            },
-        }).done(function(data) {
-
-            let schoolPovertyCount = parseInt(data[0]["poverty_1"]);
+        getSchoolDataByDbn(modifiedSchoolDBN, selectDatasetYear)
+        .then(data2 => {
+            let schoolPovertyCount = parseInt(data2[0]["poverty_1"]);
             povertyCountSum += schoolPovertyCount;
-            let schoolEnrollment = parseInt(data[0]["total_enrollment"]);
+            let schoolEnrollment = parseInt(data2[0]["total_enrollment"]);
             enrollmentSum += schoolEnrollment;
-        });
-    });
+            console.log(`povertyCountSum is ${povertyCountSum} and enrollmentSum is ${enrollmentSum}`);
+        })
+    }) 
+    .then(() => {
+        let num = (povertyCountSum/enrollmentSum*100).toFixed(1);
+        console.log(`num is ${num}`);
+        return num;
+    })
 
+    // .map(sum => {
+    //     let result = (sum.povertyCount/sum.enrollmentSum*100).toFixed(1)
+    //     return result;
+    // });
+
+    // $.each(data, function(school) {
+    //     let schoolDBN = data[school]['ats_system_code'];
+    //     let modifiedSchoolDBN = $.trim(schoolDBN); //remove white space from school DBN
+    //     let selectDatasetYear = datasetYear.slice(0,5) + datasetYear.slice(7); //slice the dataset year; format is '2018-19'
+
+        // let buildURL = "https://data.cityofnewyork.us/resource/s52a-8aq6.json?dbn=" + modifiedSchoolDBN + "&year=" + selectDatasetYear; //this dataset contains the NYC DOE's Demographic Snapshot through the 2018 school year. See https://data.cityofnewyork.us/Education/2013-2018-Demographic-Snapshot-School/s52a-8aq6
+        // //let buildURL = "https://data.cityofnewyork.us/resource/45j8-f6um.json?dbn=" + modifiedSchoolDBN + "&year=" + selectDatasetYear; //this dataset contains the NYC DOE's Demographic Snapshot through the 2019 school year
+        // $.ajax({
+        //     url: buildURL,
+        //     async: false,
+        //     type: "GET",
+        //     data: {
+        //         "$limit" : 5000,
+        //         "$$app_token" : appToken 
+        //     },
+        // }).done(function(data) {
+
+    //     getSchoolDataByDbn(modifiedSchoolDBN, selectDatasetYear)
+    //         .then(data2 => {
+    //             console.log(`data2 is ${data2}`);
+    //             let schoolPovertyCount = parseInt(data2[0]["poverty_1"]);
+    //             povertyCountSum += schoolPovertyCount;
+    //             let schoolEnrollment = parseInt(data2[0]["total_enrollment"]);
+    //             enrollmentSum += schoolEnrollment;
+    //         })
+    // });
+
+    // let num = (povertyCountSum/enrollmentSum*100).toFixed(1);
+    // console.log(`num is ${num}`);
+    // return num;
     //});
-    return (povertyCountSum/enrollmentSum*100).toFixed(1); //return a whole number, not a number less than 1
+
+    //return (povertyCountSum/enrollmentSum*100).toFixed(1); //return a whole number, not a number less than 1
 };
 
 function getAmericanCommunitySurvey5YearEstimateValue(datasetYear, tableNumber, zipCode) {
