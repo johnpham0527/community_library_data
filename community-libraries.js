@@ -41,12 +41,35 @@ async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear, callback) {
         )
 };
 
+async function getCensusFiveYearPovertyByZipCode(year, zipCode) {
+    const key = `key=ea46e190165e1ee608d643fba987f8b3620ec1a9`;
+    const totalPopLink = `https://api.census.gov/data/${year}/acs/acs5?${key}&get=B17001_001E&for=zip%20code%20tabulation%20area:${zipCode}`;
+    const povertyLink = `https://api.census.gov/data/${year}/acs/acs5?${key}&get=B17001_002E&for=zip%20code%20tabulation%20area:${zipCode}`;
+    let totalPop = 0;
+    let povertyNum = 0;
+
+    fetch(totalPopLink)
+        .then(response => response.json())
+        .then(data => {
+            totalPop = data[1][0];
+            console.log(`totalPop is ${totalPop}`)
+            
+            fetch(povertyLink)
+            .then(response => response.json())
+            .then(data => {
+                povertyNum = data[1][0];
+                console.log(`povertyNum is ${povertyNum}`)
+                console.log(`The poverty percentage is ${(povertyNum/totalPop*100).toFixed(1)}`);
+            })
+        })
+}
+
 $(document).ready(function(){
     $("input[id='ViewCommunityProfile']").click(function() {
         $("#Profile").html("Please wait...");
 
         let nycDoeDataset = $("input[name='NYCDOEDataset']:checked").val();
-        //let ACSdataset = $("input[name='ACSDataset']:checked").val();
+        let acsDataset = $("input[name='ACSDataset']:checked").val();
         let shortLibraryName = $("select.communityLibrary").val();
         let fullLibraryName = shortLibraryName;
         if (shortLibraryName != "Central Library") {
@@ -57,6 +80,8 @@ $(document).ready(function(){
             .then(zipCode => {
                 getNYCDOEPovertyRateByZIPCode(zipCode, nycDoeDataset, function(nycDoePovertyRate) { //pass an anonymous function to output data after the poverty rate is calculated
                     $('#Profile').html(`${fullLibraryName} is located in ZIP code ${zipCode}. According to the NYC Department of Education's ${nycDoeDataset} School Demographic Snapshot, ${nycDoePovertyRate}% of the students who attend the ${schoolsInZIPCode} public school${schoolsInZIPCode === 1 ? '' : 's'} located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.`);
+
+                    getCensusFiveYearPovertyByZipCode(acsDataset, zipCode);
                 })
             })
     });
