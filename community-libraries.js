@@ -34,11 +34,10 @@ async function getSchoolDataByDbn(dbn, year) {
             '$$app_token': appToken
         }
     });
-    console.log(`dbn is ${dbn}, year is ${year}, and data here is ${data2}`);
     return data2;
 }
 
-async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear, fullLibraryName, callback) {
+async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear, callback) {
     let povertyCountSum = 0;
     let enrollmentSum = 0;
     let data = await getNycDoeSchoolsDataByZipCode(zipCode); //obtain an array of schools given a ZIP code
@@ -68,10 +67,9 @@ async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear, fullLibraryNa
     }
 
     Promise.all(promises) //We will execute all of the promises in the array
-        .then(() => {
-            console.log(`Poverty percentage is ${(povertyCountSum/enrollmentSum*100).toFixed(1)}`);
-            return callback(zipCode, datasetYear, fullLibraryName, (povertyCountSum/enrollmentSum*100).toFixed(1)); //We will calculate the poverty percentage and pass it into the callback
-        })
+        .then(() => 
+            callback((povertyCountSum/enrollmentSum*100).toFixed(1)) //We will calculate the poverty percentage and pass it into the callback
+        )
 };
 
 function updatePage(zipCode, nycDoeDataset, fullLibraryName, nycDoePovertyRate) {
@@ -80,16 +78,6 @@ function updatePage(zipCode, nycDoeDataset, fullLibraryName, nycDoePovertyRate) 
     // let ACSPovertyRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset, "S1701", zipCode); //S1701 is the American Community Survey table number for poverty
     // let limitedEnglishProfiencyRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset, "DP02", zipCode); //DP02 is the American Community Survey for U.S. general social characteristics
 
-    $("#Intro").html(fullLibraryName + " is located in ZIP Code ");
-    $('#ZIP').append(zipCode); 
-    $("#DOESnapshotA").append(`. According to the NYC Department of Education's ${nycDoeDataset} School Demographic Snapshot, `);
-    $("#DOEPoverty").append(nycDoePovertyRate);
-    $("#DOESnapshotB").append("% of the students who attend the ");
-    $("#NumSchools").append(schoolsInZIPCode); 
-    
-    let schools = schoolsInZIPCode === 1 ? 'school' : 'schools'; //make school plural if there is more than one school
-    
-    $("#DOESnapshotD").append(` public ${schools} located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.`);
     // $("#ACS1").append(" According to the American Community Survey ");
     // $("#ACSdataset").append(ACSdataset);
     // $("#ACS2").append(", the ZIP code's unemployment rate is ");
@@ -183,8 +171,18 @@ $(document).ready(function(){
 
         getLibraryZipCode(shortLibraryName) //Query the NYC DOE data to obtain the ZIP code.
             .then(zipCode => {
-                console.log(`zip code is ${zipCode}`);
-                getNYCDOEPovertyRateByZIPCode(zipCode, nycDoeDataset, fullLibraryName, updatePage) //pass updatePage callback into getNYCDOEPovertyRateByZipCode call
+                getNYCDOEPovertyRateByZIPCode(zipCode, nycDoeDataset, function(nycDoePovertyRate) {
+                    $("#Intro").html(fullLibraryName + " is located in ZIP Code ");
+                    $('#ZIP').append(zipCode); 
+                    $("#DOESnapshotA").append(`. According to the NYC Department of Education's ${nycDoeDataset} School Demographic Snapshot, `);
+                    $("#DOEPoverty").append(nycDoePovertyRate);
+                    $("#DOESnapshotB").append("% of the students who attend the ");
+                    $("#NumSchools").append(schoolsInZIPCode); 
+                    
+                    let schools = schoolsInZIPCode === 1 ? 'school' : 'schools'; //make school plural if there is more than one school
+                    
+                    $("#DOESnapshotD").append(` public ${schools} located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.`);
+                }) //pass updatePage callback into getNYCDOEPovertyRateByZipCode call
             })
     });
 });
