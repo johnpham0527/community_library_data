@@ -2,31 +2,13 @@
 https://data.cityofnewyork.us/resource/b67a-vkqb.json?name=Arverne&$$apptoken=QoQet97KEDYpMW4x4Manaflkp 
 */
           
-var schoolsInZIPCode = 0;
+let schoolsInZIPCode = 0;
+let nycOpenData = 'https://data.cityofnewyork.us/resource/';
 
-async function getLibraryZIPCode(libraryName) { //given a library's name, return the ZIP code
-    // var ZIPCode = 0;
-    var buildURL = "https://data.cityofnewyork.us/resource/b67a-vkqb.json?name=" + libraryName; //build a URL that queries the selected library from the API endpoint
-    // $.ajax({
-    //     url: buildURL,
-    //     async: false,
-    //     type: "GET",
-    //     data: {
-    //         "$limit" : 5000,
-    //         "$$app_token" : "QoQet97KEDYpMW4x4Manaflkp" //This is my (John Pham's) app token
-    //     },
-    // }).done(function(data) {
-    //     ZIPCode = data[0]["postcode"];
-    // });
-
-    let response = await fetch(buildURL);
-    let data = await response.json();
-    //console.log(data[0]["postcode"]);
-    return data[0]["postcode"];
-        // .then(response => response.json())
-        // .then(data => console.log(data[0]["postcode"]));
-
-    // return ZIPCode;
+async function getLibraryZipCode(libraryName) { //given a library's name, return the ZIP code
+    let response = await fetch(`${nycOpenData}b67a-vkqb.json?name=${libraryName}`); //fetch the library from the API
+    let data = await response.json(); //convert the data into JSON format
+    return data[0]["postcode"]; //return the ZIP code
 };
 
 function getNYCDOEPovertyRateByZIPCode(ZIPCode, datasetYear) {
@@ -167,7 +149,7 @@ $(document).ready(function(){
             fullLibraryName = shortLibraryName + " Community Library"; //generate the library's full name if it is not the Central Library
         }
 
-        getLibraryZIPCode(shortLibraryName) //Query the NYC DOE data to obtain the ZIP code.
+        getLibraryZipCode(shortLibraryName) //Query the NYC DOE data to obtain the ZIP code.
             .then(zipCode => {
                 var NYCDOEPovertyRate = getNYCDOEPovertyRateByZIPCode(zipCode, NYCDOEDataset); //Query the NYC DOE data to obtain the student poverty percentage.
                 var unemploymentRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S2301",zipCode);
