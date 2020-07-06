@@ -48,9 +48,7 @@ async function getSchoolDataByDbn(dbn, year) {
 async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear) {
     let povertyCountSum = 0;
     let enrollmentSum = 0;
-
-    let data = await getNycDoeSchoolsDataByZipCode(zipCode);
-
+    let data = await getNycDoeSchoolsDataByZipCode(zipCode); //obtain an array of schools given a ZIP code
     schoolsInZIPCode = data.length; //store the number of schools in the global variable
 
     /* At this point, we have now retrieved an array of schools filtered by the given ZIP code. Here is the pseudocode for the below section:
@@ -58,10 +56,7 @@ async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear) {
             Make an AJAX request on that school's record from the NYC DOE Demographic Snapshot dataset
             Obtain the school's total enrollment and add it to an enrollment sum variable
             Obtain the number of students in the school who meet the DOE's poverty criteria. Add this number to a poverty count sum variable.
-        Divide the poverty count sum by the enrollment sum. Append this response to the web page.
-    */
-
-    //console.log(`data is ${JSON.stringify(data)} and data length is ${data.length}`);
+        Divide the poverty count sum by the enrollment sum. Append this response to the web page.    */
 
     let promises = []; //We will populate this array with promises returned by getSchoolDataByDbn
 
