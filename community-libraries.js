@@ -1,4 +1,4 @@
-'use strict';
+
 
 /* Sample view of the API endpoint:
 https://data.cityofnewyork.us/resource/b67a-vkqb.json?name=Arverne&$$apptoken=QoQet97KEDYpMW4x4Manaflkp 
@@ -162,7 +162,7 @@ function getAmericanCommunitySurvey5YearEstimateValue(datasetYear, tableNumber, 
 
 $(document).ready(function(){
     //$("input[type='button']").click(function() {
-        $("input[id='ViewCommunityProfile']").click(function() {
+    $("input[id='ViewCommunityProfile']").click(function() {
         $("#Intro").html("Please wait...");
                                     
         //clear previous results after the button is clicked each time
