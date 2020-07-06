@@ -2,7 +2,7 @@
 https://data.cityofnewyork.us/resource/b67a-vkqb.json?name=Arverne&$$apptoken=QoQet97KEDYpMW4x4Manaflkp 
 */
           
-let schoolsInZIPCode = 0;
+let schoolsInZIPCode = 0; //global variable for counting number of schools in a ZIP code
 const nycOpenData = 'https://data.cityofnewyork.us/resource/';
 const appToken = 'QoQet97KEDYpMW4x4Manaflkp'; //This is my (John Pham's) NYC Open Data app token
 
