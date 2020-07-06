@@ -18,18 +18,22 @@ async function getLibraryZipCode(libraryName) { //given a library's name, return
     return data[0]["postcode"];
 };
 
-async function getNYCDOEPovertyRateByZIPCode(ZIPCode, datasetYear) {
-    var povertyCountSum = 0;
-    var enrollmentSum = 0;
-
-    let data = await $.ajax({
-        url: `https://data.cityofnewyork.us/resource/r2nx-nhxe.json?location_1_zip=${ZIPCode}`, //this dataset contains general information about all NYC DOE schools. See https://data.cityofnewyork.us/Education/2017-2018-School-Locations/p6h4-mpyy
+async function getNYCDOESchoolsByZipCode(zipCode) {
+    return await $.ajax({
+        url: `https://data.cityofnewyork.us/resource/r2nx-nhxe.json?location_1_zip=${zipCode}`, //this dataset contains general information about all NYC DOE schools. See https://data.cityofnewyork.us/Education/2017-2018-School-Locations/p6h4-mpyy
         type: 'GET',
         data: {
             '$limit': 5000,
             '$$app_token': appToken
         }
     });
+}
+
+async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear) {
+    var povertyCountSum = 0;
+    var enrollmentSum = 0;
+
+    let data = await getNYCDOESchoolsByZipCode(zipCode);
 
     schoolsInZIPCode = data.length; //store the number of schools in the global variable
 
