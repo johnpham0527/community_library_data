@@ -1,39 +1,18 @@
 let schoolsInZIPCode = 0; //global variable for counting number of schools in a ZIP code
-const nycOpenData = 'https://data.cityofnewyork.us/resource/';
-const appToken = 'QoQet97KEDYpMW4x4Manaflkp'; //This is my (John Pham's) NYC Open Data app token
+const nycOpenData = 'https://data.cityofnewyork.us/resource';
+const appToken = '$$app_token=QoQet97KEDYpMW4x4Manaflkp'; //This is my (John Pham's) NYC Open Data app token
 
 async function getLibraryZipCode(libraryName) { //given a library's name, return the ZIP code
-    let data = await $.ajax({ //fetch the library from the API
-        url: `${nycOpenData}b67a-vkqb.json?name=${libraryName}`,
-        type: 'GET',
-        data: {
-            '$limit' : 1,
-            '$$app_token': appToken 
-        }
-    });
+    let data = await $.getJSON(`${nycOpenData}/b67a-vkqb.json?name=${libraryName}&${appToken}&$limit=1`);
     return data[0]["postcode"];
 };
 
 async function getNycDoeSchoolsDataByZipCode(zipCode) { //return data on the public schools located in a given ZIP code
-    return await $.ajax({
-        url: `${nycOpenData}r2nx-nhxe.json?location_1_zip=${zipCode}`, //this dataset contains general information about all NYC DOE schools.
-        type: 'GET',
-        data: {
-            '$limit': 5000,
-            '$$app_token': appToken
-        }
-    });
+    return await $.getJSON(`${nycOpenData}/r2nx-nhxe.json?location_1_zip=${zipCode}&${appToken}&$limit=5000`);
 }
 
 async function getSchoolDataByDbn(dbn, year) {
-    return await $.ajax({
-        url: `${nycOpenData}45j8-f6um.json?dbn=${dbn}&year=${year}`,
-        type: 'GET',
-        data: {
-            '$limit': 1,
-            '$$app_token': appToken
-        }
-    });
+    return await $.getJSON(`${nycOpenData}/45j8-f6um.json?dbn=${dbn}&year=${year}&${appToken}&$limit=1`); //return data about a school, given its DBN and dataset year
 }
 
 async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear, callback) {
