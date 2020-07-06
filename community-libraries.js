@@ -26,7 +26,7 @@ async function getNycDoeSchoolsDataByZipCode(zipCode) { //return data on the pub
 }
 
 async function getSchoolDataByDbn(dbn, year) {
-    let data2 = await $.ajax({
+    let data = await $.ajax({
         url: `https://data.cityofnewyork.us/resource/s52a-8aq6.json?dbn=${dbn}&year=${year}`,
         type: 'GET',
         data: {
@@ -34,41 +34,34 @@ async function getSchoolDataByDbn(dbn, year) {
             '$$app_token': appToken
         }
     });
-    return data2;
+    return data;
 }
 
 async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear, callback) {
     let povertyCountSum = 0;
     let enrollmentSum = 0;
-    let data = await getNycDoeSchoolsDataByZipCode(zipCode); //obtain an array of schools given a ZIP code
-    schoolsInZIPCode = data.length; //store the number of schools in the global variable
-
-    /* At this point, we have now retrieved an array of schools filtered by the given ZIP code. Here is the pseudocode for the below section:
-        Run a for-loop through this array. For each school in the school array:
-            Make an AJAX request on that school's record from the NYC DOE Demographic Snapshot dataset
-            Obtain the school's total enrollment and add it to an enrollment sum variable
-            Obtain the number of students in the school who meet the DOE's poverty criteria. Add this number to a poverty count sum variable.
-        Divide the poverty count sum by the enrollment sum. Append this response to the web page.    */
+    let schools = await getNycDoeSchoolsDataByZipCode(zipCode); //retrieve an array of schools filtered by the given ZIP code
+    schoolsInZIPCode = schools.length; //store the number of schools in the global variable
 
     let promises = []; //We will populate this array with promises returned by getSchoolDataByDbn
 
-    for (let i = 0; i < data.length; i++) {
-        let schoolDBN = data[i]['ats_system_code']; //find the schoolDBN for each school
+    for (let i = 0; i < schools.length; i++) { //run a for-loop through this array. For each school in the school array:
+        let schoolDBN = schools[i]['ats_system_code']; //find the schoolDBN for each school
         let modifiedSchoolDBN = $.trim(schoolDBN); //remove white space from school DBN
         let selectDatasetYear = datasetYear.slice(0,5) + datasetYear.slice(7); //slice the dataset year; format is '2018-19'
-        promises.push(getSchoolDataByDbn(modifiedSchoolDBN, selectDatasetYear) //fetch school data by DBN
-            .then(data2 => { //We will sum up the povertyCount and enrollment for each school
-                let schoolPovertyCount = parseInt(data2[0]["poverty_1"]);
-                povertyCountSum += schoolPovertyCount;
-                let schoolEnrollment = parseInt(data2[0]["total_enrollment"]);
-                enrollmentSum += schoolEnrollment;
+        promises.push(getSchoolDataByDbn(modifiedSchoolDBN, selectDatasetYear) //Make an AJAX request on that school's record from the NYC DOE Demographic Snapshot dataset
+            .then(schoolData => { //sum up the povertyCount and enrollment for each school
+                let schoolPovertyCount = parseInt(schoolData[0]["poverty_1"]);
+                povertyCountSum += schoolPovertyCount; //Obtain the school's total enrollment and add it to an enrollment sum variable
+                let schoolEnrollment = parseInt(schoolData[0]["total_enrollment"]);
+                enrollmentSum += schoolEnrollment; //Obtain the number of students in the school who meet the DOE's poverty criteria. Add this number to a poverty count sum variable.
             })
         )
     }
 
     Promise.all(promises) //We will execute all of the promises in the array
         .then(() => 
-            callback((povertyCountSum/enrollmentSum*100).toFixed(1)) //We will calculate the poverty percentage and pass it into the callback
+            callback((povertyCountSum/enrollmentSum*100).toFixed(1)) //Calculate the poverty percentage and pass it into the callback
         )
 };
 
@@ -182,7 +175,7 @@ $(document).ready(function(){
                     let schools = schoolsInZIPCode === 1 ? 'school' : 'schools'; //make school plural if there is more than one school
                     
                     $("#DOESnapshotD").append(` public ${schools} located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.`);
-                }) //pass updatePage callback into getNYCDOEPovertyRateByZipCode call
+                })
             })
     });
 });
