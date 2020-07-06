@@ -18,9 +18,9 @@ async function getLibraryZipCode(libraryName) { //given a library's name, return
     return data[0]["postcode"];
 };
 
-async function getNycDoeSchoolsDataByZipCode(zipCode) {
+async function getNycDoeSchoolsDataByZipCode(zipCode) { //return data on the public schools located in a given ZIP code
     return await $.ajax({
-        url: `https://data.cityofnewyork.us/resource/r2nx-nhxe.json?location_1_zip=${zipCode}`, //this dataset contains general information about all NYC DOE schools. See https://data.cityofnewyork.us/Education/2017-2018-School-Locations/p6h4-mpyy
+        url: `https://data.cityofnewyork.us/resource/r2nx-nhxe.json?location_1_zip=${zipCode}`, //this dataset contains general information about all NYC DOE schools.
         type: 'GET',
         data: {
             '$limit': 5000,
@@ -46,15 +46,18 @@ async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear) {
     */
 
     $.each(data, function(school) {
-        var schoolDBN = data[school]["ats_system_code"];
-        var modifiedSchoolDBN = $.trim(schoolDBN); //remove white space from school DBN
+        let schoolDBN = data[school]['ats_system_code'];
+        let modifiedSchoolDBN = $.trim(schoolDBN); //remove white space from school DBN
 
-        var selectDatasetYear = "2017-18"; //this is the default dataset to use
+        let selectDatasetYear = "2017-18"; //this is the default dataset to use
         switch(datasetYear) {
-            case "2017-2018 School Year":
+            case '2018-2019 School Year':
+                selectDatasetYear = '2018-2019';
+                break;
+            case '2017-2018 School Year':
                 selectDatasetYear = "2017-18";
                 break;
-            case "2016-2017 School Year":
+            case '2016-2017 School Year':
                 selectDatasetYear = "2016-17";
                 break;
         }
