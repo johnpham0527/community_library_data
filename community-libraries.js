@@ -167,8 +167,12 @@ $(document).ready(function(){
             fullLibraryName = shortLibraryName + " Community Library"; //generate the library's full name if it is not the Central Library
         }
 
-        //var ZipCodeValue = getLibraryZIPCode(shortLibraryName); //Query the NYC DOE data to obtain the ZIP code.
-        
+        let ZipCodeValue; 
+        getLibraryZIPCode(shortLibraryName) //Query the NYC DOE data to obtain the ZIP code.
+            .then(data => {
+                ZipCodeValue = data;
+                $('#ZIP').append(data); 
+            })
         var NYCDOEPovertyRate = getNYCDOEPovertyRateByZIPCode(ZipCodeValue, NYCDOEDataset); //Query the NYC DOE data to obtain the student poverty percentage.
         var unemploymentRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S2301",ZipCodeValue);
         var percentageNoHSDiploma = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S1501",ZipCodeValue); //S1501 is the American Community Survey table number for educational attainment
@@ -176,7 +180,6 @@ $(document).ready(function(){
         var limitedEnglishProfiencyRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset, "DP02", ZipCodeValue); //DP02 is the American Community Survey for U.S. general social characteristics
 
         $("#Intro").html(fullLibraryName + " is located in ZIP Code ");
-        $('#ZIP').append(ZipCodeValue);
         $("#DOESnapshotA").append(". According to the NYC Department of Education's " + NYCDOEDataset + " Demographic Snapshot, ");
         $("#DOEPoverty").append(NYCDOEPovertyRate);
         $("#DOESnapshotB").append("% of the students who attend the ");
