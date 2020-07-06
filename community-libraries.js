@@ -29,7 +29,7 @@ function getNYCDOEPovertyRateByZIPCode(ZIPCode, datasetYear) {
         type: "GET",
         data: {
             "$limit" : 5000,
-            "$$app_token" : "QoQet97KEDYpMW4x4Manaflkp" //This is my (John Pham's) app token
+            "$$app_token" : appToken 
         },
     }).done(function(data) {
         schoolsInZIPCode = data.length; //store the number of schools in the global variable
@@ -63,7 +63,7 @@ function getNYCDOEPovertyRateByZIPCode(ZIPCode, datasetYear) {
                 type: "GET",
                 data: {
                     "$limit" : 5000,
-                    "$$app_token" : "QoQet97KEDYpMW4x4Manaflkp" //This is my (John Pham's) app token
+                    "$$app_token" : appToken 
                 },
             }).done(function(data) {
 
