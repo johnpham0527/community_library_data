@@ -1,8 +1,8 @@
-
+'use strict';
 
 /* Sample view of the API endpoint:
-            https://data.cityofnewyork.us/resource/b67a-vkqb.json?name=Arverne&$$apptoken=QoQet97KEDYpMW4x4Manaflkp 
-            */
+https://data.cityofnewyork.us/resource/b67a-vkqb.json?name=Arverne&$$apptoken=QoQet97KEDYpMW4x4Manaflkp 
+*/
           
 
 
