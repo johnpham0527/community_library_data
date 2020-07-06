@@ -30,7 +30,7 @@ async function getNycDoeSchoolsDataByZipCode(zipCode) { //return data on the pub
 }
 
 async function getSchoolDataByDbn(dbn, year) {
-    return await $.ajax({
+    let data2 = await $.ajax({
         url: `https://data.cityofnewyork.us/resource/s52a-8aq6.json?dbn=${dbn}&year=${year}`,
         type: 'GET',
         data: {
@@ -38,6 +38,8 @@ async function getSchoolDataByDbn(dbn, year) {
             '$$app_token': appToken
         }
     });
+    console.log(`dbn is ${dbn}, year is ${year}, and data here is ${data2}`);
+    return data2;
 }
 
 async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear) {
@@ -57,25 +59,39 @@ async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear) {
     */
 
     //use map reduce here
-    console.log(`data is ${data}`);
-    data.forEach(school => {
-        let schoolDBN = school['ats_system_code'];
+    console.log(`data is ${JSON.stringify(data)} and data length is ${data.length}`);
+
+    for (let i = 0; i < data.length; i++) {
+        let schoolDBN = data[i]['ats_system_code'];
         let modifiedSchoolDBN = $.trim(schoolDBN); //remove white space from school DBN
         let selectDatasetYear = datasetYear.slice(0,5) + datasetYear.slice(7); //slice the dataset year; format is '2018-19'
         getSchoolDataByDbn(modifiedSchoolDBN, selectDatasetYear)
-        .then(data2 => {
-            let schoolPovertyCount = parseInt(data2[0]["poverty_1"]);
-            povertyCountSum += schoolPovertyCount;
-            let schoolEnrollment = parseInt(data2[0]["total_enrollment"]);
-            enrollmentSum += schoolEnrollment;
-            console.log(`povertyCountSum is ${povertyCountSum} and enrollmentSum is ${enrollmentSum}`);
-        })
-    }) 
-    .then(() => {
-        let num = (povertyCountSum/enrollmentSum*100).toFixed(1);
-        console.log(`num is ${num}`);
-        return num;
-    })
+            .then(data2 => {
+                console.log(`data2 is ${data2}`);
+            })
+    }
+
+    // data.forEach(school => {
+    //     let schoolDBN = school['ats_system_code'];
+    //     let modifiedSchoolDBN = $.trim(schoolDBN); //remove white space from school DBN
+    //     let selectDatasetYear = datasetYear.slice(0,5) + datasetYear.slice(7); //slice the dataset year; format is '2018-19'
+    //     getSchoolDataByDbn(modifiedSchoolDBN, selectDatasetYear)
+    //     .then(data2 => {
+    //         let schoolPovertyCount = parseInt(data2[0]["poverty_1"]);
+    //         povertyCountSum += schoolPovertyCount;
+    //         let schoolEnrollment = parseInt(data2[0]["total_enrollment"]);
+    //         enrollmentSum += schoolEnrollment;
+    //         console.log(`povertyCountSum is ${povertyCountSum} and enrollmentSum is ${enrollmentSum}`);
+    //     })
+    //     return 0;
+    // }) 
+    // .then(() => {
+    //     let num = (povertyCountSum/enrollmentSum*100).toFixed(1);
+    //     console.log(`num is ${num}`);
+    //     return num;
+    // })
+
+
 
     // .map(sum => {
     //     let result = (sum.povertyCount/sum.enrollmentSum*100).toFixed(1)
