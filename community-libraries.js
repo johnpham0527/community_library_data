@@ -68,6 +68,7 @@ function getNYCDOEPovertyRateByZIPCode(ZIPCode, datasetYear) {
                     "$$app_token" : "QoQet97KEDYpMW4x4Manaflkp" //This is my (John Pham's) app token
                 },
             }).done(function(data) {
+
                 let schoolPovertyCount = parseInt(data[0]["poverty_1"]);
                 povertyCountSum += schoolPovertyCount;
                 let schoolEnrollment = parseInt(data[0]["total_enrollment"]);
@@ -159,7 +160,6 @@ $(document).ready(function(){
         }
 
         var ZipCodeValue = getLibraryZIPCode(shortLibraryName); //Query the NYC DOE data to obtain the ZIP code.
-        //let ZipCodeValue = getLibraryZipCode(shortLibraryName);
         var NYCDOEPovertyRate = getNYCDOEPovertyRateByZIPCode(ZipCodeValue, NYCDOEDataset); //Query the NYC DOE data to obtain the student poverty percentage.
         var unemploymentRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S2301",ZipCodeValue);
         var percentageNoHSDiploma = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S1501",ZipCodeValue); //S1501 is the American Community Survey table number for educational attainment
