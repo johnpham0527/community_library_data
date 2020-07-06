@@ -182,9 +182,9 @@ $(document).ready(function(){
                 $("#DOESnapshotB").append("% of the students who attend the ");
                 $("#NumSchools").append(schoolsInZIPCode); 
                 
-                //TO-DO: insert code here to check whether there is only 1 school or there is more than 1 school in the ZIP code.
+                let schools = schoolsInZIPCode === 1 ? 'school' : 'schools'; //make school plural if there is more than one school
                 
-                $("#DOESnapshotD").append(" public schools located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.");
+                $("#DOESnapshotD").append(` public ${schools} located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.`);
                 $("#ACS1").append(" According to the American Community Survey ");
                 $("#ACSdataset").append(ACSdataset);
                 $("#ACS2").append(", the ZIP code's unemployment rate is ");
