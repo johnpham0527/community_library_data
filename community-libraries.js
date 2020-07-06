@@ -1,7 +1,3 @@
-/* Sample view of the API endpoint:
-https://data.cityofnewyork.us/resource/b67a-vkqb.json?name=Arverne&$$apptoken=QoQet97KEDYpMW4x4Manaflkp 
-*/
-          
 let schoolsInZIPCode = 0; //global variable for counting number of schools in a ZIP code
 const nycOpenData = 'https://data.cityofnewyork.us/resource/';
 const appToken = 'QoQet97KEDYpMW4x4Manaflkp'; //This is my (John Pham's) NYC Open Data app token
@@ -30,9 +26,6 @@ async function getNycDoeSchoolsDataByZipCode(zipCode) { //return data on the pub
 }
 
 async function getSchoolDataByDbn(dbn, year) {
-    let url = `https://data.cityofnewyork.us/resource/s52a-8aq6.json?dbn=${dbn}&year=${year}`;
-    console.log(`url is ${url}`);
-
     let data2 = await $.ajax({
         url: `https://data.cityofnewyork.us/resource/s52a-8aq6.json?dbn=${dbn}&year=${year}`,
         type: 'GET',
@@ -45,7 +38,7 @@ async function getSchoolDataByDbn(dbn, year) {
     return data2;
 }
 
-async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear) {
+async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear, fullLibraryName, callback) {
     let povertyCountSum = 0;
     let enrollmentSum = 0;
     let data = await getNycDoeSchoolsDataByZipCode(zipCode); //obtain an array of schools given a ZIP code
@@ -77,43 +70,38 @@ async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear) {
     Promise.all(promises) //We will execute all of the promises in the array
         .then(() => {
             console.log(`Poverty percentage is ${(povertyCountSum/enrollmentSum*100).toFixed(1)}`);
-            return (povertyCountSum/enrollmentSum*100).toFixed(1); //We will calculate the poverty percentage after 
+            return callback(zipCode, datasetYear, fullLibraryName, (povertyCountSum/enrollmentSum*100).toFixed(1)); //We will calculate the poverty percentage and pass it into the callback
         })
-
-    // $.each(data, function(school) {
-    //     let schoolDBN = data[school]['ats_system_code'];
-    //     let modifiedSchoolDBN = $.trim(schoolDBN); //remove white space from school DBN
-    //     let selectDatasetYear = datasetYear.slice(0,5) + datasetYear.slice(7); //slice the dataset year; format is '2018-19'
-
-        // let buildURL = "https://data.cityofnewyork.us/resource/s52a-8aq6.json?dbn=" + modifiedSchoolDBN + "&year=" + selectDatasetYear; //this dataset contains the NYC DOE's Demographic Snapshot through the 2018 school year. See https://data.cityofnewyork.us/Education/2013-2018-Demographic-Snapshot-School/s52a-8aq6
-        // //let buildURL = "https://data.cityofnewyork.us/resource/45j8-f6um.json?dbn=" + modifiedSchoolDBN + "&year=" + selectDatasetYear; //this dataset contains the NYC DOE's Demographic Snapshot through the 2019 school year
-        // $.ajax({
-        //     url: buildURL,
-        //     async: false,
-        //     type: "GET",
-        //     data: {
-        //         "$limit" : 5000,
-        //         "$$app_token" : appToken 
-        //     },
-        // }).done(function(data) {
-
-    //     getSchoolDataByDbn(modifiedSchoolDBN, selectDatasetYear)
-    //         .then(data2 => {
-    //             console.log(`data2 is ${data2}`);
-    //             let schoolPovertyCount = parseInt(data2[0]["poverty_1"]);
-    //             povertyCountSum += schoolPovertyCount;
-    //             let schoolEnrollment = parseInt(data2[0]["total_enrollment"]);
-    //             enrollmentSum += schoolEnrollment;
-    //         })
-    // });
-
-    // let num = (povertyCountSum/enrollmentSum*100).toFixed(1);
-    // console.log(`num is ${num}`);
-    // return num;
-    //});
-
-    //return (povertyCountSum/enrollmentSum*100).toFixed(1); //return a whole number, not a number less than 1
 };
+
+function updatePage(zipCode, nycDoeDataset, fullLibraryName, nycDoePovertyRate) {
+    // let unemploymentRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S2301",zipCode);
+    // let percentageNoHSDiploma = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S1501",zipCode); //S1501 is the American Community Survey table number for educational attainment
+    // let ACSPovertyRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset, "S1701", zipCode); //S1701 is the American Community Survey table number for poverty
+    // let limitedEnglishProfiencyRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset, "DP02", zipCode); //DP02 is the American Community Survey for U.S. general social characteristics
+
+    $("#Intro").html(fullLibraryName + " is located in ZIP Code ");
+    $('#ZIP').append(zipCode); 
+    $("#DOESnapshotA").append(`. According to the NYC Department of Education's ${nycDoeDataset} School Demographic Snapshot, `);
+    $("#DOEPoverty").append(nycDoePovertyRate);
+    $("#DOESnapshotB").append("% of the students who attend the ");
+    $("#NumSchools").append(schoolsInZIPCode); 
+    
+    let schools = schoolsInZIPCode === 1 ? 'school' : 'schools'; //make school plural if there is more than one school
+    
+    $("#DOESnapshotD").append(` public ${schools} located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.`);
+    // $("#ACS1").append(" According to the American Community Survey ");
+    // $("#ACSdataset").append(ACSdataset);
+    // $("#ACS2").append(", the ZIP code's unemployment rate is ");
+    // $("#Unemployment").append(unemploymentRate);
+    // $("#ACS3").append("%; ");
+    // $("#NoHS").append(percentageNoHSDiploma);
+    // $("#ACS4").append("% of residents do not possess a high school diploma or its equivalent; ");
+    // $("#ACSPoverty").append(ACSPovertyRate);
+    // $("#ACS5").append("% of residents live below the poverty line; and ");
+    // $("#LimitedEnglish").append(limitedEnglishProfiencyRate);
+    // $("#ACS6").append("% of residents speak English less than very well."); 
+}
 
 function getAmericanCommunitySurvey5YearEstimateValue(datasetYear, tableNumber, zipCode) {
     let selectDatasetYear = "17"; //this is the default dataset year to use
@@ -186,7 +174,7 @@ $(document).ready(function(){
         $("#ACS6").html("");
         
         let nycDoeDataset = $("input[name='NYCDOEDataset']:checked").val();
-        let ACSdataset = $("input[name='ACSDataset']:checked").val();
+        //let ACSdataset = $("input[name='ACSDataset']:checked").val();
         let shortLibraryName = $("select.communityLibrary").val();
         let fullLibraryName = shortLibraryName;
         if (shortLibraryName != "Central Library") {
@@ -195,37 +183,8 @@ $(document).ready(function(){
 
         getLibraryZipCode(shortLibraryName) //Query the NYC DOE data to obtain the ZIP code.
             .then(zipCode => {
-                getNYCDOEPovertyRateByZIPCode(zipCode, nycDoeDataset)
-                .then(nycDoePovertyRate => { 
-                    console.log(`Poverty rate is ${nycDoePovertyRate}`);
-                    let unemploymentRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S2301",zipCode);
-                    let percentageNoHSDiploma = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S1501",zipCode); //S1501 is the American Community Survey table number for educational attainment
-                    let ACSPovertyRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset, "S1701", zipCode); //S1701 is the American Community Survey table number for poverty
-                    let limitedEnglishProfiencyRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset, "DP02", zipCode); //DP02 is the American Community Survey for U.S. general social characteristics
-            
-                    $("#Intro").html(fullLibraryName + " is located in ZIP Code ");
-                    $('#ZIP').append(zipCode); 
-                    $("#DOESnapshotA").append(`. According to the NYC Department of Education's ${nycDoeDataset} School Demographic Snapshot, `);
-                    $("#DOEPoverty").append(nycDoePovertyRate);
-                    $("#DOESnapshotB").append("% of the students who attend the ");
-                    $("#NumSchools").append(schoolsInZIPCode); 
-                    
-                    let schools = schoolsInZIPCode === 1 ? 'school' : 'schools'; //make school plural if there is more than one school
-                    
-                    $("#DOESnapshotD").append(` public ${schools} located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.`);
-                    $("#ACS1").append(" According to the American Community Survey ");
-                    $("#ACSdataset").append(ACSdataset);
-                    $("#ACS2").append(", the ZIP code's unemployment rate is ");
-                    $("#Unemployment").append(unemploymentRate);
-                    $("#ACS3").append("%; ");
-                    $("#NoHS").append(percentageNoHSDiploma);
-                    $("#ACS4").append("% of residents do not possess a high school diploma or its equivalent; ");
-                    $("#ACSPoverty").append(ACSPovertyRate);
-                    $("#ACS5").append("% of residents live below the poverty line; and ");
-                    $("#LimitedEnglish").append(limitedEnglishProfiencyRate);
-                    $("#ACS6").append("% of residents speak English less than very well."); 
-                })
+                console.log(`zip code is ${zipCode}`);
+                getNYCDOEPovertyRateByZIPCode(zipCode, nycDoeDataset, fullLibraryName, updatePage) //pass updatePage callback into getNYCDOEPovertyRateByZipCode call
             })
-
     });
 });
