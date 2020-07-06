@@ -68,9 +68,9 @@ function getNYCDOEPovertyRateByZIPCode(ZIPCode, datasetYear) {
                     "$$app_token" : "QoQet97KEDYpMW4x4Manaflkp" //This is my (John Pham's) app token
                 },
             }).done(function(data) {
-                schoolPovertyCount = parseInt(data[0]["poverty_1"]);
+                let schoolPovertyCount = parseInt(data[0]["poverty_1"]);
                 povertyCountSum += schoolPovertyCount;
-                schoolEnrollment = parseInt(data[0]["total_enrollment"]);
+                let schoolEnrollment = parseInt(data[0]["total_enrollment"]);
                 enrollmentSum += schoolEnrollment;
             });
         });
