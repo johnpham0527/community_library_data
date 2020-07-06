@@ -18,7 +18,7 @@ async function getLibraryZipCode(libraryName) { //given a library's name, return
     return data[0]["postcode"];
 };
 
-async function getNYCDOESchoolsByZipCode(zipCode) {
+async function getNycDoeSchoolsDataByZipCode(zipCode) {
     return await $.ajax({
         url: `https://data.cityofnewyork.us/resource/r2nx-nhxe.json?location_1_zip=${zipCode}`, //this dataset contains general information about all NYC DOE schools. See https://data.cityofnewyork.us/Education/2017-2018-School-Locations/p6h4-mpyy
         type: 'GET',
@@ -33,7 +33,7 @@ async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear) {
     var povertyCountSum = 0;
     var enrollmentSum = 0;
 
-    let data = await getNYCDOESchoolsByZipCode(zipCode);
+    let data = await getNycDoeSchoolsDataByZipCode(zipCode);
 
     schoolsInZIPCode = data.length; //store the number of schools in the global variable
 
