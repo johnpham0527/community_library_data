@@ -46,12 +46,13 @@ async function getNycDoePovertyRateByZipCode(libraryData, done) {
         })
 };
 
-async function getCensusFiveYearPovertyByZipCode(libraryData, zipCode, done) {
-    const { censusDataset } = libraryData;
-    const totalPopLink = `${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=B17001_001E&for=zip%20code%20tabulation%20area:${zipCode}`;
-    const povertyLink = `${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=B17001_002E&for=zip%20code%20tabulation%20area:${zipCode}`;
+async function getCensusFiveYearPovertyByZipCode(libraryData, done) {
+    const { censusDataset, zipCode } = libraryData; //destructure libraryData
+    const zipText = `zip%20code%20tabulation%20area:${zipCode}`;
+    const totalPopLink = `${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=B17001_001E&for=${zipText}`;
+    const numPovertyLink = `${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=B17001_002E&for=${zipText}`;
     let totalPop = 0;
-    let povertyNum = 0;
+    let numPoverty = 0;
     let newLibraryData = Object.assign({}, libraryData); //newLibraryData will be the return object
 
     fetch(totalPopLink)
@@ -59,11 +60,11 @@ async function getCensusFiveYearPovertyByZipCode(libraryData, zipCode, done) {
         .then(result => {
             totalPop = result[1][0];
             
-            fetch(povertyLink)
+            fetch(numPovertyLink)
             .then(response => response.json())
             .then(result2 => {
-                povertyNum = result2[1][0];
-                newLibraryData.censusPovertyPercentage = (povertyNum/totalPop*100).toFixed(1);
+                numPoverty = result2[1][0];
+                newLibraryData.censusPovertyPercentage = (numPoverty/totalPop*100).toFixed(1); //assign poverty percentage to newLibraryData
                 done(null, newLibraryData);
             })
         })
@@ -91,7 +92,7 @@ $(document).ready(function(){
                     if (err) console.log(`Error retrieving NYC DOE data: ${err}`);
                     $('#Profile').html(`${newLibraryData.fullLibraryName} is located in ZIP code ${newLibraryData.zipCode}. According to the NYC Department of Education's ${newLibraryData.nycDoeDataset} School Demographic Snapshot, ${newLibraryData.nycDoePovertyRate}% of the students who attend the ${newLibraryData.schoolsInZipCode} public school${newLibraryData.schoolsInZipCode === 1 ? '' : 's'} located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.`);
 
-                    getCensusFiveYearPovertyByZipCode(newLibraryData, zipCode, function(err, newLibraryData2) {
+                    getCensusFiveYearPovertyByZipCode(newLibraryData, function(err, newLibraryData2) {
                         if (err) console.log(`Error retrieving Census poverty data: ${err}`)
                         console.log(`Data is ${JSON.stringify(newLibraryData2)}`);
                     });
