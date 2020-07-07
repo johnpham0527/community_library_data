@@ -79,22 +79,19 @@ async function getNycDoePovertyRate(libraryData, done) {
         })
 };
 
-async function getCensusData(censusVar, area, censusDataset) {
+async function getCensusData(censusVar, area, censusDataset) { //fetch census data from API, given variable, area, and dataset
     return await $.getJSON(`${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=${censusVar}&for=${area}`);
 }
 
 async function getCensusFiveYearPoverty(libraryData, done) {
     const { censusDataset, zipCode } = libraryData; //destructure libraryData
     const area = `zip%20code%20tabulation%20area:${zipCode}`; //the zip code will be the area to filter
-    //const totalPovertyPopLink = `${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=${censusVars.totalPovertyPop}&for=${area}`;
-    const numPovertyLink = `${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=${censusVars.numPoverty}&for=${area}`;
 
-    //const data1 = await $.getJSON(totalPovertyPopLink);
     const data1 = await getCensusData(censusVars.totalPovertyPop, area, censusDataset);
-    let totalPop = data1[1][0];
+    let totalPop = data1[1][0]; //get total population for poverty measure
 
-    const data2 = await $.getJSON(numPovertyLink);
-    let numPoverty = data2[1][0];
+    const data2 = await getCensusData(censusVars.numPoverty, area, censusDataset);
+    let numPoverty = data2[1][0]; //get number of individuals in poverty for past 12 months
 
     done(null, { //execute the callback, passing along null for error and updated data
         ...libraryData, //use the spread operator and avoid mutating libraryData
