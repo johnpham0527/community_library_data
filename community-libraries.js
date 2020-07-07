@@ -15,7 +15,7 @@ async function getSchoolDataByDbn(dbn, year) {
     return await $.getJSON(`${nycOpenData}/45j8-f6um.json?dbn=${dbn}&year=${year}&${appToken}&$limit=1`); //return data about a school, given its DBN and dataset year
 }
 
-async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear, callback) {
+async function getNycDoePovertyRateByZipCode(zipCode, datasetYear, done) {
     let povertyCountSum = 0;
     let enrollmentSum = 0;
     let promises = []; //we will populate this promises array with promises returned by getSchoolDataByDbn
@@ -37,7 +37,7 @@ async function getNYCDOEPovertyRateByZIPCode(zipCode, datasetYear, callback) {
 
     Promise.all(promises) //execute all of the promises in the array
         .then(() => 
-            callback((povertyCountSum/enrollmentSum*100).toFixed(1)) //calculate the poverty percentage to one decimal place and pass it into the callback
+            done(null, (povertyCountSum/enrollmentSum*100).toFixed(1)) //calculate the poverty percentage to one decimal place and pass it into the callback
         )
 };
 
@@ -78,7 +78,8 @@ $(document).ready(function(){
 
         getLibraryZipCode(shortLibraryName) //query the NYC DOE data to obtain the ZIP code.
             .then(zipCode => {
-                getNYCDOEPovertyRateByZIPCode(zipCode, nycDoeDataset, function(nycDoePovertyRate) { //pass an anonymous function to output data after the poverty rate is calculated
+                getNycDoePovertyRateByZipCode(zipCode, nycDoeDataset, function(err, nycDoePovertyRate) { //pass an anonymous function to output data after the poverty rate is calculated
+                    if (err) console.log(`Error retrieving NYC DOE data: ${err}`);
                     $('#Profile').html(`${fullLibraryName} is located in ZIP code ${zipCode}. According to the NYC Department of Education's ${nycDoeDataset} School Demographic Snapshot, ${nycDoePovertyRate}% of the students who attend the ${schoolsInZIPCode} public school${schoolsInZIPCode === 1 ? '' : 's'} located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.`);
 
                     getCensusFiveYearPovertyByZipCode(acsDataset, zipCode);
