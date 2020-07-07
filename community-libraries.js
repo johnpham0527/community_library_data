@@ -10,52 +10,27 @@ const censusVars = { //this is a map of various Census variables
     neverMarriedMaleInLaborForceUnemployed:     'B12006_006E',
     neverMarriedFemaleInLaborForce:             'B12006_009E',
     neverMarriedFemaleInLaborForceUnemployed:   'B12006_011E',
-    nowMarriedMaleInLaborForce:                 '',
-    nowMarriedMaleInLaborForceUnemployed:       '',
-    nowMarriedFemaleInLaborForce:               '',
-    nowMarriedFemaleInLaborForceUnemployed:     '',
-    separatedMaleInLaborForce:                  '',
-    separatedMaleInLaborForceUnemployed:        '',
-    separatedFemaleInLaborForce:                '',
-    separatedFemaleInLaborForceUnemployed:      '',
-    widowedMaleInLaborForce:                    '',
-    widowedMaleInLaborForceUnemployed:          '',
-    widowedFemaleLaborForce:                    '',
-    widowedFemaleLaborForceUnemployed:          '',
-    divorcedMaleInLaborForce:                   '',
-    divorcedMaleInLaborForceUnemployed:         '',
-    divorcedFemaleInLaborForce:                 '',
-    divorcedFemaleInLaborForceUnemployed:       '',
+    nowMarriedMaleInLaborForce:                 'B12006_015E',
+    nowMarriedMaleInLaborForceUnemployed:       'B12006_017E',
+    nowMarriedFemaleInLaborForce:               'B12006_020E',
+    nowMarriedFemaleInLaborForceUnemployed:     'B12006_022E',
+    separatedMaleInLaborForce:                  'B12006_026E',
+    separatedMaleInLaborForceUnemployed:        'B12006_028E',
+    separatedFemaleInLaborForce:                'B12006_031E',
+    separatedFemaleInLaborForceUnemployed:      'B12006_033E',
+    widowedMaleInLaborForce:                    'B12006_037E',
+    widowedMaleInLaborForceUnemployed:          'B12006_039E',
+    widowedFemaleLaborForce:                    'B12006_042E',
+    widowedFemaleLaborForceUnemployed:          'B12006_044E',
+    divorcedMaleInLaborForce:                   'B12006_048E',
+    divorcedMaleInLaborForceUnemployed:         'B12006_050E',
+    divorcedFemaleInLaborForce:                 'B12006_053E',
+    divorcedFemaleInLaborForceUnemployed:       'B12006_055E',
 
 
     /* Unemployment is available as Marital Status by Sex by Labor Force Participation
     Link: https://data.census.gov/cedsci/table?q=B12006%3A%20MARITAL%20STATUS%20BY%20SEX%20BY%20LABOR%20FORCE%20PARTICIPATION&hidePreview=false&tid=ACSDT1Y2018.B12006&t=Marital%20Status%20and%20Marital%20History%3AAge%20and%20Sex&vintage=2018
     Link: https://api.census.gov/data/2018/acs/acs5/variables.html
-    Marital Statuses: never married, now married (except separated), separated, widows, divorced
-    Sex Statuses: male, female
-    Labor Force Statuses: in labor force, not in labor force
-    In Labor Force Statuses: employed or in armed forces, unemployed
-    I need these 20 variables:
-    * never married males in labor force, total - DONE
-    * never married males in labor force, unemployed - DONE
-    * never married females in labor force, total - DONE
-    * never married females in labor force, unemployed - DONE
-    * now married males in labor force, total
-    * now married males in labor force, unemployed
-    * now married females in labor force, total
-    * now married females in labor force, unemployed
-    * separated males in labor force, total
-    * separated males in labor force, unemployed
-    * separated females in labor force, total
-    * separated females in labor force, unemployed
-    * widowed males in labor force, total
-    * widowed males in labor force, unemployed
-    * widowed females in labor force, total
-    * widowed females in labor force, unemployed
-    * divorced males in labor force, total
-    * divorced males in labor force, unemployed
-    * divorced females in labor force, total
-    * divorced females in labor force, unemployed
 
     Filter by ZCTA5
     */
