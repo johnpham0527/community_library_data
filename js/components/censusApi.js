@@ -37,7 +37,7 @@ async function getCensusData(censusVar, area, censusDataset) { //fetch census da
     return data;
 }
 
-async function getPoverty(libraryData, done) {
+async function getCensusPoverty(libraryData, done) {
     const { censusDataset, zipCode } = libraryData; //destructure libraryData
     const area = `zip%20code%20tabulation%20area:${zipCode}`; //the zip code will be the area to filter
 
@@ -103,7 +103,7 @@ async function getLessThanHighSchoolEducation(libraryData, done) {
     done(null, data);
 }
 
-export { getPoverty, getUnemployment, getLimitedEnglishProficiency, getLessThanHighSchoolEducation }
+export { getCensusPoverty, getUnemployment, getLimitedEnglishProficiency, getLessThanHighSchoolEducation }
 
 // function getAmericanCommunitySurvey5YearEstimateValue(datasetYear, tableNumber, zipCode) {
 //     let selectDatasetYear = "17"; //this is the default dataset year to use

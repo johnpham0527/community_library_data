@@ -1,7 +1,7 @@
 'use strict';
 
-import { getLibraryZipCode, getNycDoePovertyRate } from './components/nycDoeApi.js';
-import { getUnemployment, getPoverty, getLimitedEnglishProficiency, getLessThanHighSchoolEducation } from './components/censusApi.js'
+import { getLibraryZipCode, getNycDoePoverty } from './components/nycDoeApi.js';
+import { getUnemployment, getCensusPoverty, getLimitedEnglishProficiency, getLessThanHighSchoolEducation } from './components/censusApi.js'
 
 function outputProfile(libraryData) { //output profile to #Profile, given the library data
     const { fullLibraryName, zipCode, nycDoeDataset, nycDoePovertyRate, schoolsInZipCode, censusDataset, unemploymentRate, censusPovertyRate } = libraryData;
@@ -42,13 +42,13 @@ $(document).ready(function(){
         getLibraryZipCode(libraryData) //query the NYC DOE data to obtain the ZIP code.
             .then(zipCode => {
                 libraryData.zipCode = zipCode;
-                getNycDoePovertyRate(libraryData, function(err, newLibraryData) { //pass an anonymous function to output data after the poverty rate is calculated
+                getNycDoePoverty(libraryData, function(err, newLibraryData) { //pass an anonymous function to output data after the poverty rate is calculated
                     if (err) console.log(`Error retrieving NYC DOE data: ${err}`);
 
-                    getCensusFiveYearPoverty(newLibraryData, function(err, newLibraryData2) { //query the Census Bureau to obtain poverty data
+                    getCensusPoverty(newLibraryData, function(err, newLibraryData2) { //query the Census Bureau to obtain poverty data
                         if (err) console.log(`Error retrieving Census poverty data: ${err}`)
 
-                        getCensusFiveYearUnemployment(newLibraryData2, function(err, newLibraryData3) { //query the Census Bureau to obtain unemployment data
+                        getUnemployment(newLibraryData2, function(err, newLibraryData3) { //query the Census Bureau to obtain unemployment data
                             if (err) console.log(`Error retrieving Census unemployment data: ${err}`)
                             console.log(`Data is ${JSON.stringify(newLibraryData3)}`);
                             

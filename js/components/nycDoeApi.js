@@ -15,7 +15,7 @@ async function getSchoolDataByDbn(dbn, year) { //return data on a school, given 
     return await $.getJSON(`${nycOpenData}/45j8-f6um.json?dbn=${dbn}&year=${year}&${nycOpenDataToken}&$limit=1`);
 }
 
-async function getNycDoePovertyRate(libraryData, done) {
+async function getNycDoePoverty(libraryData, done) {
     const { zipCode, nycDoeDataset } = libraryData; //destructure libraryData to obtain the ZIP code and dataset year
     let povertyCountSum = 0;
     let enrollmentSum = 0;
@@ -44,4 +44,4 @@ async function getNycDoePovertyRate(libraryData, done) {
         })
 };
 
-export { getLibraryZipCode, getNycDoePovertyRate };
+export { getLibraryZipCode, getNycDoePoverty };
