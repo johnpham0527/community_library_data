@@ -2,8 +2,8 @@ let schoolsInZIPCode = 0; //global variable for counting number of schools in a 
 const nycOpenData = 'https://data.cityofnewyork.us/resource';
 const appToken = '$$app_token=QoQet97KEDYpMW4x4Manaflkp'; //This is my (John Pham's) NYC Open Data app token
 
-async function getLibraryZipCode(libraryName) { //given a library's name, return the ZIP code
-    let data = await $.getJSON(`${nycOpenData}/b67a-vkqb.json?name=${libraryName}&${appToken}&$limit=1`);
+async function getLibraryZipCode(libraryData) { //given a library's name, return the ZIP code
+    let data = await $.getJSON(`${nycOpenData}/b67a-vkqb.json?name=${libraryData.shortLibraryName}&${appToken}&$limit=1`);
     return data[0]["postcode"];
 };
 
@@ -15,12 +15,12 @@ async function getSchoolDataByDbn(dbn, year) {
     return await $.getJSON(`${nycOpenData}/45j8-f6um.json?dbn=${dbn}&year=${year}&${appToken}&$limit=1`); //return data about a school, given its DBN and dataset year
 }
 
-async function getNycDoePovertyRateByZipCode(libraryData, datasetYear, done) {
-    const { zipCode } = libraryData;
+async function getNycDoePovertyRateByZipCode(libraryData, done) {
+    const { zipCode, nycDoeDataset } = libraryData; //destructure libraryData to obtain the ZIP code and dataset year
     let povertyCountSum = 0;
     let enrollmentSum = 0;
     let promises = []; //we will populate this promises array with promises returned by getSchoolDataByDbn
-    let newLibraryData = libraryData;
+    let newLibraryData = Object.assign({}, libraryData); //newLibraryData will be the return object
 
     let schools = await getNycDoeSchoolsDataByZipCode(zipCode); //retrieve an array of schools filtered by the given ZIP code
     schoolsInZIPCode = schools.length; //store the number of schools in the global variable
@@ -28,12 +28,11 @@ async function getNycDoePovertyRateByZipCode(libraryData, datasetYear, done) {
     for (let i = 0; i < schools.length; i++) { //run a for-loop through the schools array. For each school in the school array:
         let schoolDBN = schools[i]['ats_system_code']; //find the schoolDBN for each school
         let modifiedSchoolDBN = $.trim(schoolDBN); //remove white space from school DBN
-        let selectDatasetYear = datasetYear.slice(0,5) + datasetYear.slice(7); //slice the dataset year; format is '2018-19'
+        let selectDatasetYear = nycDoeDataset.slice(0,5) + nycDoeDataset.slice(7); //slice the dataset year; format is '2018-19'
         promises.push(getSchoolDataByDbn(modifiedSchoolDBN, selectDatasetYear) //fetch that school's record from the NYC DOE Demographic Snapshot dataset
             .then(schoolData => { //sum up the povertyCount and enrollment for each school
                 povertyCountSum += parseInt(schoolData[0]["poverty"]); //obtain the number of students in the school who meet the DOE's poverty criteria. Add this number to a poverty count sum variable.
                 enrollmentSum += parseInt(schoolData[0]["total_enrollment"]); //obtain the school's total enrollment and add it to an enrollment sum variable
-                console.log(`povertyCountSum is ${povertyCountSum} and enrollmentSum is ${enrollmentSum}`)
             })
         )
     }
@@ -77,24 +76,24 @@ $(document).ready(function(){
     $("input[id='ViewCommunityProfile']").click(function() {
         $("#Profile").html("Please wait...");
 
-        let libraryData = {
-        };
-        let nycDoeDataset = $("input[name='NYCDOEDataset']:checked").val();
-        let acsDataset = $("input[name='ACSDataset']:checked").val();
-        let shortLibraryName = $("select.communityLibrary").val();
-        let fullLibraryName = shortLibraryName;
-        if (shortLibraryName != "Central Library") {
-            fullLibraryName = shortLibraryName + " Community Library"; //generate the library's full name if it is not the Central Library
-        }
+        let shortLibraryName = $("select.communityLibrary").val(); //NYC Open Data references each library's short name;
 
-        getLibraryZipCode(shortLibraryName) //query the NYC DOE data to obtain the ZIP code.
+        let libraryData = { //this data structure will store all of the values that each callback finds
+            nycDoeDataset: $("input[name='NYCDOEDataset']:checked").val(),
+            censusDataset: $("input[name='ACSDataset']:checked").val(),
+            shortLibraryName: shortLibraryName,
+            fullLibraryName: shortLibraryName === 'Central Library' ? //generate each library's full name using a ternary operator
+                shortLibraryName : shortLibraryName + ' Community Library' //generate the library's full name if it is not the Central Library
+        };
+
+        getLibraryZipCode(libraryData) //query the NYC DOE data to obtain the ZIP code.
             .then(zipCode => {
                 libraryData.zipCode = zipCode;
-                getNycDoePovertyRateByZipCode(libraryData, nycDoeDataset, function(err, newLibraryData) { //pass an anonymous function to output data after the poverty rate is calculated
+                getNycDoePovertyRateByZipCode(libraryData, function(err, newLibraryData) { //pass an anonymous function to output data after the poverty rate is calculated
                     if (err) console.log(`Error retrieving NYC DOE data: ${err}`);
-                    $('#Profile').html(`${fullLibraryName} is located in ZIP code ${newLibraryData.zipCode}. According to the NYC Department of Education's ${nycDoeDataset} School Demographic Snapshot, ${newLibraryData.nycDoePovertyRate}% of the students who attend the ${schoolsInZIPCode} public school${schoolsInZIPCode === 1 ? '' : 's'} located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.`);
+                    $('#Profile').html(`${newLibraryData.fullLibraryName} is located in ZIP code ${newLibraryData.zipCode}. According to the NYC Department of Education's ${newLibraryData.nycDoeDataset} School Demographic Snapshot, ${newLibraryData.nycDoePovertyRate}% of the students who attend the ${schoolsInZIPCode} public school${schoolsInZIPCode === 1 ? '' : 's'} located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.`);
 
-                    getCensusFiveYearPovertyByZipCode(acsDataset, zipCode, function(err, data) {
+                    getCensusFiveYearPovertyByZipCode(newLibraryData.acsDataset, zipCode, function(err, data) {
                         if (err) console.log(`Erro retrieving Census poverty data: ${err}`)
                         console.log(`Data is ${JSON.stringify(data)}`);
                     });
