@@ -1,6 +1,6 @@
 'use strict';
 
-import { getLibraryZipCode, getNycDoePovertyRate } from './nycDoeApi.js';
+import { getLibraryZipCode, getNycDoePovertyRate } from './components/nycDoeApi.js';
 
 /**** Global Variables */
 const censusAPI =           'https://api.census.gov/data';
