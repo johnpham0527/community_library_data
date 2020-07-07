@@ -1,8 +1,12 @@
 /**** Global Variables */
 const nycOpenData = 'https://data.cityofnewyork.us/resource';
 const censusAPI = 'https://api.census.gov/data';
-const nycOpenDataToken = '$$app_token=QoQet97KEDYpMW4x4Manaflkp'; //This is my (John Pham's) NYC Open Data app token
+const nycOpenDataToken = '$$app_token=QoQet97KEDYpMW4x4Manaflkp'; //this is my (John Pham's) NYC Open Data app token
 const censusKey = 'key=ea46e190165e1ee608d643fba987f8b3620ec1a9';
+const censusVars = { //this is a map of various Census variables
+    totalPovertyPop: 'B17001_001E',
+    numPoverty: 'B17001_002E'
+}
 
 async function getLibraryZipCode(libraryData) { //given a library's name, return the ZIP code
     let data = await $.getJSON(`${nycOpenData}/b67a-vkqb.json?name=${libraryData.shortLibraryName}&${nycOpenDataToken}&$limit=1`);
@@ -48,9 +52,9 @@ async function getNycDoePovertyRateByZipCode(libraryData, done) {
 
 async function getCensusFiveYearPovertyByZipCode(libraryData, done) {
     const { censusDataset, zipCode } = libraryData; //destructure libraryData
-    const zipText = `zip%20code%20tabulation%20area:${zipCode}`;
-    const totalPopLink = `${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=B17001_001E&for=${zipText}`;
-    const numPovertyLink = `${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=B17001_002E&for=${zipText}`;
+    const area = `zip%20code%20tabulation%20area:${zipCode}`; //the zip code will be the area to filter
+    const totalPopLink = `${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=${censusVars.totalPovertyPop}&for=${area}`;
+    const numPovertyLink = `${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=${censusVars.numPoverty}&for=${area}`;
     let totalPop = 0;
     let numPoverty = 0;
     let newLibraryData = Object.assign({}, libraryData); //newLibraryData will be the return object
