@@ -6,26 +6,28 @@ const censusKey =           'key=ea46e190165e1ee608d643fba987f8b3620ec1a9';
 const censusVars = { //this is a map of various Census variables
     totalPovertyPop:                                    'B17001_001E',
     numPoverty:                                         'B17001_002E',
-    unemployment:   [
+    laborForce:     [
         { neverMarriedMaleInLaborForce:                 'B12006_004E' },
-        { neverMarriedMaleInLaborForceUnemployed:       'B12006_006E' },
         { neverMarriedFemaleInLaborForce:               'B12006_009E' },
-        { neverMarriedFemaleInLaborForceUnemployed:     'B12006_011E' },
         { nowMarriedMaleInLaborForce:                   'B12006_015E' },
-        { nowMarriedMaleInLaborForceUnemployed:         'B12006_017E' },
         { nowMarriedFemaleInLaborForce:                 'B12006_020E' },
-        { nowMarriedFemaleInLaborForceUnemployed:       'B12006_022E' },
         { separatedMaleInLaborForce:                    'B12006_026E' },
-        { separatedMaleInLaborForceUnemployed:          'B12006_028E' },
         { separatedFemaleInLaborForce:                  'B12006_031E' },
-        { separatedFemaleInLaborForceUnemployed:        'B12006_033E' },
         { widowedMaleInLaborForce:                      'B12006_037E' },
-        { widowedMaleInLaborForceUnemployed:            'B12006_039E' },
         { widowedFemaleLaborForce:                      'B12006_042E' },
-        { widowedFemaleLaborForceUnemployed:            'B12006_044E' },
         { divorcedMaleInLaborForce:                     'B12006_048E' },
-        { divorcedMaleInLaborForceUnemployed:           'B12006_050E' },
         { divorcedFemaleInLaborForce:                   'B12006_053E' },
+    ],
+    unemployed:   [
+        { neverMarriedMaleInLaborForceUnemployed:       'B12006_006E' },
+        { neverMarriedFemaleInLaborForceUnemployed:     'B12006_011E' },
+        { nowMarriedMaleInLaborForceUnemployed:         'B12006_017E' },
+        { nowMarriedFemaleInLaborForceUnemployed:       'B12006_022E' },
+        { separatedMaleInLaborForceUnemployed:          'B12006_028E' },
+        { separatedFemaleInLaborForceUnemployed:        'B12006_033E' },
+        { widowedMaleInLaborForceUnemployed:            'B12006_039E' },
+        { widowedFemaleLaborForceUnemployed:            'B12006_044E' },
+        { divorcedMaleInLaborForceUnemployed:           'B12006_050E' },
         { divorcedFemaleInLaborForceUnemployed:         'B12006_055E' },
     ]
 
@@ -104,7 +106,15 @@ async function getCensusFiveYearUnemployment(libraryData, done) {
     const area = `zip%20code%20tabulation%20area:${zipCode}`; //the zip code will be the area to filter
     let laborForcePop = 0;
     let numUnemployed = 0;
-    let promises = [];
+    let promises = []; //we will populate this promises array with promises returned by getCensusData
+
+    censusVars.unemployment.forEach(censusVar => { //censusVars.unemployment is an array of unemployment-related census variables
+        promises.push(getCensusData(censusVar, area, censusDataset) //fetch that unemployment census variable's data
+            .then(unemploymentData => {
+
+            })
+        )
+    })
 
     // const totalUnemployedPopLink = ``;
     // const numUnemployedLink = ``;
