@@ -78,6 +78,12 @@ async function getCensusFiveYearUnemployment(libraryData, done) {
     done(null, null);
 }
 
+function outputProfile(libraryData) { //output profile to #Profile, given the library data
+    const { fullLibraryName, zipCode, nycDoeDataset, nycDoePovertyRate, schoolsInZipCode } = libraryData;
+
+    $('#Profile').html(`${fullLibraryName} is located in ZIP code ${zipCode}. According to the NYC Department of Education's ${nycDoeDataset} School Demographic Snapshot, ${nycDoePovertyRate}% of the students who attend the ${schoolsInZipCode} public school${schoolsInZipCode === 1 ? '' : 's'} located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.`);
+}
+
 $(document).ready(function(){
     $("input[id='ViewCommunityProfile']").click(function() {
         $("#Profile").html("Please wait...");
@@ -98,8 +104,8 @@ $(document).ready(function(){
                 libraryData.zipCode = zipCode;
                 getNycDoePovertyRate(libraryData, function(err, newLibraryData) { //pass an anonymous function to output data after the poverty rate is calculated
                     if (err) console.log(`Error retrieving NYC DOE data: ${err}`);
-                    const { fullLibraryName, zipCode, nycDoeDataset, nycDoePovertyRate, schoolsInZipCode } = newLibraryData;
-                    $('#Profile').html(`${fullLibraryName} is located in ZIP code ${zipCode}. According to the NYC Department of Education's ${nycDoeDataset} School Demographic Snapshot, ${nycDoePovertyRate}% of the students who attend the ${schoolsInZipCode} public school${schoolsInZipCode === 1 ? '' : 's'} located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.`);
+
+                    outputProfile(newLibraryData);
 
                     getCensusFiveYearPoverty(newLibraryData, function(err, newLibraryData2) {
                         if (err) console.log(`Error retrieving Census poverty data: ${err}`)
