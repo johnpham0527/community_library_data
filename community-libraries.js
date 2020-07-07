@@ -53,11 +53,11 @@ async function getNycDoePovertyRate(libraryData, done) {
 async function getCensusFiveYearPoverty(libraryData, done) {
     const { censusDataset, zipCode } = libraryData; //destructure libraryData
     const area = `zip%20code%20tabulation%20area:${zipCode}`; //the zip code will be the area to filter
-    const totalPovertyLink = `${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=${censusVars.totalPovertyPop}&for=${area}`;
+    const totalPovertyPopLink = `${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=${censusVars.totalPovertyPop}&for=${area}`;
     const numPovertyLink = `${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=${censusVars.numPoverty}&for=${area}`;
     let newLibraryData = Object.assign({}, libraryData); //newLibraryData will be the return object
 
-    const data1 = await $.getJSON(totalPovertyLink);
+    const data1 = await $.getJSON(totalPovertyPopLink);
     let totalPop = data1[1][0];
 
     const data2 = await $.getJSON(numPovertyLink);
@@ -68,7 +68,20 @@ async function getCensusFiveYearPoverty(libraryData, done) {
 }
 
 async function getCensusFiveYearUnemployment(libraryData, done) {
-    done(null, null);
+    const { censusDataset, zipCode } = libraryData;
+    const area = `zip%20code%20tabulation%20area:${zipCode}`; //the zip code will be the area to filter
+    const totalUnemployedPopLink = ``;
+    const numUnemployedLink = ``;
+    let newLibraryData = Object.assign({}, libraryData); //newLibraryData will be the return object
+
+    const data1 = await $.getJSON(totalUnemployedPopLink);
+    let totalPop = data1[1][0];
+
+    const data2 = await $.getJSON(numUnemployedLink);
+    let numUnemployed = data2[1][0];
+
+    newLibraryData.unemploymentPercentage = (numUnemployed/totalPop*100).toFixed(1); //calculate unemployment percentage
+    done(null, newLibraryData);
 }
 
 function outputProfile(libraryData) { //output profile to #Profile, given the library data
