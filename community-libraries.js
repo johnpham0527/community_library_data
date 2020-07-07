@@ -1,3 +1,5 @@
+'use strict';
+
 /**** Global Variables */
 const nycOpenData =         'https://data.cityofnewyork.us/resource';
 const censusAPI =           'https://api.census.gov/data';
