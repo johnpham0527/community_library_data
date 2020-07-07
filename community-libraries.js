@@ -21,7 +21,7 @@ async function getSchoolDataByDbn(dbn, year) {
     return await $.getJSON(`${nycOpenData}/45j8-f6um.json?dbn=${dbn}&year=${year}&${nycOpenDataToken}&$limit=1`); //return data about a school, given its DBN and dataset year
 }
 
-async function getNycDoePovertyRateByZipCode(libraryData, done) {
+async function getNycDoePovertyRate(libraryData, done) {
     const { zipCode, nycDoeDataset } = libraryData; //destructure libraryData to obtain the ZIP code and dataset year
     let povertyCountSum = 0;
     let enrollmentSum = 0;
@@ -96,7 +96,7 @@ $(document).ready(function(){
         getLibraryZipCode(libraryData) //query the NYC DOE data to obtain the ZIP code.
             .then(zipCode => {
                 libraryData.zipCode = zipCode;
-                getNycDoePovertyRateByZipCode(libraryData, function(err, newLibraryData) { //pass an anonymous function to output data after the poverty rate is calculated
+                getNycDoePovertyRate(libraryData, function(err, newLibraryData) { //pass an anonymous function to output data after the poverty rate is calculated
                     if (err) console.log(`Error retrieving NYC DOE data: ${err}`);
                     $('#Profile').html(`${newLibraryData.fullLibraryName} is located in ZIP code ${newLibraryData.zipCode}. According to the NYC Department of Education's ${newLibraryData.nycDoeDataset} School Demographic Snapshot, ${newLibraryData.nycDoePovertyRate}% of the students who attend the ${newLibraryData.schoolsInZipCode} public school${newLibraryData.schoolsInZipCode === 1 ? '' : 's'} located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.`);
 
