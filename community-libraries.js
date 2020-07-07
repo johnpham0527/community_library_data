@@ -4,12 +4,29 @@ const censusAPI = 'https://api.census.gov/data';
 const nycOpenDataToken = '$$app_token=QoQet97KEDYpMW4x4Manaflkp'; //this is my (John Pham's) NYC Open Data app token
 const censusKey = 'key=ea46e190165e1ee608d643fba987f8b3620ec1a9';
 const censusVars = { //this is a map of various Census variables
-    totalPovertyPop: 'B17001_001E',
-    numPoverty: 'B17001_002E',
-    neverMarriedMaleInLaborForce: 'B12006_004E',
-    neverMarriedMaleInLaborForceUnemployed: 'B12006_006E',
-    neverMarriedFemaleInLaborForce: 'B12006_009E',
-    neverMarriedFemaleInLaborForceUnemployed: 'B12006_11E'
+    totalPovertyPop:                            'B17001_001E',
+    numPoverty:                                 'B17001_002E',
+    neverMarriedMaleInLaborForce:               'B12006_004E',
+    neverMarriedMaleInLaborForceUnemployed:     'B12006_006E',
+    neverMarriedFemaleInLaborForce:             'B12006_009E',
+    neverMarriedFemaleInLaborForceUnemployed:   'B12006_011E',
+    nowMarriedMaleInLaborForce:                 '',
+    nowMarriedMaleInLaborForceUnemployed:       '',
+    nowMarriedFemaleInLaborForce:               '',
+    nowMarriedFemaleInLaborForceUnemployed:     '',
+    separatedMaleInLaborForce:                  '',
+    separatedMaleInLaborForceUnemployed:        '',
+    separatedFemaleInLaborForce:                '',
+    separatedFemaleInLaborForceUnemployed:      '',
+    widowedMaleInLaborForce:                    '',
+    widowedMaleInLaborForceUnemployed:          '',
+    widowedFemaleLaborForce:                    '',
+    widowedFemaleLaborForceUnemployed:          '',
+    divorcedMaleInLaborForce:                   '',
+    divorcedMaleInLaborForceUnemployed:         '',
+    divorcedFemaleInLaborForce:                 '',
+    divorcedFemaleInLaborForceUnemployed:       '',
+
 
     /* Unemployment is available as Marital Status by Sex by Labor Force Participation
     Link: https://data.census.gov/cedsci/table?q=B12006%3A%20MARITAL%20STATUS%20BY%20SEX%20BY%20LABOR%20FORCE%20PARTICIPATION&hidePreview=false&tid=ACSDT1Y2018.B12006&t=Marital%20Status%20and%20Marital%20History%3AAge%20and%20Sex&vintage=2018
