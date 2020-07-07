@@ -97,4 +97,10 @@ async function getCensusLimitedEnglishProficiency(libraryData, done) {
     done(null, data);
 }
 
-export { getCensusFiveYearPoverty, getCensusFiveYearUnemployment }
+async function getCensusLessThanHighSchoolEducation(libraryData, done) {
+    const data;
+
+    done(null, data);
+}
+
+export { getCensusFiveYearPoverty, getCensusFiveYearUnemployment, getCensusLimitedEnglishProficiency, getCensusLessThanHighSchoolEducation }
