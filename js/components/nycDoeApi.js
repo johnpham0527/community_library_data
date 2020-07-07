@@ -1,3 +1,4 @@
+/*** Global variables */
 const nycOpenData =         'https://data.cityofnewyork.us/resource';
 const nycOpenDataToken =    '$$app_token=QoQet97KEDYpMW4x4Manaflkp'; //this is my (John Pham's) NYC Open Data app token
 
