@@ -1,7 +1,7 @@
 'use strict';
 
 import { getLibraryZipCode, getNycDoePovertyRate } from './components/nycDoeApi.js';
-import { getCensusFiveYearUnemployment, getCensusFiveYearPoverty } from './components/censusApi.js'
+import { getUnemployment, getPoverty, getLimitedEnglishProficiency, getLessThanHighSchoolEducation } from './components/censusApi.js'
 
 function outputProfile(libraryData) { //output profile to #Profile, given the library data
     const { fullLibraryName, zipCode, nycDoeDataset, nycDoePovertyRate, schoolsInZipCode, censusDataset, unemploymentRate, censusPovertyRate } = libraryData;

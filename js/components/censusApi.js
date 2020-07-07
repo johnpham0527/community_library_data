@@ -37,7 +37,7 @@ async function getCensusData(censusVar, area, censusDataset) { //fetch census da
     return data;
 }
 
-async function getCensusFiveYearPoverty(libraryData, done) {
+async function getPoverty(libraryData, done) {
     const { censusDataset, zipCode } = libraryData; //destructure libraryData
     const area = `zip%20code%20tabulation%20area:${zipCode}`; //the zip code will be the area to filter
 
@@ -53,7 +53,7 @@ async function getCensusFiveYearPoverty(libraryData, done) {
     }); 
 }
 
-async function getCensusFiveYearUnemployment(libraryData, done) {
+async function getUnemployment(libraryData, done) {
     const { censusDataset, zipCode } = libraryData;
     const area = `zip%20code%20tabulation%20area:${zipCode}`; //the zip code will be the area to filter
     let laborForcePop = 0;
@@ -91,16 +91,16 @@ async function getCensusFiveYearUnemployment(libraryData, done) {
         })
 }
 
-async function getCensusLimitedEnglishProficiency(libraryData, done) {
-    const data;
+async function getLimitedEnglishProficiency(libraryData, done) {
+    const data = '';
 
     done(null, data);
 }
 
-async function getCensusLessThanHighSchoolEducation(libraryData, done) {
-    const data;
+async function getLessThanHighSchoolEducation(libraryData, done) {
+    const data = '';
 
     done(null, data);
 }
 
-export { getCensusFiveYearPoverty, getCensusFiveYearUnemployment, getCensusLimitedEnglishProficiency, getCensusLessThanHighSchoolEducation }
+export { getPoverty, getUnemployment, getLimitedEnglishProficiency, getLessThanHighSchoolEducation }
