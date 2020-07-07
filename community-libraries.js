@@ -50,7 +50,7 @@ async function getNycDoePovertyRateByZipCode(libraryData, done) {
         })
 };
 
-async function getCensusFiveYearPovertyByZipCode(libraryData, done) {
+async function getCensusFiveYearPoverty(libraryData, done) {
     const { censusDataset, zipCode } = libraryData; //destructure libraryData
     const area = `zip%20code%20tabulation%20area:${zipCode}`; //the zip code will be the area to filter
     const totalPopLink = `${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=${censusVars.totalPovertyPop}&for=${area}`;
@@ -96,7 +96,7 @@ $(document).ready(function(){
                     if (err) console.log(`Error retrieving NYC DOE data: ${err}`);
                     $('#Profile').html(`${newLibraryData.fullLibraryName} is located in ZIP code ${newLibraryData.zipCode}. According to the NYC Department of Education's ${newLibraryData.nycDoeDataset} School Demographic Snapshot, ${newLibraryData.nycDoePovertyRate}% of the students who attend the ${newLibraryData.schoolsInZipCode} public school${newLibraryData.schoolsInZipCode === 1 ? '' : 's'} located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.`);
 
-                    getCensusFiveYearPovertyByZipCode(newLibraryData, function(err, newLibraryData2) {
+                    getCensusFiveYearPoverty(newLibraryData, function(err, newLibraryData2) {
                         if (err) console.log(`Error retrieving Census poverty data: ${err}`)
                         console.log(`Data is ${JSON.stringify(newLibraryData2)}`);
                     });
