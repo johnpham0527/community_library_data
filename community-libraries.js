@@ -15,10 +15,12 @@ async function getSchoolDataByDbn(dbn, year) {
     return await $.getJSON(`${nycOpenData}/45j8-f6um.json?dbn=${dbn}&year=${year}&${appToken}&$limit=1`); //return data about a school, given its DBN and dataset year
 }
 
-async function getNycDoePovertyRateByZipCode(zipCode, datasetYear, done) {
+async function getNycDoePovertyRateByZipCode(libraryData, datasetYear, done) {
+    const { zipCode } = libraryData;
     let povertyCountSum = 0;
     let enrollmentSum = 0;
     let promises = []; //we will populate this promises array with promises returned by getSchoolDataByDbn
+    let newLibraryData = libraryData;
 
     let schools = await getNycDoeSchoolsDataByZipCode(zipCode); //retrieve an array of schools filtered by the given ZIP code
     schoolsInZIPCode = schools.length; //store the number of schools in the global variable
@@ -31,35 +33,42 @@ async function getNycDoePovertyRateByZipCode(zipCode, datasetYear, done) {
             .then(schoolData => { //sum up the povertyCount and enrollment for each school
                 povertyCountSum += parseInt(schoolData[0]["poverty"]); //obtain the number of students in the school who meet the DOE's poverty criteria. Add this number to a poverty count sum variable.
                 enrollmentSum += parseInt(schoolData[0]["total_enrollment"]); //obtain the school's total enrollment and add it to an enrollment sum variable
+                console.log(`povertyCountSum is ${povertyCountSum} and enrollmentSum is ${enrollmentSum}`)
             })
         )
     }
 
     Promise.all(promises) //execute all of the promises in the array
-        .then(() => 
-            done(null, (povertyCountSum/enrollmentSum*100).toFixed(1)) //calculate the poverty percentage to one decimal place and pass it into the callback
-        )
+        .then(() => {
+            newLibraryData.nycDoePovertyRate = (povertyCountSum/enrollmentSum*100).toFixed(1);
+            done(null, newLibraryData) //calculate the poverty percentage to one decimal place and pass it into the callback
+        })
 };
 
-async function getCensusFiveYearPovertyByZipCode(year, zipCode) {
+async function getCensusFiveYearPovertyByZipCode(year, zipCode, done) {
     const key = `key=ea46e190165e1ee608d643fba987f8b3620ec1a9`;
     const totalPopLink = `https://api.census.gov/data/${year}/acs/acs5?${key}&get=B17001_001E&for=zip%20code%20tabulation%20area:${zipCode}`;
     const povertyLink = `https://api.census.gov/data/${year}/acs/acs5?${key}&get=B17001_002E&for=zip%20code%20tabulation%20area:${zipCode}`;
     let totalPop = 0;
     let povertyNum = 0;
+    let data = {};
 
     fetch(totalPopLink)
         .then(response => response.json())
-        .then(data => {
-            totalPop = data[1][0];
-            console.log(`totalPop is ${totalPop}`)
+        .then(result => {
+            totalPop = result[1][0];
+            // console.log(`totalPop is ${totalPop}`)
             
             fetch(povertyLink)
             .then(response => response.json())
-            .then(data => {
-                povertyNum = data[1][0];
-                console.log(`povertyNum is ${povertyNum}`)
-                console.log(`The poverty percentage is ${(povertyNum/totalPop*100).toFixed(1)}`);
+            .then(result2 => {
+                povertyNum = result2[1][0];
+                // console.log(`povertyNum is ${povertyNum}`)
+                // console.log(`The poverty percentage is ${(povertyNum/totalPop*100).toFixed(1)}`);
+                data = {
+                    povertyPercentage: (povertyNum/totalPop*100).toFixed(1)
+                }
+                done(null, data);
             })
         })
 }
@@ -68,6 +77,8 @@ $(document).ready(function(){
     $("input[id='ViewCommunityProfile']").click(function() {
         $("#Profile").html("Please wait...");
 
+        let libraryData = {
+        };
         let nycDoeDataset = $("input[name='NYCDOEDataset']:checked").val();
         let acsDataset = $("input[name='ACSDataset']:checked").val();
         let shortLibraryName = $("select.communityLibrary").val();
@@ -78,11 +89,15 @@ $(document).ready(function(){
 
         getLibraryZipCode(shortLibraryName) //query the NYC DOE data to obtain the ZIP code.
             .then(zipCode => {
-                getNycDoePovertyRateByZipCode(zipCode, nycDoeDataset, function(err, nycDoePovertyRate) { //pass an anonymous function to output data after the poverty rate is calculated
+                libraryData.zipCode = zipCode;
+                getNycDoePovertyRateByZipCode(libraryData, nycDoeDataset, function(err, newLibraryData) { //pass an anonymous function to output data after the poverty rate is calculated
                     if (err) console.log(`Error retrieving NYC DOE data: ${err}`);
-                    $('#Profile').html(`${fullLibraryName} is located in ZIP code ${zipCode}. According to the NYC Department of Education's ${nycDoeDataset} School Demographic Snapshot, ${nycDoePovertyRate}% of the students who attend the ${schoolsInZIPCode} public school${schoolsInZIPCode === 1 ? '' : 's'} located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.`);
+                    $('#Profile').html(`${fullLibraryName} is located in ZIP code ${newLibraryData.zipCode}. According to the NYC Department of Education's ${nycDoeDataset} School Demographic Snapshot, ${newLibraryData.nycDoePovertyRate}% of the students who attend the ${schoolsInZIPCode} public school${schoolsInZIPCode === 1 ? '' : 's'} located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.`);
 
-                    getCensusFiveYearPovertyByZipCode(acsDataset, zipCode);
+                    getCensusFiveYearPovertyByZipCode(acsDataset, zipCode, function(err, data) {
+                        if (err) console.log(`Erro retrieving Census poverty data: ${err}`)
+                        console.log(`Data is ${JSON.stringify(data)}`);
+                    });
                 })
             })
     });
