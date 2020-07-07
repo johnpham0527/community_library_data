@@ -156,7 +156,7 @@ $(document).ready(function(){
 
 
 
-function updatePage(zipCode, nycDoeDataset, fullLibraryName, nycDoePovertyRate) {
+// function updatePage(zipCode, nycDoeDataset, fullLibraryName, nycDoePovertyRate) {
     // let unemploymentRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S2301",zipCode);
     // let percentageNoHSDiploma = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S1501",zipCode); //S1501 is the American Community Survey table number for educational attainment
     // let ACSPovertyRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset, "S1701", zipCode); //S1701 is the American Community Survey table number for poverty
@@ -173,49 +173,49 @@ function updatePage(zipCode, nycDoeDataset, fullLibraryName, nycDoePovertyRate) 
     // $("#ACS5").append("% of residents live below the poverty line; and ");
     // $("#LimitedEnglish").append(limitedEnglishProfiencyRate);
     // $("#ACS6").append("% of residents speak English less than very well."); 
-}
+// }
 
-function getAmericanCommunitySurvey5YearEstimateValue(datasetYear, tableNumber, zipCode) {
-    let selectDatasetYear = "17"; //this is the default dataset year to use
-    let returnValue = 0;
+// function getAmericanCommunitySurvey5YearEstimateValue(datasetYear, tableNumber, zipCode) {
+//     let selectDatasetYear = "17"; //this is the default dataset year to use
+//     let returnValue = 0;
 
-    switch(datasetYear) {
-        case "2017 Five-Year Estimates":
-            selectDatasetYear = "17";
-            break;
-        case "2016 Five-Year Estimates":
-            selectDatasetYear = "16";
-    break;
-    }
+//     switch(datasetYear) {
+//         case "2017 Five-Year Estimates":
+//             selectDatasetYear = "17";
+//             break;
+//         case "2016 Five-Year Estimates":
+//             selectDatasetYear = "16";
+//     break;
+//     }
     
-    let buildURL1 = "http://factfinder.census.gov/service/data/v1/en/programs/ACS/datasets/" + selectDatasetYear + "_5YR/tables/";
-    let buildURL2 = "/data/8600000US" + zipCode + "?maxResults=1&key=" + "ea46e190165e1ee608d643fba987f8b3620ec1a9";
-    let buildURLFinal = buildURL1 + tableNumber.toString() + buildURL2;
+//     let buildURL1 = "http://factfinder.census.gov/service/data/v1/en/programs/ACS/datasets/" + selectDatasetYear + "_5YR/tables/";
+//     let buildURL2 = "/data/8600000US" + zipCode + "?maxResults=1&key=" + "ea46e190165e1ee608d643fba987f8b3620ec1a9";
+//     let buildURLFinal = buildURL1 + tableNumber.toString() + buildURL2;
     
-    $.ajax({
-        url: buildURLFinal,
-        async: false,
-        type: "GET",
-        success: function(data) {
+//     $.ajax({
+//         url: buildURLFinal,
+//         async: false,
+//         type: "GET",
+//         success: function(data) {
             
-            switch(tableNumber) {
-            case "S2301": //American Community Survey dataset for unemployment rate
-                returnValue = data.data.rows[0].cells.C7.value;
-                break;
-            case "S1501": //American Community Survey dataset for educational attainment
-                var value1 = data.data.rows[0].cells.C75.value; //the percentage of people age 25+ who have less than a 9th grade education
-                var value2 = data.data.rows[0].cells.C87.value; //the percentage of people age 25+ who have a 9th-12th grade education but lack a high school diploma or its equivalent
-                var value3 = parseFloat(value1) + parseFloat(value2); //add the two values together
-                returnValue = value3.toFixed(1);
-                break;
-            case "S1701": //American Community Survey dataset for poverty
-                returnValue = data.data.rows[0].cells.C5.value; //percentage of population for whom poverty status is determined who earned an income at the poverty level or lower
-                break;
-            case "DP02": //American Community Survey dataset called "Selected Social Characteristics in the United States"
-                returnValue = data.data.rows[0].cells.C411.value; //percentage of people age 5 and older who speak English less than "very well," among those people who speak a language other than English
-                break;
-            }//closes the switch statement
-            } //closes success
-            })//closes the AJAX call's property list
-    return returnValue;
-}; //closes the function
+//             switch(tableNumber) {
+//             case "S2301": //American Community Survey dataset for unemployment rate
+//                 returnValue = data.data.rows[0].cells.C7.value;
+//                 break;
+//             case "S1501": //American Community Survey dataset for educational attainment
+//                 var value1 = data.data.rows[0].cells.C75.value; //the percentage of people age 25+ who have less than a 9th grade education
+//                 var value2 = data.data.rows[0].cells.C87.value; //the percentage of people age 25+ who have a 9th-12th grade education but lack a high school diploma or its equivalent
+//                 var value3 = parseFloat(value1) + parseFloat(value2); //add the two values together
+//                 returnValue = value3.toFixed(1);
+//                 break;
+//             case "S1701": //American Community Survey dataset for poverty
+//                 returnValue = data.data.rows[0].cells.C5.value; //percentage of population for whom poverty status is determined who earned an income at the poverty level or lower
+//                 break;
+//             case "DP02": //American Community Survey dataset called "Selected Social Characteristics in the United States"
+//                 returnValue = data.data.rows[0].cells.C411.value; //percentage of people age 5 and older who speak English less than "very well," among those people who speak a language other than English
+//                 break;
+//             }//closes the switch statement
+//             } //closes success
+//             })//closes the AJAX call's property list
+//     return returnValue;
+// }; //closes the function
