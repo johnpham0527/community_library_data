@@ -55,10 +55,7 @@ async function getNycDoePovertyRate(libraryData, done) {
     let povertyCountSum = 0;
     let enrollmentSum = 0;
     let promises = []; //we will populate this promises array with promises returned by getSchoolDataByDbn
-    let newLibraryData = Object.assign({}, libraryData); //newLibraryData will be the return object
-
     let schools = await getNycDoeSchoolsDataByZipCode(zipCode); //retrieve an array of schools filtered by the given ZIP code
-    newLibraryData.schoolsInZipCode = schools.length; //store the number of schools in the global variable
 
     for (let i = 0; i < schools.length; i++) { //run a for-loop through the schools array. For each school in the school array:
         let schoolDBN = schools[i]['ats_system_code']; //find the schoolDBN for each school
@@ -74,8 +71,11 @@ async function getNycDoePovertyRate(libraryData, done) {
 
     Promise.all(promises) //execute all of the promises in the array
         .then(() => {
-            newLibraryData.nycDoePovertyRate = (povertyCountSum/enrollmentSum*100).toFixed(1);
-            done(null, newLibraryData) //calculate the poverty percentage to one decimal place and pass it into the callback
+            done(null, { //execute the callback, passing along null for error and updated data
+                ...libraryData, //use the spread operator and avoid mutating libraryData
+                schoolsInZipCode: schools.length, //store the number of schools in the global variable
+                nycDoePovertyRate: (povertyCountSum/enrollmentSum*100).toFixed(1) //calculate the poverty percentage to one decimal place and pass it into the callback
+            }) 
         })
 };
 
@@ -97,16 +97,12 @@ async function getCensusFiveYearPoverty(libraryData, done) {
     }); 
 }
 
-
-
 async function getCensusFiveYearUnemployment(libraryData, done) {
     const { censusDataset, zipCode } = libraryData;
     const area = `zip%20code%20tabulation%20area:${zipCode}`; //the zip code will be the area to filter
     let laborForcePop = 0;
     let numUnemployed = 0;
     let promises = [];
-
-    const 
 
     // const totalUnemployedPopLink = ``;
     // const numUnemployedLink = ``;
