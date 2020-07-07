@@ -52,26 +52,17 @@ async function getNycDoePovertyRate(libraryData, done) {
 
 async function getCensusFiveYearPoverty(libraryData, done) {
     const { censusDataset, zipCode } = libraryData; //destructure libraryData
-    const area = `zip%20code%20tabulation%20area:${zipCode}`; //the zip code will be the area to filter
-    const totalPopLink = `${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=${censusVars.totalPovertyPop}&for=${area}`;
-    const numPovertyLink = `${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=${censusVars.numPoverty}&for=${area}`;
-    let totalPop = 0;
-    let numPoverty = 0;
     let newLibraryData = Object.assign({}, libraryData); //newLibraryData will be the return object
+    const area = `zip%20code%20tabulation%20area:${zipCode}`; //the zip code will be the area to filter
 
-    fetch(totalPopLink)
-        .then(response => response.json())
-        .then(result => {
-            totalPop = result[1][0];
-            
-            fetch(numPovertyLink)
-            .then(response => response.json())
-            .then(result2 => {
-                numPoverty = result2[1][0];
-                newLibraryData.censusPovertyPercentage = (numPoverty/totalPop*100).toFixed(1); //assign poverty percentage to newLibraryData
-                done(null, newLibraryData);
-            })
-        })
+    let totalPovertyPopData = await $.getJSON(`${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=${censusVars.totalPovertyPop}&for=${area}`);
+    let totalPop = totalPovertyPopData[1][0];
+
+    let numPovertyData = await $.getJSON(`${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=${censusVars.numPoverty}&for=${area}`);
+    let numPoverty = numPovertyData[1][0];
+
+    newLibraryData.censusPovertyPercentage = (numPoverty/totalPop*100).toFixed(1); //assign poverty percentage to newLibraryData
+    done(null, newLibraryData); //execute the callback, passing along null for error and newLibraryData
 }
 
 async function getCensusFiveYearUnemployment(libraryData, done) {
