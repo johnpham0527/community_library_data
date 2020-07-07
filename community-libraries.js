@@ -30,13 +30,6 @@ const censusVars = { //this is a map of various Census variables
         { divorcedMaleInLaborForceUnemployed:           'B12006_050E' },
         { divorcedFemaleInLaborForceUnemployed:         'B12006_055E' },
     ]
-
-    /* Unemployment is available as Marital Status by Sex by Labor Force Participation
-    Link: https://data.census.gov/cedsci/table?q=B12006%3A%20MARITAL%20STATUS%20BY%20SEX%20BY%20LABOR%20FORCE%20PARTICIPATION&hidePreview=false&tid=ACSDT1Y2018.B12006&t=Marital%20Status%20and%20Marital%20History%3AAge%20and%20Sex&vintage=2018
-    Link: https://api.census.gov/data/2018/acs/acs5/variables.html
-
-    Filter by ZCTA5
-    */
 }
 
 async function getLibraryZipCode(libraryData) { //given a library's name, return the ZIP code
@@ -100,7 +93,7 @@ async function getCensusFiveYearPoverty(libraryData, done) {
 
     done(null, { //execute the callback, passing along null for error and updated data
         ...libraryData, //use the spread operator and avoid mutating libraryData
-        censusPovertyPercentage: (numPoverty/totalPop*100).toFixed(1) //calculate and assign censusPovertyPercentage property
+        censusPovertyRate: (numPoverty/totalPop*100).toFixed(1) //calculate and assign censusPovertyRate property
     }); 
 }
 
@@ -117,7 +110,6 @@ async function getCensusFiveYearUnemployment(libraryData, done) {
         laborForcePromises.push(getCensusData(censusVar, area, censusDataset) //fetch that unemployment census variable's data
             .then(laborForceData => {
                 laborForcePop += parseInt(laborForceData[1][0]); //sum up the labor force total population for each variable type
-                console.log(`laborForceData is ${laborForceData} and laborForcePop is ${laborForcePop}`);
             })
         )
     })
@@ -137,21 +129,21 @@ async function getCensusFiveYearUnemployment(libraryData, done) {
             .then(() => {
                 done(null, {
                     ...libraryData, 
-                    unemploymentPercentage: (numUnemployed/laborForcePop*100).toFixed(1)
+                    unemploymentRate: (numUnemployed/laborForcePop*100).toFixed(1)
                 }) 
             })
         })
 }
 
 function outputProfile(libraryData) { //output profile to #Profile, given the library data
-    const { fullLibraryName, zipCode, nycDoeDataset, nycDoePovertyRate, schoolsInZipCode } = libraryData;
+    const { fullLibraryName, zipCode, nycDoeDataset, nycDoePovertyRate, schoolsInZipCode, censusDataset, unemploymentRate, censusPovertyRate } = libraryData;
 
-    $('#Profile').html(`${fullLibraryName} is located in ZIP code ${zipCode}. According to the NYC Department of Education's ${nycDoeDataset} School Demographic Snapshot, ${nycDoePovertyRate}% of the students who attend the ${schoolsInZipCode} public school${schoolsInZipCode === 1 ? '' : 's'} located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.`);
+    $('#Profile').html(`${fullLibraryName} is located in ZIP code ${zipCode}. According to the NYC Department of Education's ${nycDoeDataset} School Demographic Snapshot, ${nycDoePovertyRate}% of the students who attend the ${schoolsInZipCode} public school${schoolsInZipCode === 1 ? '' : 's'} located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits. According to the ${censusDataset} American Community Survey Five-Year Dataset, the ZIP code's unemployment rate is ${unemploymentRate}% and ${censusPovertyRate}% of residents live below the poverty line.`);
 }
 
 $(document).ready(function(){
     $("input[id='ViewCommunityProfile']").click(function() {
-        $("#Profile").html("Please wait...");
+        $("#Profile").html("Retrieving data. Please wait... ");
 
         let shortLibraryName = $("select.communityLibrary").val(); //NYC Open Data references each library's short name;
 
@@ -170,19 +162,16 @@ $(document).ready(function(){
                 getNycDoePovertyRate(libraryData, function(err, newLibraryData) { //pass an anonymous function to output data after the poverty rate is calculated
                     if (err) console.log(`Error retrieving NYC DOE data: ${err}`);
 
-                    outputProfile(newLibraryData);
-
-                    getCensusFiveYearPoverty(newLibraryData, function(err, newLibraryData2) {
+                    getCensusFiveYearPoverty(newLibraryData, function(err, newLibraryData2) { //query the Census Bureau to obtain poverty data
                         if (err) console.log(`Error retrieving Census poverty data: ${err}`)
-                        console.log(`Data is ${JSON.stringify(newLibraryData2)}`);
 
-                        getCensusFiveYearUnemployment(newLibraryData, function(err, newLibraryData3) {
+                        getCensusFiveYearUnemployment(newLibraryData2, function(err, newLibraryData3) { //query the Census Bureau to obtain unemployment data
                             if (err) console.log(`Error retrieving Census unemployment data: ${err}`)
                             console.log(`Data is ${JSON.stringify(newLibraryData3)}`);
+                            
+                            outputProfile(newLibraryData3);
                         })
                     });
-
-
                 })
             })
     });
@@ -191,9 +180,7 @@ $(document).ready(function(){
 
 
 // function updatePage(zipCode, nycDoeDataset, fullLibraryName, nycDoePovertyRate) {
-    // let unemploymentRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S2301",zipCode);
     // let percentageNoHSDiploma = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset,"S1501",zipCode); //S1501 is the American Community Survey table number for educational attainment
-    // let ACSPovertyRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset, "S1701", zipCode); //S1701 is the American Community Survey table number for poverty
     // let limitedEnglishProfiencyRate = getAmericanCommunitySurvey5YearEstimateValue(ACSdataset, "DP02", zipCode); //DP02 is the American Community Survey for U.S. general social characteristics
 
     // $("#ACS1").append(" According to the American Community Survey ");
