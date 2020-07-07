@@ -74,6 +74,10 @@ async function getCensusFiveYearPoverty(libraryData, done) {
         })
 }
 
+async function getCensusFiveYearUnemployment(libraryData, done) {
+    done(null, null);
+}
+
 $(document).ready(function(){
     $("input[id='ViewCommunityProfile']").click(function() {
         $("#Profile").html("Please wait...");
