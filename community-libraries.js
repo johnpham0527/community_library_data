@@ -82,7 +82,10 @@ async function getNycDoePovertyRate(libraryData, done) {
 };
 
 async function getCensusData(censusVar, area, censusDataset) { //fetch census data from API, given variable, area, and dataset
-    return await $.getJSON(`${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=${censusVar}&for=${area}`);
+    //console.log(`censusVar is ${censusVar}, censusDataset is ${censusDataset}, and area is ${area}`);
+    let data = await $.getJSON(`${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=${censusVar}&for=${area}`);
+    //console.log(`censusVar is ${censusVar} and data is ${data}`);
+    return data;
 }
 
 async function getCensusFiveYearPoverty(libraryData, done) {
@@ -109,18 +112,21 @@ async function getCensusFiveYearUnemployment(libraryData, done) {
     let laborForcePromises = []; //we will populate this promises array with promises returned by getCensusData
     let unemployedPromises = []; //we will populate this promises array with promises returned by getCensusData
 
-    censusVars.laborForce.forEach(censusVar => { //censusVars.laborForce is an array of total labor force count-related census variables
+    censusVars.laborForce.forEach(censusVarObject => { //censusVars.laborForce is an array of total labor force count-related census variables
+        const censusVar = censusVarObject[Object.keys(censusVarObject)[0]];
         laborForcePromises.push(getCensusData(censusVar, area, censusDataset) //fetch that unemployment census variable's data
             .then(laborForceData => {
-                laborForcePop += laborForceData[1][0]; //sum up the labor force total population for each variable type
+                laborForcePop += parseInt(laborForceData[1][0]); //sum up the labor force total population for each variable type
+                console.log(`laborForceData is ${laborForceData} and laborForcePop is ${laborForcePop}`);
             })
         )
     })
 
-    censusVars.unemployed.forEach(censusVar => { //censusVars.laborForce is an array of unemployment count-related census variables
-        unemployedPromises.push(getCensusData(censusVar, area, censusDataset) //fetch that unemployment census variable's data
+    censusVars.unemployed.forEach(censusVarObject => { //censusVars.laborForce is an array of unemployment count-related census variables
+        const censusVar2 = censusVarObject[Object.keys(censusVarObject)[0]];
+        unemployedPromises.push(getCensusData(censusVar2, area, censusDataset) //fetch that unemployment census variable's data
             .then(unemployedData => {
-                numUnemployed += unemployedData[1][0]; //sum up the unemployed count for each variable type
+                numUnemployed += parseInt(unemployedData[1][0]); //sum up the unemployed count for each variable type
             })
         )
     })
@@ -129,7 +135,6 @@ async function getCensusFiveYearUnemployment(libraryData, done) {
         .then(() => {
             Promise.all(unemployedPromises)
             .then(() => {
-                console.log(`unemployment percentage is ${(numUnemployed/laborForcePop*100).toFixed(1)}`);
                 done(null, {
                     ...libraryData, 
                     unemploymentPercentage: (numUnemployed/laborForcePop*100).toFixed(1)
@@ -170,7 +175,14 @@ $(document).ready(function(){
                     getCensusFiveYearPoverty(newLibraryData, function(err, newLibraryData2) {
                         if (err) console.log(`Error retrieving Census poverty data: ${err}`)
                         console.log(`Data is ${JSON.stringify(newLibraryData2)}`);
+
+                        getCensusFiveYearUnemployment(newLibraryData, function(err, newLibraryData3) {
+                            if (err) console.log(`Error retrieving Census unemployment data: ${err}`)
+                            console.log(`Data is ${JSON.stringify(newLibraryData3)}`);
+                        })
                     });
+
+
                 })
             })
     });
