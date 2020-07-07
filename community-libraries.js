@@ -79,6 +79,12 @@ async function getNycDoePovertyRate(libraryData, done) {
         })
 };
 
+async function getCensusData(censusVar, area, censusDataset) {
+    let data = await $.getJSON(`${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=${censusVar}&for=${area}`);
+    console.log(`Data is ${data}`);
+    return data;
+}
+
 async function getCensusFiveYearPoverty(libraryData, done) {
     const { censusDataset, zipCode } = libraryData; //destructure libraryData
     const area = `zip%20code%20tabulation%20area:${zipCode}`; //the zip code will be the area to filter
