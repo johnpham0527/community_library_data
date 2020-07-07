@@ -125,44 +125,17 @@ async function getCensusFiveYearUnemployment(libraryData, done) {
         )
     })
 
-
-    // const totalUnemployedPopLink = ``;
-    // const numUnemployedLink = ``;
-
-    // const data1 = await $.getJSON(totalUnemployedPopLink);
-    // laborForcePop = data1[1][0];
-
-    // const data2 = await $.getJSON(numUnemployedLink);
-    // numUnemployed = data2[1][0];
-
-
-    /*
-    neverMarriedMaleInLaborForce:               'B12006_004E',
-    neverMarriedMaleInLaborForceUnemployed:     'B12006_006E',
-    neverMarriedFemaleInLaborForce:             'B12006_009E',
-    neverMarriedFemaleInLaborForceUnemployed:   'B12006_011E',
-    nowMarriedMaleInLaborForce:                 'B12006_015E',
-    nowMarriedMaleInLaborForceUnemployed:       'B12006_017E',
-    nowMarriedFemaleInLaborForce:               'B12006_020E',
-    nowMarriedFemaleInLaborForceUnemployed:     'B12006_022E',
-    separatedMaleInLaborForce:                  'B12006_026E',
-    separatedMaleInLaborForceUnemployed:        'B12006_028E',
-    separatedFemaleInLaborForce:                'B12006_031E',
-    separatedFemaleInLaborForceUnemployed:      'B12006_033E',
-    widowedMaleInLaborForce:                    'B12006_037E',
-    widowedMaleInLaborForceUnemployed:          'B12006_039E',
-    widowedFemaleLaborForce:                    'B12006_042E',
-    widowedFemaleLaborForceUnemployed:          'B12006_044E',
-    divorcedMaleInLaborForce:                   'B12006_048E',
-    divorcedMaleInLaborForceUnemployed:         'B12006_050E',
-    divorcedFemaleInLaborForce:                 'B12006_053E',
-    divorcedFemaleInLaborForceUnemployed:       'B12006_055E',
-    */
-
-    done(null, {
-        ...libraryData, 
-        unemploymentPercentage: (numUnemployed/totalPop*100).toFixed(1)
-    }) 
+    Promise.all(laborForcePromises)
+        .then(() => {
+            Promise.all(unemployedPromises)
+            .then(() => {
+                console.log(`unemployment percentage is ${(numUnemployed/laborForcePop*100).toFixed(1)}`);
+                done(null, {
+                    ...libraryData, 
+                    unemploymentPercentage: (numUnemployed/laborForcePop*100).toFixed(1)
+                }) 
+            })
+        })
 }
 
 function outputProfile(libraryData) { //output profile to #Profile, given the library data
