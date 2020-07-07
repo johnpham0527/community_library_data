@@ -1,32 +1,33 @@
 /**** Global Variables */
-const nycOpenData = 'https://data.cityofnewyork.us/resource';
-const censusAPI = 'https://api.census.gov/data';
-const nycOpenDataToken = '$$app_token=QoQet97KEDYpMW4x4Manaflkp'; //this is my (John Pham's) NYC Open Data app token
-const censusKey = 'key=ea46e190165e1ee608d643fba987f8b3620ec1a9';
+const nycOpenData =         'https://data.cityofnewyork.us/resource';
+const censusAPI =           'https://api.census.gov/data';
+const nycOpenDataToken =    '$$app_token=QoQet97KEDYpMW4x4Manaflkp'; //this is my (John Pham's) NYC Open Data app token
+const censusKey =           'key=ea46e190165e1ee608d643fba987f8b3620ec1a9';
 const censusVars = { //this is a map of various Census variables
-    totalPovertyPop:                            'B17001_001E',
-    numPoverty:                                 'B17001_002E',
-    neverMarriedMaleInLaborForce:               'B12006_004E',
-    neverMarriedMaleInLaborForceUnemployed:     'B12006_006E',
-    neverMarriedFemaleInLaborForce:             'B12006_009E',
-    neverMarriedFemaleInLaborForceUnemployed:   'B12006_011E',
-    nowMarriedMaleInLaborForce:                 'B12006_015E',
-    nowMarriedMaleInLaborForceUnemployed:       'B12006_017E',
-    nowMarriedFemaleInLaborForce:               'B12006_020E',
-    nowMarriedFemaleInLaborForceUnemployed:     'B12006_022E',
-    separatedMaleInLaborForce:                  'B12006_026E',
-    separatedMaleInLaborForceUnemployed:        'B12006_028E',
-    separatedFemaleInLaborForce:                'B12006_031E',
-    separatedFemaleInLaborForceUnemployed:      'B12006_033E',
-    widowedMaleInLaborForce:                    'B12006_037E',
-    widowedMaleInLaborForceUnemployed:          'B12006_039E',
-    widowedFemaleLaborForce:                    'B12006_042E',
-    widowedFemaleLaborForceUnemployed:          'B12006_044E',
-    divorcedMaleInLaborForce:                   'B12006_048E',
-    divorcedMaleInLaborForceUnemployed:         'B12006_050E',
-    divorcedFemaleInLaborForce:                 'B12006_053E',
-    divorcedFemaleInLaborForceUnemployed:       'B12006_055E',
-
+    totalPovertyPop:                                    'B17001_001E',
+    numPoverty:                                         'B17001_002E',
+    unemployment:   [
+        { neverMarriedMaleInLaborForce:                 'B12006_004E' },
+        { neverMarriedMaleInLaborForceUnemployed:       'B12006_006E' },
+        { neverMarriedFemaleInLaborForce:               'B12006_009E' },
+        { neverMarriedFemaleInLaborForceUnemployed:     'B12006_011E' },
+        { nowMarriedMaleInLaborForce:                   'B12006_015E' },
+        { nowMarriedMaleInLaborForceUnemployed:         'B12006_017E' },
+        { nowMarriedFemaleInLaborForce:                 'B12006_020E' },
+        { nowMarriedFemaleInLaborForceUnemployed:       'B12006_022E' },
+        { separatedMaleInLaborForce:                    'B12006_026E' },
+        { separatedMaleInLaborForceUnemployed:          'B12006_028E' },
+        { separatedFemaleInLaborForce:                  'B12006_031E' },
+        { separatedFemaleInLaborForceUnemployed:        'B12006_033E' },
+        { widowedMaleInLaborForce:                      'B12006_037E' },
+        { widowedMaleInLaborForceUnemployed:            'B12006_039E' },
+        { widowedFemaleLaborForce:                      'B12006_042E' },
+        { widowedFemaleLaborForceUnemployed:            'B12006_044E' },
+        { divorcedMaleInLaborForce:                     'B12006_048E' },
+        { divorcedMaleInLaborForceUnemployed:           'B12006_050E' },
+        { divorcedFemaleInLaborForce:                   'B12006_053E' },
+        { divorcedFemaleInLaborForceUnemployed:         'B12006_055E' },
+    ]
 
     /* Unemployment is available as Marital Status by Sex by Labor Force Participation
     Link: https://data.census.gov/cedsci/table?q=B12006%3A%20MARITAL%20STATUS%20BY%20SEX%20BY%20LABOR%20FORCE%20PARTICIPATION&hidePreview=false&tid=ACSDT1Y2018.B12006&t=Marital%20Status%20and%20Marital%20History%3AAge%20and%20Sex&vintage=2018
@@ -96,12 +97,16 @@ async function getCensusFiveYearPoverty(libraryData, done) {
     }); 
 }
 
+
+
 async function getCensusFiveYearUnemployment(libraryData, done) {
     const { censusDataset, zipCode } = libraryData;
     const area = `zip%20code%20tabulation%20area:${zipCode}`; //the zip code will be the area to filter
-
     let laborForcePop = 0;
     let numUnemployed = 0;
+    let promises = [];
+
+    const 
 
     // const totalUnemployedPopLink = ``;
     // const numUnemployedLink = ``;
@@ -111,6 +116,30 @@ async function getCensusFiveYearUnemployment(libraryData, done) {
 
     // const data2 = await $.getJSON(numUnemployedLink);
     // numUnemployed = data2[1][0];
+
+
+    /*
+    neverMarriedMaleInLaborForce:               'B12006_004E',
+    neverMarriedMaleInLaborForceUnemployed:     'B12006_006E',
+    neverMarriedFemaleInLaborForce:             'B12006_009E',
+    neverMarriedFemaleInLaborForceUnemployed:   'B12006_011E',
+    nowMarriedMaleInLaborForce:                 'B12006_015E',
+    nowMarriedMaleInLaborForceUnemployed:       'B12006_017E',
+    nowMarriedFemaleInLaborForce:               'B12006_020E',
+    nowMarriedFemaleInLaborForceUnemployed:     'B12006_022E',
+    separatedMaleInLaborForce:                  'B12006_026E',
+    separatedMaleInLaborForceUnemployed:        'B12006_028E',
+    separatedFemaleInLaborForce:                'B12006_031E',
+    separatedFemaleInLaborForceUnemployed:      'B12006_033E',
+    widowedMaleInLaborForce:                    'B12006_037E',
+    widowedMaleInLaborForceUnemployed:          'B12006_039E',
+    widowedFemaleLaborForce:                    'B12006_042E',
+    widowedFemaleLaborForceUnemployed:          'B12006_044E',
+    divorcedMaleInLaborForce:                   'B12006_048E',
+    divorcedMaleInLaborForceUnemployed:         'B12006_050E',
+    divorcedFemaleInLaborForce:                 'B12006_053E',
+    divorcedFemaleInLaborForceUnemployed:       'B12006_055E',
+    */
 
     done(null, {
         ...libraryData, 
