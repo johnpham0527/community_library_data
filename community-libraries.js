@@ -80,18 +80,17 @@ async function getNycDoePovertyRate(libraryData, done) {
 };
 
 async function getCensusData(censusVar, area, censusDataset) {
-    let data = await $.getJSON(`${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=${censusVar}&for=${area}`);
-    console.log(`Data is ${data}`);
-    return data;
+    return await $.getJSON(`${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=${censusVar}&for=${area}`);
 }
 
 async function getCensusFiveYearPoverty(libraryData, done) {
     const { censusDataset, zipCode } = libraryData; //destructure libraryData
     const area = `zip%20code%20tabulation%20area:${zipCode}`; //the zip code will be the area to filter
-    const totalPovertyPopLink = `${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=${censusVars.totalPovertyPop}&for=${area}`;
+    //const totalPovertyPopLink = `${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=${censusVars.totalPovertyPop}&for=${area}`;
     const numPovertyLink = `${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=${censusVars.numPoverty}&for=${area}`;
 
-    const data1 = await $.getJSON(totalPovertyPopLink);
+    //const data1 = await $.getJSON(totalPovertyPopLink);
+    const data1 = await getCensusData(censusVars.totalPovertyPop, area, censusDataset);
     let totalPop = data1[1][0];
 
     const data2 = await $.getJSON(numPovertyLink);
