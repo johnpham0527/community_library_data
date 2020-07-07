@@ -8,89 +8,111 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     </head>
     <body>
-        <div class="jumbotron text-center">
-            <h1>Queens Public Library Community Library Information</h1>
-        </div>
-        <form>
-            <p>Please select a community library to view.</p>
-            <select class="communityLibrary">
-                <option value="Arverne">Arverne Community Library</option>
-                <option value="Astoria">Astoria Community Library</option>
-                <option value="Auburndale">Auburndale Community Library</option>
-                <option value="Baisley Park">Baisley Park Community Library</option>
-                <option value="Bay Terrace">Bay Terrace Community Library</option>
-                <option value="Bayside">Bayside Community Library</option>
-                <option value="Bellerose">Bellerose Community Library</option>
-                <option value="Briarwood">Briarwood Community Library</option>
-                <option value="Broad Channel">Broad Channel Community Library</option>
-                <option value="Broadway">Broadway Community Library</option>
-                <option value="Cambria Heights">Cambria Heights Community Library</option>
-                <option value="Central Library">Central Library</option>
-                <option value="Corona">Corona Community Library</option>
-                <option value="Court Square">Court Square Community Library</option>
-                <option value="Douglaston/Little Neck">Douglaston/Little Neck Community Library</option>
-                <option value="East Elmhurst">East Elmhurst Community Library</option>
-                <option value="East Flushing">East Flushing Community Library</option>
-                <option value="Elmhurst">Elmhurst Community Library</option>
-                <option value="Far Rockaway">Far Rockaway Community Library</option>
-                <option value="Flushing">Flushing Community Library</option>
-                <option value="Forest Hills">Forest Hills Community Library</option>
-                <option value="Fresh Meadows">Fresh Meadows Community Library</option>
-                <option value="Glen Oaks">Glen Oaks Community Library</option>
-                <option value="Glendale">Glendale Community Library</option>
-                <option value="Hillcrest">Hillcrest Community Library</option>
-                <option value="Hollis">Hollis Community Library</option>
-                <option value="Howard Beach">Howard Beach Community Library</option>
-                <option value="Jackson Heights">Jackson Heights Community Library</option>
-                <option value="Kew Gardens Hills">Kew Gardens Hills Community Library</option>
-                <option value="Langston Hughes">Langston Hughes Community Library</option>
-                <option value="Laurelton">Laurelton Community Library</option>
-                <option value="Lefferts">Lefferts Community Library</option>
-                <option value="Lefrak City">Lefrak City Community Library</option>
-                <option value="Long Island City">Long Island City Community Library</option>
-                <option value="Maspeth">Maspeth Community Library</option>
-                <option value="McGoldrick">McGoldrick Community Library</option>
-                <option value="Middle Village">Middle Village Community Library</option>
-                <option value="Mitchell-Linden">Mitchell-Linden Community Library</option>
-                <option value="North Forest Park">North Forest Park Community Library</option>
-                <option value="North Hills">North Hills Community Library</option>
-                <option value="Ozone Park">Ozone Park Community Library</option>
-                <option value="Peninsula">Peninsula Community Library</option>
-                <option value="Pomonok">Pomonok Community Library</option>
-                <option value="Poppenhusen">Poppenhusen Community Library</option>
-                <option value="Queens Village">Queens Village Community Library</option>
-                <option value="Queensboro Hill">Queensboro Hill Community Library</option>
-                <option value="Rego Park">Rego Park Community Library</option>
-                <option value="Richmond Hill">Richmond Hill Community Library</option>
-                <option value="Ridgewood">Ridgewood Community Library</option>
-                <option value="Rochdale Village">Rochdale Village Community Library</option>
-                <option value="Rosedale">Rosedale Community Library</option>
-                <option value="Seaside">Seaside Community Library</option>
-                <option value="South Hollis">South Hollis Community Library</option>
-                <option value="South Jamaica">South Jamaica Community Library</option>
-                <option value="South Ozone Park">South Ozone Park Community Library</option>
-                <option value="St. Albans">St. Albans Community Library</option>
-                <option value="Steinway">Steinway Community Library</option>
-                <option value="Sunnyside">Sunnyside Community Library</option>
-                <option value="Whitestone">Whitestone Community Library</option>
-                <option value="Windsor Park">Windsor Park Community Library</option>
-                <option value="Woodhaven">Woodhaven Community Library</option>
-                <option value="Woodside">Woodside Community Library</option>
-            </select>
-            <br /><br />
-            <p>Learn about the students who attend the selected library's nearby schools. Please choose a NYC Department of Education dataset.<p>
-                <label><input type="radio" name="NYCDOEDataset" value="2018-2019" checked>2018-2019 School Year</label> 
-                <label><input type="radio" name="NYCDOEDataset" value="2017-2018">2017-2018 School Year</label> 
-                <label><input type="radio" name="NYCDOEDataset" value="2016-2017">2016-2017 School Year</label>
-            <br /><br />
-            <p>Discover demographic, social, and economic information about the selected library's neighborhood. Please select an American Community Survey dataset.</p>
-            <p> 
-                <label><input type="radio" name="ACSDataset" value="2018" checked>2018 Five-Year Estimates</label> 
-                <label><input type="radio" name="ACSDataset" value="2017">2017 Five-Year Estimates</label> 
-            </p>
-            <p><br /><input type="button" value="View Community Profile" id="ViewCommunityProfile"><br /><br /></p>
-        </form>
-        <div id="Profile">
+        <div class="container">
+            <div class="jumbotron text-center bg-primary text-light">
+                <h1>Queens Public Library Community Library Information</h1>
+            </div>
+            <form>
+                <div class="row mb-4 text-center">
+                    <div class="col-sm-12 form-group">
+                        <p">Please select a community library to view.</p>
+                        <select class="communityLibrary">
+                            <option value="Arverne">Arverne Community Library</option>
+                            <option value="Astoria">Astoria Community Library</option>
+                            <option value="Auburndale">Auburndale Community Library</option>
+                            <option value="Baisley Park">Baisley Park Community Library</option>
+                            <option value="Bay Terrace">Bay Terrace Community Library</option>
+                            <option value="Bayside">Bayside Community Library</option>
+                            <option value="Bellerose">Bellerose Community Library</option>
+                            <option value="Briarwood">Briarwood Community Library</option>
+                            <option value="Broad Channel">Broad Channel Community Library</option>
+                            <option value="Broadway">Broadway Community Library</option>
+                            <option value="Cambria Heights">Cambria Heights Community Library</option>
+                            <option value="Central Library">Central Library</option>
+                            <option value="Corona">Corona Community Library</option>
+                            <option value="Court Square">Court Square Community Library</option>
+                            <option value="Douglaston/Little Neck">Douglaston/Little Neck Community Library</option>
+                            <option value="East Elmhurst">East Elmhurst Community Library</option>
+                            <option value="East Flushing">East Flushing Community Library</option>
+                            <option value="Elmhurst">Elmhurst Community Library</option>
+                            <option value="Far Rockaway">Far Rockaway Community Library</option>
+                            <option value="Flushing">Flushing Community Library</option>
+                            <option value="Forest Hills">Forest Hills Community Library</option>
+                            <option value="Fresh Meadows">Fresh Meadows Community Library</option>
+                            <option value="Glen Oaks">Glen Oaks Community Library</option>
+                            <option value="Glendale">Glendale Community Library</option>
+                            <option value="Hillcrest">Hillcrest Community Library</option>
+                            <option value="Hollis">Hollis Community Library</option>
+                            <option value="Howard Beach">Howard Beach Community Library</option>
+                            <option value="Jackson Heights">Jackson Heights Community Library</option>
+                            <option value="Kew Gardens Hills">Kew Gardens Hills Community Library</option>
+                            <option value="Langston Hughes">Langston Hughes Community Library</option>
+                            <option value="Laurelton">Laurelton Community Library</option>
+                            <option value="Lefferts">Lefferts Community Library</option>
+                            <option value="Lefrak City">Lefrak City Community Library</option>
+                            <option value="Long Island City">Long Island City Community Library</option>
+                            <option value="Maspeth">Maspeth Community Library</option>
+                            <option value="McGoldrick">McGoldrick Community Library</option>
+                            <option value="Middle Village">Middle Village Community Library</option>
+                            <option value="Mitchell-Linden">Mitchell-Linden Community Library</option>
+                            <option value="North Forest Park">North Forest Park Community Library</option>
+                            <option value="North Hills">North Hills Community Library</option>
+                            <option value="Ozone Park">Ozone Park Community Library</option>
+                            <option value="Peninsula">Peninsula Community Library</option>
+                            <option value="Pomonok">Pomonok Community Library</option>
+                            <option value="Poppenhusen">Poppenhusen Community Library</option>
+                            <option value="Queens Village">Queens Village Community Library</option>
+                            <option value="Queensboro Hill">Queensboro Hill Community Library</option>
+                            <option value="Rego Park">Rego Park Community Library</option>
+                            <option value="Richmond Hill">Richmond Hill Community Library</option>
+                            <option value="Ridgewood">Ridgewood Community Library</option>
+                            <option value="Rochdale Village">Rochdale Village Community Library</option>
+                            <option value="Rosedale">Rosedale Community Library</option>
+                            <option value="Seaside">Seaside Community Library</option>
+                            <option value="South Hollis">South Hollis Community Library</option>
+                            <option value="South Jamaica">South Jamaica Community Library</option>
+                            <option value="South Ozone Park">South Ozone Park Community Library</option>
+                            <option value="St. Albans">St. Albans Community Library</option>
+                            <option value="Steinway">Steinway Community Library</option>
+                            <option value="Sunnyside">Sunnyside Community Library</option>
+                            <option value="Whitestone">Whitestone Community Library</option>
+                            <option value="Windsor Park">Windsor Park Community Library</option>
+                            <option value="Woodhaven">Woodhaven Community Library</option>
+                            <option value="Woodside">Woodside Community Library</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-sm-6 form-group">
+                        <p>Learn about the students who attend the selected library's nearby schools. Please choose a NYC Department of Education dataset.<p>
+                        <div class="form-check">
+                            <label class="form-check-label"><input class="form-check-input" type="radio" name="NYCDOEDataset" value="2018-2019" checked>2018-2019 School Year</label> 
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label"><input class="form-check-input" type="radio" name="NYCDOEDataset" value="2017-2018">2017-2018 School Year</label> 
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label"><input class="form-check-input" type="radio" name="NYCDOEDataset" value="2016-2017">2016-2017 School Year</label>
+                        </div> 
+                    </div>
+                    <div class="col-sm-6 form-group">
+                        <p>Discover demographic, social, and economic information about the selected library's neighborhood. Please select an American Community Survey dataset.</p>
+                        <div class="form-check">
+                            <label class="form-check-label"><input class="form-check-input" type="radio" name="ACSDataset" value="2018" checked>2018 Five-Year Estimates</label> 
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label"><input class="form-check-input" type="radio" name="ACSDataset" value="2017">2017 Five-Year Estimates</label> 
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-group mb-4">
+                    <div class="col-sm-12">
+                        <input class="btn btn-primary" type="button" value="View Community Profile" id="ViewCommunityProfile">
+                    </div>
+
+                </div>
+            </form>
+            <div id="Profile"></div>
         </div>
         <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>

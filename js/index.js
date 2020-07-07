@@ -26,7 +26,7 @@ function outputProfile(libraryData) { //output profile to #Profile, given the li
 
 $(document).ready(function(){
     $("input[id='ViewCommunityProfile']").click(function() {
-        $("#Profile").html("Retrieving data. Please wait... ");
+        $("#Profile").html(`<span class="spinner-border text-primary"></span> Retrieving data. Please wait... `);
 
         let shortLibraryName = $("select.communityLibrary").val(); //NYC Open Data references each library's short name;
 
