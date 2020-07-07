@@ -1,6 +1,6 @@
 /*** Global variables */
-const censusAPI =           'https://api.census.gov/data';
-const censusKey =           'key=ea46e190165e1ee608d643fba987f8b3620ec1a9';
+const censusAPI =                                       'https://api.census.gov/data';
+const censusKey =                                       'key=ea46e190165e1ee608d643fba987f8b3620ec1a9';
 const censusVars = { //this is a map of various Census variables
     totalPovertyPop:                                    'B17001_001E',
     numPoverty:                                         'B17001_002E',
@@ -89,6 +89,12 @@ async function getCensusFiveYearUnemployment(libraryData, done) {
                 }) 
             })
         })
+}
+
+async function getCensusLimitedEnglishProficiency(libraryData, done) {
+    const data;
+
+    done(null, data);
 }
 
 export { getCensusFiveYearPoverty, getCensusFiveYearUnemployment }
