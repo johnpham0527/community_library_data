@@ -125,14 +125,17 @@ async function getCensusFiveYearUnemployment(libraryData, done) {
     const { censusDataset, zipCode } = libraryData;
     const area = `zip%20code%20tabulation%20area:${zipCode}`; //the zip code will be the area to filter
 
-    const totalUnemployedPopLink = ``;
-    const numUnemployedLink = ``;
+    let laborForcePop = 0;
+    let numUnemployed = 0;
 
-    const data1 = await $.getJSON(totalUnemployedPopLink);
-    let totalPop = data1[1][0];
+    // const totalUnemployedPopLink = ``;
+    // const numUnemployedLink = ``;
 
-    const data2 = await $.getJSON(numUnemployedLink);
-    let numUnemployed = data2[1][0];
+    // const data1 = await $.getJSON(totalUnemployedPopLink);
+    // laborForcePop = data1[1][0];
+
+    // const data2 = await $.getJSON(numUnemployedLink);
+    // numUnemployed = data2[1][0];
 
     done(null, {
         ...libraryData, 
