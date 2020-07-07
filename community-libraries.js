@@ -106,15 +106,25 @@ async function getCensusFiveYearUnemployment(libraryData, done) {
     const area = `zip%20code%20tabulation%20area:${zipCode}`; //the zip code will be the area to filter
     let laborForcePop = 0;
     let numUnemployed = 0;
-    let promises = []; //we will populate this promises array with promises returned by getCensusData
+    let laborForcePromises = []; //we will populate this promises array with promises returned by getCensusData
+    let unemployedPromises = []; //we will populate this promises array with promises returned by getCensusData
 
-    censusVars.unemployment.forEach(censusVar => { //censusVars.unemployment is an array of unemployment-related census variables
-        promises.push(getCensusData(censusVar, area, censusDataset) //fetch that unemployment census variable's data
-            .then(unemploymentData => {
-
+    censusVars.laborForce.forEach(censusVar => { //censusVars.laborForce is an array of total labor force count-related census variables
+        laborForcePromises.push(getCensusData(censusVar, area, censusDataset) //fetch that unemployment census variable's data
+            .then(laborForceData => {
+                laborForcePop += laborForceData[1][0]; //sum up the labor force total population for each variable type
             })
         )
     })
+
+    censusVars.unemployed.forEach(censusVar => { //censusVars.laborForce is an array of unemployment count-related census variables
+        unemployedPromises.push(getCensusData(censusVar, area, censusDataset) //fetch that unemployment census variable's data
+            .then(unemployedData => {
+                numUnemployed += unemployedData[1][0]; //sum up the unemployed count for each variable type
+            })
+        )
+    })
+
 
     // const totalUnemployedPopLink = ``;
     // const numUnemployedLink = ``;
