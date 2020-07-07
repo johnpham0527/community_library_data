@@ -17,8 +17,8 @@ async function getNycDoeSchoolsDataByZipCode(zipCode) { //return data on the pub
     return await $.getJSON(`${nycOpenData}/r2nx-nhxe.json?location_1_zip=${zipCode}&${nycOpenDataToken}&$limit=5000`);
 }
 
-async function getSchoolDataByDbn(dbn, year) {
-    return await $.getJSON(`${nycOpenData}/45j8-f6um.json?dbn=${dbn}&year=${year}&${nycOpenDataToken}&$limit=1`); //return data about a school, given its DBN and dataset year
+async function getSchoolDataByDbn(dbn, year) { //return data on a school, given the DBN and dataset year
+    return await $.getJSON(`${nycOpenData}/45j8-f6um.json?dbn=${dbn}&year=${year}&${nycOpenDataToken}&$limit=1`);
 }
 
 async function getNycDoePovertyRate(libraryData, done) {
@@ -98,7 +98,8 @@ $(document).ready(function(){
                 libraryData.zipCode = zipCode;
                 getNycDoePovertyRate(libraryData, function(err, newLibraryData) { //pass an anonymous function to output data after the poverty rate is calculated
                     if (err) console.log(`Error retrieving NYC DOE data: ${err}`);
-                    $('#Profile').html(`${newLibraryData.fullLibraryName} is located in ZIP code ${newLibraryData.zipCode}. According to the NYC Department of Education's ${newLibraryData.nycDoeDataset} School Demographic Snapshot, ${newLibraryData.nycDoePovertyRate}% of the students who attend the ${newLibraryData.schoolsInZipCode} public school${newLibraryData.schoolsInZipCode === 1 ? '' : 's'} located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.`);
+                    const { fullLibraryName, zipCode, nycDoeDataset, nycDoePovertyRate, schoolsInZipCode } = newLibraryData;
+                    $('#Profile').html(`${fullLibraryName} is located in ZIP code ${zipCode}. According to the NYC Department of Education's ${nycDoeDataset} School Demographic Snapshot, ${nycDoePovertyRate}% of the students who attend the ${schoolsInZipCode} public school${schoolsInZipCode === 1 ? '' : 's'} located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits.`);
 
                     getCensusFiveYearPoverty(newLibraryData, function(err, newLibraryData2) {
                         if (err) console.log(`Error retrieving Census poverty data: ${err}`)
