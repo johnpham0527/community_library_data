@@ -5,7 +5,39 @@ const nycOpenDataToken = '$$app_token=QoQet97KEDYpMW4x4Manaflkp'; //this is my (
 const censusKey = 'key=ea46e190165e1ee608d643fba987f8b3620ec1a9';
 const censusVars = { //this is a map of various Census variables
     totalPovertyPop: 'B17001_001E',
-    numPoverty: 'B17001_002E'
+    numPoverty: 'B17001_002E',
+
+    /* Unemployment is available as Marital Status by Sex by Labor Force Participation
+    Link: https://data.census.gov/cedsci/table?q=B12006%3A%20MARITAL%20STATUS%20BY%20SEX%20BY%20LABOR%20FORCE%20PARTICIPATION&hidePreview=false&tid=ACSDT1Y2018.B12006&t=Marital%20Status%20and%20Marital%20History%3AAge%20and%20Sex&vintage=2018
+    Link: https://api.census.gov/data/2018/acs/acs5/variables.html
+    Marital Statuses: never married, now married (except separated), separated, widows, divorced
+    Sex Statuses: male, female
+    Labor Force Statuses: in labor force, not in labor force
+    In Labor Force Statuses: employed or in armed forces, unemployed
+    I need these 20 variables:
+    * never married males in labor force, unemployed
+    * never married females in labor force, unemployed
+    * now married males in labor force, unemployed
+    * now married females in labor force, unemployed
+    * separated males in labor force, unemployed
+    * separated females in labor force, unemployed
+    * widowed males in labor force, unemployed
+    * widowed females in labor force, unemployed
+    * divorced males in labor force, unemployed
+    * divorced females in labor force, unemployed
+    * never married males in labor force, total
+    * never married females in labor force, total
+    * now married males in labor force, total
+    * now married females in labor force, total
+    * separated males in labor force, total
+    * separated females in labor force, total
+    * widowed males in labor force, total
+    * widowed females in labor force, total
+    * divorced males in labor force, total
+    * divorced females in labor force, total
+
+    Filter by ZCTA5
+    */
 }
 
 async function getLibraryZipCode(libraryData) { //given a library's name, return the ZIP code
