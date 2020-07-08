@@ -50,9 +50,29 @@ async function getCensusPoverty(libraryData, done) {
     }); 
 }
 
-async function calculateRate(numeratorArray, denominatorArray, area, censusDataset) {
-    const numeratorPromises = []; //we will populate this array with promises returned by getCensusData
-    const denominatorPromises = []; //we will populate this array with promises returned by getCensusData
+async function sumCensusVariables(censusVarArray, area, censusDataset) {
+    let promises = []; //we will populate this array with promises returned by getCensusData
+    let returnData;
+
+    censusVarArray.forEach(censusVarHash => { //for each item in the numerator's array of variables to be summed up...
+        const censusVar = censusVarHash[Object.keys(censusVarHash)[0]]; //retrieve Census API variable name from the hash
+        promises.push(getCensusData(censusVar, area, censusDataset)) //fetch the variable's data
+            .then(data => parseInt(data[1][0])) //return the variable's value
+    });
+
+    Promise.all(promises)
+        .then((fetchedData) => {
+            returnData = fetchedData.reduce((accumulator, currentValue => {
+                accumulator + currentValue
+            }));
+            console.log(`returnData is ${returnData}`);
+            return returnData;
+        })
+}
+
+async function calculateCensusRate(numeratorArray, denominatorArray, area, censusDataset) {
+    let numeratorPromises = []; //we will populate this array with promises returned by getCensusData
+    let denominatorPromises = []; //we will populate this array with promises returned by getCensusData
     let numeratorSum = 0;
     let denominatorSum = 0;
 
@@ -60,9 +80,11 @@ async function calculateRate(numeratorArray, denominatorArray, area, censusDatas
         const censusVar = censusVarHash[Object.keys(censusVarHash)[0]]; //retrieve Census API variable name from the hash
         numeratorPromises.push(getCensusData(censusVar, area, censusDataset)) //fetch the numerator variable's data
             .then(numeratorData => {
-                numeratorSum += parseInt(numeratorData[1][0]); //sum up the numerator data for each variable
+                numeratorSum += parseInt(numeratorData[1][0]); //fetch the numerator variable's data
             })
     })
+
+
 }
 
 async function getUnemployment(libraryData, done) {
