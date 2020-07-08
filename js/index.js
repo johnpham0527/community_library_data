@@ -54,9 +54,12 @@ $(document).ready(function(){
                             getLimitedEnglishProficiency(libraryData, function(err, libraryData) { //query the Census API to obtain English language proficiency data
                                 if (err) console.log(`Error retrieving Census limited English language proficiency data: ${err}`);
 
-                                // getLessThanHighSchoolDiploma(libraryData)
-                                console.log(`Data is ${JSON.stringify(libraryData)}`);
-                                outputProfile(libraryData);
+                                getLessThanHighSchoolDiploma(libraryData, function(err, libraryData) {
+                                    if (err) console.log(`Error retrieving Census educational attainment data: ${err}`);
+
+                                    console.log(`Data is ${JSON.stringify(libraryData)}`);
+                                    outputProfile(libraryData);
+                                })
                             })
                         })
                     });

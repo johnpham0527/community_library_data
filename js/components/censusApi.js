@@ -46,14 +46,17 @@ const censusVars = { //this is a map of various Census variables
         { age65PlusAsianPacific:                        'B16004_059E' },
         { age65PlusOtherLanguages:                      'B16004_064E' },
     ],
-    totalPop25Plus:                                     'S1501_C01_006E',
-    age25PlusLessThan9thGrade:                          'S1501_C01_007E',
-    age25Plus9thTo12thGradeNoDiploma:                   'S1501_C01_008E'
+    // totalPop25Plus:                                     'S1501_C01_006E',
+    // age25PlusLessThan9thGrade:                          'S1501_C01_007E',
+    // age25Plus9thTo12thGradeNoDiploma:                   'S1501_C01_008E',
+    totalPop25Plus:                                     'DP02_0058E',
+    age25PlusLessThan9thGrade:                          'DP02_0059E',
+    age25Plus9thTo12thGradeNoDiploma:                   'DP02_0060E'
 }
 
-async function getCensusData(censusVar, area, censusDataset) { //fetch census data from API, given variable, area, and dataset
-    let data = await $.getJSON(`${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=${censusVar}&for=${area}`); //fetch the census variable data from the API
-    return data[1][0]; //return the Census estimate, ignoring other information such as the margin of error
+async function getCensusData(censusVar, area, censusDataset, additional='') { //fetch census data from API, given variable, area, and dataset
+    let data = await $.getJSON(`${censusAPI}/${censusDataset}/acs/acs5${additional}?${censusKey}&get=${censusVar}&for=${area}`); //fetch the census variable data from the API
+    return parseInt(data[1][0]); //return the Census estimate, ignoring other information such as the margin of error
 }
 
 async function getCensusPoverty(libraryData, done) {
@@ -121,14 +124,18 @@ async function getLessThanHighSchoolDiploma(libraryData, done) {
     const { censusDataset, zipCode} = libraryData;
     const area = `zip%20code%20tabulation%20area:${zipCode}`; //the zip code will be the area to filter
 
-    const totalPop = await getCensusData(censusVars.totalPop25Plus, area, censusDataset); //fetch the total population of people age 25+
-    const age25PlusLessThan9thGrade = await getCensusData(censusVars.age25PlusLessThan9thGrade, area, censusDataset); //fetch the number of people age 25+ who have attained less than a 9th grade education
-    const age25Plus9thTo12thGradeNoDiploma = await getCensusData(censusVars.age25Plus9thTo12thGradeNoDiploma, area, censusDataset); //fetch the number of people age 25+ who have attained up to a 12th grade education without a high school diploma
+    const totalPop = await getCensusData(censusVars.totalPop25Plus, area, censusDataset, '/profile'); //fetch the total population of people age 25+
+
+    const age25PlusLessThan9thGrade = await getCensusData(censusVars.age25PlusLessThan9thGrade, area, censusDataset, '/profile'); //fetch the number of people age 25+ who have attained less than a 9th grade education
+    const age25Plus9thTo12thGradeNoDiploma = await getCensusData(censusVars.age25Plus9thTo12thGradeNoDiploma, area, censusDataset, '/profile'); //fetch the number of people age 25+ who have attained up to a 12th grade education without a high school diploma
 
     const numNoHighSchoolDiplomaOrEquivalent = age25PlusLessThan9thGrade + age25Plus9thTo12thGradeNoDiploma; //add up the number of people who do not possess a high school diplomam or its equivalent
 
+    console.log(`totalPop is ${totalPop}, less than 9th grade is ${age25PlusLessThan9thGrade}, up to 12th grade is ${age25Plus9thTo12thGradeNoDiploma}, and num no high school diploma is ${numNoHighSchoolDiplomaOrEquivalent}`);
+
     done(null, {
         ...libraryData,
+        //noHighSchoolDiplomaOrEquivalent: 0
         noHighSchoolDiplomaOrEquivalent: (numNoHighSchoolDiplomaOrEquivalent/totalPop*100).toFixed(1) //calculate and assign the percentage of people who do not possess a high school diploma or its equivalent
     });
 }
