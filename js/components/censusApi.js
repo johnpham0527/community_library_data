@@ -118,9 +118,19 @@ async function getLimitedEnglishProficiency(libraryData, done) {
 }
 
 async function getLessThanHighSchoolDiploma(libraryData, done) {
-    const data = '';
+    const { censusDataset, zipCode} = libraryData;
+    const area = `zip%20code%20tabulation%20area:${zipCode}`; //the zip code will be the area to filter
 
-    done(null, data);
+    const totalPop = await getCensusData(censusVars.totalPop25Plus, area, censusDataset); //fetch the total population of people age 25+
+    const age25PlusLessThan9thGrade = await getCensusData(censusVars.age25PlusLessThan9thGrade, area, censusDataset); //fetch the number of people age 25+ who have attained less than a 9th grade education
+    const age25Plus9thTo12thGradeNoDiploma = await getCensusData(censusVars.age25Plus9thTo12thGradeNoDiploma, area, censusDataset); //fetch the number of people age 25+ who have attained up to a 12th grade education without a high school diploma
+
+    const numNoHighSchoolDiplomaOrEquivalent = age25PlusLessThan9thGrade + age25Plus9thTo12thGradeNoDiploma; //add up the number of people who do not possess a high school diplomam or its equivalent
+
+    done(null, {
+        ...libraryData,
+        noHighSchoolDiplomaOrEquivalent = (numNoHighSchoolDiplomaOrEquivalent/totalPop*100).toFixed(1) //calculate and assign the percentage of people who do not possess a high school diploma or its equivalent
+    });
 }
 
 export { getCensusPoverty, getUnemployment, getLimitedEnglishProficiency, getLessThanHighSchoolDiploma }
