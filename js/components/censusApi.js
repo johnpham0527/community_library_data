@@ -28,29 +28,23 @@ const censusVars = { //this is a map of various Census variables
         { divorcedMaleInLaborForceUnemployed:           'B12006_050E' },
         { divorcedFemaleInLaborForceUnemployed:         'B12006_055E' },
     ],
-    totalEnglishLanguagePop:                                 'B16004_001',
-    speakOnlyEnglish: [
+    totalEnglishLanguagePop:                            'B16004_001',
+    speakEnglishOnlyOrVeryWell: [
         { age5To17OnlyEnglish:                          'B16004_003E' },
         { age18To64OnlyEnglish:                         'B16004_025E' },
-        { age65PlusOnlyEnglish:                         'B16004_047E' }
-    ],
-    age5To17SpeakEnglishVeryWell:   [
-        { spanish:                                      'B16004_005E' },
-        { indoEuropean:                                 'B16004_010E' },
-        { asianPacific:                                 'B16004_015E' },
-        { otherLanguages:                               'B16004_020E' },
-    ],
-    age18To64SpeakEnglishVeryWell:  [
-        { spanish:                                      'B16004_027E' },
-        { indoEuropean:                                 'B16004_032E' },
-        { asianPacific:                                 'B16004_037E' },
-        { otherLanguages:                               'B16004_042E' },
-    ],
-    age65PlusSpeakEnglishVeryWell:  [
-        { spanish:                                      'B16004_049E' },
-        { indoEuropean:                                 'B16004_054E' },
-        { asianPacific:                                 'B16004_059E' },
-        { otherLanguages:                               'B16004_064E' },
+        { age65PlusOnlyEnglish:                         'B16004_047E' },
+        { age5To17Spanish:                              'B16004_005E' },
+        { age5To17IndoEuropean:                         'B16004_010E' },
+        { age5To17AsianPacific:                         'B16004_015E' },
+        { age5To17OtherLanguages:                       'B16004_020E' },
+        { age18To64Spanish:                             'B16004_027E' },
+        { age18To64IndoEuropean:                        'B16004_032E' },
+        { age18To64AsianPacific:                        'B16004_037E' },
+        { age18To64OtherLanguages:                      'B16004_042E' },
+        { age65PlusSpanish:                             'B16004_049E' },
+        { age65PlusIndoEuropean:                        'B16004_054E' },
+        { age65PlusAsianPacific:                        'B16004_059E' },
+        { age65PlusOtherLanguages:                      'B16004_064E' },
     ]
 }
 
@@ -108,9 +102,11 @@ async function getUnemployment(libraryData, done) {
 }
 
 async function getLimitedEnglishProficiency(libraryData, done) {
-    const data = '';
+    const { censusDataset, zipCode} = libraryData;
+    const area = `zip%20code%20tabulation%20area:${zipCode}`; //the zip code will be the area to filter
 
-    done(null, data);
+
+    done(null, null);
 }
 
 async function getLessThanHighSchoolEducation(libraryData, done) {
