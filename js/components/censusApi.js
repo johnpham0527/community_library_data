@@ -129,7 +129,7 @@ async function getLessThanHighSchoolDiploma(libraryData, done) {
 
     done(null, {
         ...libraryData,
-        noHighSchoolDiplomaOrEquivalent = (numNoHighSchoolDiplomaOrEquivalent/totalPop*100).toFixed(1) //calculate and assign the percentage of people who do not possess a high school diploma or its equivalent
+        noHighSchoolDiplomaOrEquivalent: (numNoHighSchoolDiplomaOrEquivalent/totalPop*100).toFixed(1) //calculate and assign the percentage of people who do not possess a high school diploma or its equivalent
     });
 }
 
