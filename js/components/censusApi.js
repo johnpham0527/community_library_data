@@ -31,8 +31,8 @@ const censusVars = { //this is a map of various Census variables
     englishLanguagePop:                                 'B16004_001',
     speakOnlyEnglish: [
         { age5To17OnlyEnglish:                          'B16004_003E' },
-        { age18To64OnlyEnglish:                         '' },
-        { age65PlusOnlyEnglish:                         '' }
+        { age18To64OnlyEnglish:                         'B16004_025E' },
+        { age65PlusOnlyEnglish:                         'B16004_047E' }
     ],
     age5To17SpeakEnglishVeryWell:   [
         { spanish:                                      'B16004_005E' },
@@ -41,10 +41,10 @@ const censusVars = { //this is a map of various Census variables
         { otherLanguages:                               'B16004_020E' },
     ],
     age18To64SpeakEnglishVeryWell:  [
-        { spanish:                                      '' },
-        { indoEuropean:                                 '' },
-        { asianPacific:                                 '' },
-        { otherLanguages:                               '' },
+        { spanish:                                      'B16004_027E' },
+        { indoEuropean:                                 'B16004_032E' },
+        { asianPacific:                                 'B16004_037E' },
+        { otherLanguages:                               'B16004_042E' },
     ],
     age65PlusSpeakEnglishVeryWell:  [
         { spanish:                                      '' },
