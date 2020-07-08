@@ -114,13 +114,13 @@ async function getLimitedEnglishProficiency(libraryData, done) {
     });
 }
 
-async function getLessThanHighSchoolEducation(libraryData, done) {
+async function getLessThanHighSchoolDiploma(libraryData, done) {
     const data = '';
 
     done(null, data);
 }
 
-export { getCensusPoverty, getUnemployment, getLimitedEnglishProficiency, getLessThanHighSchoolEducation }
+export { getCensusPoverty, getUnemployment, getLimitedEnglishProficiency, getLessThanHighSchoolDiploma }
 
 // function getAmericanCommunitySurvey5YearEstimateValue(datasetYear, tableNumber, zipCode) {
 //     let selectDatasetYear = "17"; //this is the default dataset year to use
