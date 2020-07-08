@@ -31,16 +31,16 @@ const censusVars = { //this is a map of various Census variables
     totalEnglishLanguagePop:                            'B16004_001',
     speakEnglishOnlyOrVeryWell: [
         { age5To17OnlyEnglish:                          'B16004_003E' },
-        { age18To64OnlyEnglish:                         'B16004_025E' },
-        { age65PlusOnlyEnglish:                         'B16004_047E' },
         { age5To17Spanish:                              'B16004_005E' },
         { age5To17IndoEuropean:                         'B16004_010E' },
         { age5To17AsianPacific:                         'B16004_015E' },
         { age5To17OtherLanguages:                       'B16004_020E' },
+        { age18To64OnlyEnglish:                         'B16004_025E' },
         { age18To64Spanish:                             'B16004_027E' },
         { age18To64IndoEuropean:                        'B16004_032E' },
         { age18To64AsianPacific:                        'B16004_037E' },
         { age18To64OtherLanguages:                      'B16004_042E' },
+        { age65PlusOnlyEnglish:                         'B16004_047E' },
         { age65PlusSpanish:                             'B16004_049E' },
         { age65PlusIndoEuropean:                        'B16004_054E' },
         { age65PlusAsianPacific:                        'B16004_059E' },
@@ -104,9 +104,21 @@ async function getUnemployment(libraryData, done) {
 async function getLimitedEnglishProficiency(libraryData, done) {
     const { censusDataset, zipCode} = libraryData;
     const area = `zip%20code%20tabulation%20area:${zipCode}`; //the zip code will be the area to filter
+    const totalPop = censusVars.totalEnglishLanguagePop;
 
+    const numEnglishProficient = sumCensusVariables(censusVars.speakEnglishOnlyOrVeryWell, area, censusDataset);
+    console.log(`number of proficient English speakers is ${numSpeakEnglishOnlyOrVeryWell}`);
 
-    done(null, null);
+    const numEnglishLessThanVeryWell = totalPop - numEnglishProficient;
+    console.log(`number of people speaking English less than very well is ${numSpeakEnglishLessThanVeryWell}`);
+
+    const englishLessThanVeryWellRate = numEnglishLessThanVeryWell / totalPop;
+    console.log(`percent of population speaking English less than very well is ${englishLessThanVeryWellRate}`);
+
+    done(null, {
+        ...libraryData,
+        englishLessThanVeryWellRate: englishLessThanVeryWellRate
+    });
 }
 
 async function getLessThanHighSchoolEducation(libraryData, done) {
