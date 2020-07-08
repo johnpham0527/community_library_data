@@ -28,7 +28,7 @@ const censusVars = { //this is a map of various Census variables
         { divorcedMaleInLaborForceUnemployed:           'B12006_050E' },
         { divorcedFemaleInLaborForceUnemployed:         'B12006_055E' },
     ],
-    englishLanguagePop:                                 'B16004_001',
+    totalEnglishLanguagePop:                                 'B16004_001',
     speakOnlyEnglish: [
         { age5To17OnlyEnglish:                          'B16004_003E' },
         { age18To64OnlyEnglish:                         'B16004_025E' },
