@@ -46,14 +46,18 @@ $(document).ready(function(){
                 getNycDoePoverty(libraryData, function(err, newLibraryData) { //pass an anonymous function to output data after the poverty rate is calculated
                     if (err) console.log(`Error retrieving NYC DOE data: ${err}`);
 
-                    getCensusPoverty(newLibraryData, function(err, newLibraryData2) { //query the Census Bureau to obtain poverty data
-                        if (err) console.log(`Error retrieving Census poverty data: ${err}`)
+                    getCensusPoverty(newLibraryData, function(err, newLibraryData) { //query the Census Bureau to obtain poverty data
+                        if (err) console.log(`Error retrieving Census poverty data: ${err}`);
 
-                        getUnemployment(newLibraryData2, function(err, newLibraryData3) { //query the Census Bureau to obtain unemployment data
-                            if (err) console.log(`Error retrieving Census unemployment data: ${err}`)
-                            console.log(`Data is ${JSON.stringify(newLibraryData3)}`);
+                        getUnemployment(newLibraryData, function(err, newLibraryData) { //query the Census Bureau to obtain unemployment data
+                            if (err) console.log(`Error retrieving Census unemployment data: ${err}`);
                             
-                            outputProfile(newLibraryData3);
+                            getLimitedEnglishProficiency(newLibraryData, function(err, newLibraryData) {
+                                if (err) console.log(`Error retrieving Census limited English language proficiency data: ${err}`);
+
+                                console.log(`Data is ${JSON.stringify(newLibraryData)}`);
+                                outputProfile(newLibraryData);
+                            })
                         })
                     });
                 })
