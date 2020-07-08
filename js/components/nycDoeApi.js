@@ -1,6 +1,11 @@
 const appToken = 'QoQet97KEDYpMW4x4Manaflkp'; //this is my (John Pham's) NYC Open Data app token
 
 async function getLibraryZipCode(libraryData) { //given a library's name, return the ZIP code
+
+    if (libraryData.shortLibraryName === 'Hunters Point') { // implement hard code for Hunters Point, since the library is so new that NYC Open Data doesn't have information on it
+        return 11109;
+    }
+
     let data = await $.getJSON(`https://data.cityofnewyork.us/resource/b67a-vkqb.json?name=${libraryData.shortLibraryName}&$$app_token=${appToken}&$limit=1`);
     return data[0]["postcode"];
 };
