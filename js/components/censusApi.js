@@ -110,7 +110,7 @@ async function getLimitedEnglishProficiency(libraryData, done) {
 
     done(null, {
         ...libraryData,
-        englishLessThanVeryWellRate: (numEnglishLessThanVeryWell/totalPop*100).toFixed(1) //calculate and assign the percentage of people who speak English less than very well, up to one decimal place
+        limitedEnglishPercent: (numEnglishLessThanVeryWell/totalPop*100).toFixed(1) //calculate and assign the percentage of people who speak English less than very well, up to one decimal place
     });
 }
 
