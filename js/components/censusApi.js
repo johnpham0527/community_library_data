@@ -60,8 +60,9 @@ const censusVars = { // this is a map of various Census variables
 }
 
 async function getCensusData(censusVar, area, censusDataset, additional='') { // fetch census data from API, given variable, area, and dataset
-    let data = await $.getJSON(`${censusAPI}/${censusDataset}/acs/acs5${additional}?${censusKey}&get=${censusVar}&for=${area}`); // fetch the census variable data from the API
-    return parseInt(data[1][0]); // return the Census estimate, ignoring other information such as the margin of error
+    let data = await $.getJSON(`${censusAPI}/${censusDataset}/acs/acs5${additional}?${censusKey}&get=${censusVar}&for=${area}`) // fetch the census variable data from the API
+
+    return data[1][0]; // return the Census estimate, ignoring other information such as the margin of error
 }
 
 async function getCensusPoverty(libraryData, done) {
@@ -132,7 +133,14 @@ async function getLessThanHighSchoolDiploma(libraryData, done) {
     const totalPop = await getCensusData(censusVars.totalPop25Plus, area, censusDataset, '/profile'); // fetch the total population of people age 25+
 
     const age25PlusLessThan9thGrade = await getCensusData(censusVars.age25PlusLessThan9thGrade, area, censusDataset, '/profile'); // fetch the number of people age 25+ who have attained less than a 9th grade education
+    if (typeof age25PlusLessThan9thGrade === String) {
+        done(err, null);
+    }
+
     const age25Plus9thTo12thGradeNoDiploma = await getCensusData(censusVars.age25Plus9thTo12thGradeNoDiploma, area, censusDataset, '/profile'); // fetch the number of people age 25+ who have attained up to a 12th grade education without a high school diploma
+    if (typeof age25Plus9thTo12thGradeNoDiploma === String) {
+        done(err, null);
+    }
 
     const numNoHighSchoolDiplomaOrEquivalent = age25PlusLessThan9thGrade + age25Plus9thTo12thGradeNoDiploma; // add up the number of people who do not possess a high school diplomam or its equivalent
 
