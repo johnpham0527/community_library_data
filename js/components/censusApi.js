@@ -31,10 +31,7 @@ const censusVars = { //this is a map of various Census variables
 }
 
 async function getCensusData(censusVar, area, censusDataset) { //fetch census data from API, given variable, area, and dataset
-    //console.log(`censusVar is ${censusVar}, censusDataset is ${censusDataset}, and area is ${area}`);
-    let data = await $.getJSON(`${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=${censusVar}&for=${area}`);
-    //console.log(`censusVar is ${censusVar} and data is ${data}`);
-    return data;
+    return await $.getJSON(`${censusAPI}/${censusDataset}/acs/acs5?${censusKey}&get=${censusVar}&for=${area}`);
 }
 
 async function getCensusPoverty(libraryData, done) {
@@ -53,6 +50,21 @@ async function getCensusPoverty(libraryData, done) {
     }); 
 }
 
+async function calculateRate(numeratorArray, denominatorArray, area, censusDataset) {
+    const numeratorPromises = []; //we will populate this array with promises returned by getCensusData
+    const denominatorPromises = []; //we will populate this array with promises returned by getCensusData
+    let numeratorSum = 0;
+    let denominatorSum = 0;
+
+    numeratorArray.forEach(censusVarHash => { //for each item in the numerator's array of variables to be summed up...
+        const censusVar = censusVarHash[Object.keys(censusVarHash)[0]]; //retrieve Census API variable name from the hash
+        numeratorPromises.push(getCensusData(censusVar, area, censusDataset)) //fetch the numerator variable's data
+            .then(numeratorData => {
+                numeratorSum += parseInt(numeratorData[1][0]); //sum up the numerator data for each variable
+            })
+    })
+}
+
 async function getUnemployment(libraryData, done) {
     const { censusDataset, zipCode } = libraryData;
     const area = `zip%20code%20tabulation%20area:${zipCode}`; //the zip code will be the area to filter
@@ -65,7 +77,7 @@ async function getUnemployment(libraryData, done) {
         const censusVar = censusVarObject[Object.keys(censusVarObject)[0]];
         laborForcePromises.push(getCensusData(censusVar, area, censusDataset) //fetch that unemployment census variable's data
             .then(laborForceData => {
-                laborForcePop += parseInt(laborForceData[1][0]); //sum up the labor force total population for each variable type
+                laborForcePop += parseInt(laborForceData[1][0]); //sum up the labor force total population for each variable
             })
         )
     })
