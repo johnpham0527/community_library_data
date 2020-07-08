@@ -107,22 +107,14 @@ async function getLimitedEnglishProficiency(libraryData, done) {
 
     const data = await getCensusData(censusVars.totalEnglishLanguagePop, area, censusDataset); //fetch the data for the population of English speakers
     const totalPop = data[1][0];
-    
-    console.log(`totalPop is ${totalPop}`);
 
     const numEnglishProficient = await sumCensusVariables(censusVars.speakEnglishOnlyOrVeryWell, area, censusDataset);
-    console.log(`number of proficient English speakers is ${numEnglishProficient}`);
-
     const numEnglishLessThanVeryWell = totalPop - numEnglishProficient;
-    console.log(`number of people speaking English less than very well is ${numEnglishLessThanVeryWell}`);
-
     const englishLessThanVeryWellRate = (numEnglishLessThanVeryWell/totalPop*100).toFixed(1);
-    console.log(`percent of population speaking English less than very well is ${englishLessThanVeryWellRate}`);
 
     done(null, {
         ...libraryData,
         englishLessThanVeryWellRate: englishLessThanVeryWellRate
-        // englishLessThanVeryWellRate: 0
     });
 }
 
