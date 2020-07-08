@@ -47,10 +47,10 @@ const censusVars = { //this is a map of various Census variables
         { otherLanguages:                               'B16004_042E' },
     ],
     age65PlusSpeakEnglishVeryWell:  [
-        { spanish:                                      '' },
-        { indoEuropean:                                 '' },
-        { asianPacific:                                 '' },
-        { otherLanguages:                               '' },
+        { spanish:                                      'B16004_049E' },
+        { indoEuropean:                                 'B16004_054E' },
+        { asianPacific:                                 'B16004_059E' },
+        { otherLanguages:                               'B16004_064E' },
     ]
 }
 
