@@ -67,7 +67,7 @@ async function getCensusData(censusVar, area, censusDataset, additional='') { //
             throw `error: ${textStatus}: ${error}`;
         })
 
-    return data[1][0]; // return the Census estimate, ignoring other information such as the margin of error
+    return parseInt(data[1][0]); // return the Census estimate, ignoring other information such as the margin of error
     }
     catch(err) {
         console.error(err)
