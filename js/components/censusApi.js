@@ -45,7 +45,10 @@ const censusVars = { //this is a map of various Census variables
         { age65PlusIndoEuropean:                        'B16004_054E' },
         { age65PlusAsianPacific:                        'B16004_059E' },
         { age65PlusOtherLanguages:                      'B16004_064E' },
-    ]
+    ],
+    totalPop25Plus:                                     'S1501_C01_006E',
+    age25PlusLessThan9thGrade:                          'S1501_C01_007E',
+    age25Plus9thTo12thGradeNoDiploma:                   'S1501_C01_008E'
 }
 
 async function getCensusData(censusVar, area, censusDataset) { //fetch census data from API, given variable, area, and dataset
