@@ -60,25 +60,38 @@ const censusVars = { // this is a map of various Census variables
 }
 
 async function getCensusData(censusVar, area, censusDataset, additional='') { // fetch census data from API, given variable, area, and dataset
-    let data = await $.getJSON(`${censusAPI}/${censusDataset}/acs/acs5${additional}?${censusKey}&get=${censusVar}&for=${area}`) // fetch the census variable data from the API
+
+    try {
+        let data = await $.getJSON(`${censusAPI}/${censusDataset}/acs/acs5${additional}?${censusKey}&get=${censusVar}&for=${area}`) // fetch the census variable data from the API
         .fail(function(jsxhr, textStatus, error) {
             throw `error: ${textStatus}: ${error}`;
         })
 
     return data[1][0]; // return the Census estimate, ignoring other information such as the margin of error
+    }
+    catch(err) {
+        console.error(err)
+    }
+
 }
 
 async function getCensusPoverty(libraryData, done) {
     const { censusDataset, zipCode } = libraryData; // destructure libraryData
     const area = `zip%20code%20tabulation%20area:${zipCode}`; // the ZIP code will be the area to filter
 
-    const totalPop = await getCensusData(censusVars.totalPovertyPop, area, censusDataset); // get total population for poverty measure
-    const numPoverty = await getCensusData(censusVars.numPoverty, area, censusDataset); // get number of individuals in poverty for past 12 months
+    try {
+        const totalPop = await getCensusData(censusVars.totalPovertyPop, area, censusDataset); // get total population for poverty measure
+        const numPoverty = await getCensusData(censusVars.numPoverty, area, censusDataset); // get number of individuals in poverty for past 12 months
+    
+        done(null, { // execute the callback, passing along null for error and updated data
+            ...libraryData, // use the spread operator and avoid mutating libraryData
+            censusPovertyRate: (numPoverty/totalPop*100).toFixed(1) // calculate and assign censusPovertyRate property
+        }); 
+    }
+    catch(err) {
+        done(err);
+    }
 
-    done(null, { // execute the callback, passing along null for error and updated data
-        ...libraryData, // use the spread operator and avoid mutating libraryData
-        censusPovertyRate: (numPoverty/totalPop*100).toFixed(1) // calculate and assign censusPovertyRate property
-    }); 
 }
 
 async function sumCensusVariables(censusVarArray, area, censusDataset) { // given an array of census variables, find the sum
@@ -91,42 +104,68 @@ async function sumCensusVariables(censusVarArray, area, censusDataset) { // give
         )
     });
 
-    return await Promise.all(promises) // execute all of the getCensusData promises
+    try {
+        return await Promise.all(promises) // execute all of the getCensusData promises
         .then(async fetchedData => // given the fetched results of the getCensusData promises... 
             fetchedData.reduce((accumulator, currentValue) => accumulator + currentValue)) // ...sum up and return their values
+    }
+    catch(err) {
+        done(err);
+    }
+
 }
 
 async function calculateCensusRate(numeratorArray, denominatorArray, area, censusDataset) { // given two arrays, sum up each array to find the numerator and denominator. Then, return the value as a whole percentage, up to one decimal place
-    let numerator = await sumCensusVariables(numeratorArray, area, censusDataset); // sum up the variables in the array
-    let denominator = await sumCensusVariables(denominatorArray, area, censusDataset); // sum up the variables in the array
 
-    return (numerator/denominator*100).toFixed(1) // calculate and return the rate up to 1 decimal place
+    try {
+        let numerator = await sumCensusVariables(numeratorArray, area, censusDataset); // sum up the variables in the array
+        let denominator = await sumCensusVariables(denominatorArray, area, censusDataset); // sum up the variables in the array
+    
+        return (numerator/denominator*100).toFixed(1) // calculate and return the rate up to 1 decimal place
+    }
+    catch(err) {
+        done(err);
+    }
+
 }
 
 async function getUnemployment(libraryData, done) {
     const { censusDataset, zipCode } = libraryData;
     const area = `zip%20code%20tabulation%20area:${zipCode}`; // the ZIP code will be the area to filter
-    const unemploymentRate = await calculateCensusRate(censusVars.unemployed, censusVars.laborForce, area, censusDataset) // calculate the unemployment rate, given the census variables for the number of unemployed and the total labor force participants
 
-    done(null, { // execute the callback passing on the new libraryData state
+    try {
+        const unemploymentRate = await calculateCensusRate(censusVars.unemployed, censusVars.laborForce, area, censusDataset) // calculate the unemployment rate, given the census variables for the number of unemployed and the total labor force participants
+
+        done(null, { // execute the callback passing on the new libraryData state
         ...libraryData,
         unemploymentRate: unemploymentRate // assign the unemployment rate as a new property of libraryData
-    });
+        });    
+    }
+    catch {
+        done(err);
+    }
+
 }
 
 async function getLimitedEnglishProficiency(libraryData, done) {
     const { censusDataset, zipCode} = libraryData;
     const area = `zip%20code%20tabulation%20area:${zipCode}`; // the ZIP code will be the area to filter
 
-    const totalPop = await getCensusData(censusVars.totalEnglishLanguagePop, area, censusDataset); // fetch the data for the population of English speakers
+    try {
+        const totalPop = await getCensusData(censusVars.totalEnglishLanguagePop, area, censusDataset); // fetch the data for the population of English speakers
 
-    const numEnglishProficient = await sumCensusVariables(censusVars.speakEnglishOnlyOrVeryWell, area, censusDataset); // fetch the number of people who speak only English or speak English very well
-    const numEnglishLessThanVeryWell = totalPop - numEnglishProficient; // calculate the number of people who speak English less than very well
+        const numEnglishProficient = await sumCensusVariables(censusVars.speakEnglishOnlyOrVeryWell, area, censusDataset); // fetch the number of people who speak only English or speak English very well
+        const numEnglishLessThanVeryWell = totalPop - numEnglishProficient; // calculate the number of people who speak English less than very well
+    
+        done(null, {
+            ...libraryData,
+            limitedEnglishPercent: (numEnglishLessThanVeryWell/totalPop*100).toFixed(1) // calculate and assign the percentage of people who speak English less than very well, up to one decimal place
+        });
+    }
+    catch(err) {
+        done(err);
+    }
 
-    done(null, {
-        ...libraryData,
-        limitedEnglishPercent: (numEnglishLessThanVeryWell/totalPop*100).toFixed(1) // calculate and assign the percentage of people who speak English less than very well, up to one decimal place
-    });
 }
 
 async function getLessThanHighSchoolDiploma(libraryData, done) {

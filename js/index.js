@@ -29,19 +29,19 @@ $(document).ready(function(){
             .then(zipCode => {
                 libraryData.zipCode = zipCode;
                 getNycDoePoverty(libraryData, function(err, libraryData) { // pass an anonymous function to output data after the poverty rate is calculated
-                    if (err) console.log(`Error retrieving NYC DOE data. Status: ${err.status}. Error: ${err.statusText}`);
+                    if (err) console.error(`Error retrieving NYC DOE data. Status: ${err.status}. Error: ${err.statusText}`);
 
                     getCensusPoverty(libraryData, function(err, libraryData) { // query the Census API to obtain poverty data
-                        if (err) console.log(`Error retrieving Census poverty data: Status: ${err.status}. Error: ${err.statusText}`);
+                        if (err) console.error(`Error retrieving Census poverty data: Status: ${err.status}. Error: ${err.statusText}`);
 
                         getUnemployment(libraryData, function(err, libraryData) { // query the Census API to obtain unemployment data
-                            if (err) console.log(`Error retrieving Census unemployment data: Status: ${err.status}. Error: ${err.statusText}`);
+                            if (err) console.error(`Error retrieving Census unemployment data: Status: ${err.status}. Error: ${err.statusText}`);
                             
                             getLimitedEnglishProficiency(libraryData, function(err, libraryData) { // query the Census API to obtain English language proficiency data
-                                if (err) console.log(`Error retrieving Census limited English language proficiency data: Status: ${err.status}. Error: ${err.statusText}`);
+                                if (err) console.error(`Error retrieving Census limited English language proficiency data: Status: ${err.status}. Error: ${err.statusText}`);
 
                                 getLessThanHighSchoolDiploma(libraryData, function(err, libraryData) { // query the Census API to obtain high school educational attainment data
-                                    if (err) console.log(`Error retrieving Census educational attainment data: Status: ${err.status}. Error: ${err.statusText}`);
+                                    if (err) console.error(`Error retrieving Census educational attainment data: Status: ${err.status}. Error: ${err.statusText}`);
 
                                     outputProfile(libraryData);
                                 })
