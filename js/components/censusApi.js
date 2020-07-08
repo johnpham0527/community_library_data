@@ -75,10 +75,11 @@ async function calculateCensusRate(numeratorArray, denominatorArray, area, censu
 async function getUnemployment(libraryData, done) {
     const { censusDataset, zipCode } = libraryData;
     const area = `zip%20code%20tabulation%20area:${zipCode}`; //the zip code will be the area to filter
+    const unemploymentRate = await calculateCensusRate(censusVars.unemployed, censusVars.laborForce, area, censusDataset) //calculate the unemployment rate, given the census variables for the number of unemployed and the total labor force participants
 
-    done(null, {
+    done(null, { //execute the callback passing on the new libraryData state
         ...libraryData,
-        unemploymentRate: await calculateCensusRate(censusVars.unemployed, censusVars.laborForce, area, censusDataset) //calculate the unemployment rate, given the census variables for the number of unemployed and the total labor force participants
+        unemploymentRate: unemploymentRate
     });
 }
 
