@@ -191,4 +191,4 @@ async function getLessThanHighSchoolDiploma(libraryData, done) {
 
 }
 
-export { getCensusPoverty, getUnemployment, getLimitedEnglishProficiency, getLessThanHighSchoolDiploma }
+export { getCensusPoverty, getUnemployment, getLimitedEnglishProficiency, getLessThanHighSchoolDiploma };

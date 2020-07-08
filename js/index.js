@@ -11,10 +11,11 @@ function outputProfile(libraryData) { // output profile to #Profile, given the l
 }
 
 $(document).ready(function(){
-    $("input[id='ViewCommunityProfile']").click(function() {
-        $("#Profile").html(`<span class="spinner-border text-primary"></span> Retrieving data. Please wait... `);
+    $("input[id='ViewCommunityProfile']").click(function() { // this is the click handler for the ViewCommunityProfile button
+        $("#Profile").html(`<span class="spinner-border text-primary"></span> Retrieving data. Please wait... `); // let the user know that we are retrieving the data
 
         let shortLibraryName = $("select.communityLibrary").val(); // NYC Open Data references each library's short name;
+
 
         let libraryData = { // this data structure will store all of the values that each callback finds
             schoolsInZipCode: 0, // variable for counting number of schools in a ZIP code
