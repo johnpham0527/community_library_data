@@ -42,20 +42,21 @@ $(document).ready(function(){
         getLibraryZipCode(libraryData) //query the NYC DOE data to obtain the ZIP code.
             .then(zipCode => {
                 libraryData.zipCode = zipCode;
-                getNycDoePoverty(libraryData, function(err, newLibraryData) { //pass an anonymous function to output data after the poverty rate is calculated
+                getNycDoePoverty(libraryData, function(err, libraryData) { //pass an anonymous function to output data after the poverty rate is calculated
                     if (err) console.log(`Error retrieving NYC DOE data: ${err}`);
 
-                    getCensusPoverty(newLibraryData, function(err, newLibraryData) { //query the Census API to obtain poverty data
+                    getCensusPoverty(libraryData, function(err, libraryData) { //query the Census API to obtain poverty data
                         if (err) console.log(`Error retrieving Census poverty data: ${err}`);
 
-                        getUnemployment(newLibraryData, function(err, newLibraryData) { //query the Census API to obtain unemployment data
+                        getUnemployment(libraryData, function(err, libraryData) { //query the Census API to obtain unemployment data
                             if (err) console.log(`Error retrieving Census unemployment data: ${err}`);
                             
-                            getLimitedEnglishProficiency(newLibraryData, function(err, newLibraryData) { //query the Census API to obtain English language proficiency data
+                            getLimitedEnglishProficiency(libraryData, function(err, libraryData) { //query the Census API to obtain English language proficiency data
                                 if (err) console.log(`Error retrieving Census limited English language proficiency data: ${err}`);
 
-                                console.log(`Data is ${JSON.stringify(newLibraryData)}`);
-                                outputProfile(newLibraryData);
+                                // getLessThanHighSchoolDiploma(libraryData)
+                                console.log(`Data is ${JSON.stringify(libraryData)}`);
+                                outputProfile(libraryData);
                             })
                         })
                     });
