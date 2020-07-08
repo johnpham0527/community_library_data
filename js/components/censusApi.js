@@ -1,5 +1,5 @@
 /*** Global variables */
-const censusKey =                                       'key=ea46e190165e1ee608d643fba987f8b3620ec1a9';
+const censusKey =                                       'ea46e190165e1ee608d643fba987f8b3620ec1a9';
 
 const censusVars = { // this is a map of various Census variables
     /* poverty variables */
@@ -61,7 +61,7 @@ const censusVars = { // this is a map of various Census variables
 async function getCensusData(censusVar, area, censusDataset, additional='') { // fetch census data from API, given variable, area, and dataset
 
     try {
-        let data = await $.getJSON(`https://api.census.gov/data/${censusDataset}/acs/acs5${additional}?${censusKey}&get=${censusVar}&for=${area}`) // fetch the census variable data from the API
+        let data = await $.getJSON(`https://api.census.gov/data/${censusDataset}/acs/acs5${additional}?key=${censusKey}&get=${censusVar}&for=${area}`) // fetch the census variable data from the API
         .fail(function(jsxhr, textStatus, error) {
             throw `error: ${textStatus}: ${error}`;
         })
