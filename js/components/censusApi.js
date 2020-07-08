@@ -66,31 +66,20 @@ async function sumCensusVariables(censusVarArray, area, censusDataset) { //given
 }
 
 async function calculateCensusRate(numeratorArray, denominatorArray, area, censusDataset) {
-    let numeratorPromises = []; //we will populate this array with promises returned by getCensusData
-    let denominatorPromises = []; //we will populate this array with promises returned by getCensusData
-    let numeratorSum = 0;
-    let denominatorSum = 0;
+    let numerator = await sumCensusVariables(numeratorArray, area, censusDataset);
+    let denominator = await sumCensusVariables(denominatorArray, area, censusDataset);
 
-    numeratorArray.forEach(censusVarHash => { //for each item in the numerator's array of variables to be summed up...
-        const censusVar = censusVarHash[Object.keys(censusVarHash)[0]]; //retrieve Census API variable name from the hash
-        numeratorPromises.push(getCensusData(censusVar, area, censusDataset)) //fetch the numerator variable's data
-            .then(numeratorData => {
-                numeratorSum += parseInt(numeratorData[1][0]); //fetch the numerator variable's data
-            })
-    })
+    return (numerator/denominator*100).toFixed(1) //calculate and return the rate up to 1 decimal place
 }
 
 async function getUnemployment(libraryData, done) {
     const { censusDataset, zipCode } = libraryData;
     const area = `zip%20code%20tabulation%20area:${zipCode}`; //the zip code will be the area to filter
 
-    let laborForcePop = await sumCensusVariables(censusVars.laborForce, area, censusDataset); //find the labor force population
-    let numUnemployed = await sumCensusVariables(censusVars.unemployed, area, censusDataset); //find the number of unemployed
-
     done(null, {
-        ...libraryData, //use spread operator here to return a new libraryData state 
-        unemploymentRate: (numUnemployed/laborForcePop*100).toFixed(1) //calculate and return the unemployment rate
-    })
+        ...libraryData,
+        unemploymentRate: await calculateCensusRate(censusVars.unemployed, censusVars.laborForce, area, censusDataset) //calculate the unemployment rate, given the census variables for the number of unemployed and the total labor force participants
+    });
 }
 
 async function getLimitedEnglishProficiency(libraryData, done) {
