@@ -49,7 +49,12 @@ $(document).ready(function(){
     $("input[id='ViewAllLibraries']").click(async function() { // this is the click handler for the ViewAllLibraries button
         $('#AllLibraries').html(`<span class="spinner-border text-primary"></span> Retrieving data. Please wait... `); // let the user know that we are retrieving the data
 
-        const allLibraryData = await getAllLibraries();
+        let datasets = {
+            nycDoeDataset: $("input[name='NYCDOEDataset']:checked").val(),
+            censusDataset: $("input[name='ACSDataset']:checked").val(),
+        };
+
+        const allLibraryData = await getAllLibraries(datasets);
         $('#AllLibraries').addClass("card");
         $('#AllLibraries').html(`<div class="card-body">${JSON.stringify(allLibraryData)}</div>`);
 
