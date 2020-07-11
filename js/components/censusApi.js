@@ -165,7 +165,7 @@ async function getLimitedEnglishProficiency(libraryData) {
 
 }
 
-async function getLessThanHighSchoolDiploma(libraryData, done) {
+async function getLessThanHighSchoolDiploma(libraryData) {
     const { censusDataset, zipCode} = libraryData;
     const area = `zip%20code%20tabulation%20area:${zipCode}`; // the ZIP code will be the area to filter
 
@@ -178,13 +178,13 @@ async function getLessThanHighSchoolDiploma(libraryData, done) {
     
         const numNoHighSchoolDiplomaOrEquivalent = age25PlusLessThan9thGrade + age25Plus9thTo12thGradeNoDiploma; // add up the number of people who do not possess a high school diplomam or its equivalent
     
-        done(null, {
+        return {
             ...libraryData,
             noHighSchoolDiplomaOrEquivalent: (numNoHighSchoolDiplomaOrEquivalent/totalPop*100).toFixed(1) // calculate and assign the percentage of people who do not possess a high school diploma or its equivalent
-        });
+        }
     }
     catch(err) {
-        done(err);
+        console.error(`Error retrieving Census educational attainment data: Status: ${err.status}. Error: ${err.statusText}`);
     }
 
 }

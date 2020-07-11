@@ -34,15 +34,9 @@ $(document).ready(function(){
                                 .then(libraryData => getCensusPoverty(libraryData))
                                 .then(libraryData => getUnemployment(libraryData))
                                 .then(libraryData => getLimitedEnglishProficiency(libraryData))
+                                .then(libraryData => getLessThanHighSchoolDiploma(libraryData))
+                                .then(libraryData => outputProfile(libraryData));
                 console.log(`libraryData is ${JSON.stringify(libraryData)}`);
-
-                            
-
-                //                 getLessThanHighSchoolDiploma(libraryData, function(err, libraryData) { // query the Census API to obtain high school educational attainment data
-                //                     if (err) console.error(`Error retrieving Census educational attainment data: Status: ${err.status}. Error: ${err.statusText}`);
-
-                //                     outputProfile(libraryData);
-                //                 })
             })
     });
 });
