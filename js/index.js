@@ -8,6 +8,8 @@ function outputProfile(libraryData) { // output profile to #Profile, given the l
 
     $('#Profile').addClass("card");
     $('#Profile').html(`<div class="card-body">${fullLibraryName} is located in ZIP code ${zipCode}. According to the NYC Department of Education's ${nycDoeDataset} School Demographic Snapshot, ${nycDoePovertyRate}% of the students who attend the ${schoolsInZipCode} public school${schoolsInZipCode === 1 ? '' : 's'} located in this ZIP code receive free or reduced lunch or are eligible for NYC Human Resources Administration public benefits. According to the ${censusDataset} American Community Survey Five-Year Dataset, the ZIP code's unemployment rate is ${unemploymentRate}%; ${noHighSchoolDiplomaOrEquivalent}% of adults age 25 or older do not possess a high school diploma or its equivalent; ${censusPovertyRate}% of residents live below the poverty line; and ${limitedEnglishPercent}% of residents speak English less than very well.</div>`);
+
+    return libraryData;
 }
 
 $(document).ready(function(){
@@ -27,29 +29,15 @@ $(document).ready(function(){
         };
 
         getLibraryZipCode(libraryData) // query the NYC DOE data to obtain the ZIP code.
-            .then(zipCode => {
+            .then(async zipCode => {
                 libraryData.zipCode = zipCode;
-                getNycDoePoverty(libraryData, function(err, libraryData) { // pass an anonymous function to output data after the poverty rate is calculated
-                    if (err) console.error(`Error retrieving NYC DOE data. Status: ${err.status}. Error: ${err.statusText}`);
 
-                    getCensusPoverty(libraryData, function(err, libraryData) { // query the Census API to obtain poverty data
-                        if (err) console.error(`Error retrieving Census poverty data: Status: ${err.status}. Error: ${err.statusText}`);
-
-                        getUnemployment(libraryData, function(err, libraryData) { // query the Census API to obtain unemployment data
-                            if (err) console.error(`Error retrieving Census unemployment data: Status: ${err.status}. Error: ${err.statusText}`);
-                            
-                            getLimitedEnglishProficiency(libraryData, function(err, libraryData) { // query the Census API to obtain English language proficiency data
-                                if (err) console.error(`Error retrieving Census limited English language proficiency data: Status: ${err.status}. Error: ${err.statusText}`);
-
-                                getLessThanHighSchoolDiploma(libraryData, function(err, libraryData) { // query the Census API to obtain high school educational attainment data
-                                    if (err) console.error(`Error retrieving Census educational attainment data: Status: ${err.status}. Error: ${err.statusText}`);
-
-                                    outputProfile(libraryData);
-                                })
-                            })
-                        })
-                    });
-                })
+                return await getNycDoePoverty(libraryData) //assign this promise chain to libraryData object
+                    .then(libraryData => getCensusPoverty(libraryData))
+                    .then(libraryData => getUnemployment(libraryData))
+                    .then(libraryData => getLimitedEnglishProficiency(libraryData))
+                    .then(libraryData => getLessThanHighSchoolDiploma(libraryData))
+                    .then(libraryData => outputProfile(libraryData));
             })
     });
 });

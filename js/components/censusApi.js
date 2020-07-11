@@ -74,7 +74,7 @@ async function getCensusData(censusVar, area, censusDataset, additional='') { //
 
 }
 
-async function getCensusPoverty(libraryData, done) {
+async function getCensusPoverty(libraryData) {
     const { censusDataset, zipCode } = libraryData; // destructure libraryData
     const area = `zip%20code%20tabulation%20area:${zipCode}`; // the ZIP code will be the area to filter
 
@@ -82,15 +82,14 @@ async function getCensusPoverty(libraryData, done) {
         const totalPop = await getCensusData(censusVars.totalPovertyPop, area, censusDataset); // get total population for poverty measure
         const numPoverty = await getCensusData(censusVars.numPoverty, area, censusDataset); // get number of individuals in poverty for past 12 months
     
-        done(null, { // execute the callback, passing along null for error and updated data
+        return {
             ...libraryData, // use the spread operator and avoid mutating libraryData
             censusPovertyRate: (numPoverty/totalPop*100).toFixed(1) // calculate and assign censusPovertyRate property
-        }); 
+        }
     }
     catch(err) {
-        done(err);
+        console.error(`Error retrieving Census poverty data: Status: ${err.status}. Error: ${err.statusText}`);
     }
-
 }
 
 async function sumCensusVariables(censusVarArray, area, censusDataset) { // given an array of census variables, find the sum
@@ -128,25 +127,24 @@ async function calculateCensusRate(numeratorArray, denominatorArray, area, censu
 
 }
 
-async function getUnemployment(libraryData, done) {
+async function getUnemployment(libraryData) {
     const { censusDataset, zipCode } = libraryData;
     const area = `zip%20code%20tabulation%20area:${zipCode}`; // the ZIP code will be the area to filter
 
     try {
         const unemploymentRate = await calculateCensusRate(censusVars.unemployed, censusVars.laborForce, area, censusDataset) // calculate the unemployment rate, given the census variables for the number of unemployed and the total labor force participants
 
-        done(null, { // execute the callback passing on the new libraryData state
-        ...libraryData,
-        unemploymentRate: unemploymentRate // assign the unemployment rate as a new property of libraryData
-        });    
+        return {
+            ...libraryData,
+            unemploymentRate: unemploymentRate // assign the unemployment rate as a new property of libraryData          
+        };  
     }
     catch {
-        done(err);
+        if (err) console.error(`Error retrieving Census unemployment data: Status: ${err.status}. Error: ${err.statusText}`);
     }
-
 }
 
-async function getLimitedEnglishProficiency(libraryData, done) {
+async function getLimitedEnglishProficiency(libraryData) {
     const { censusDataset, zipCode} = libraryData;
     const area = `zip%20code%20tabulation%20area:${zipCode}`; // the ZIP code will be the area to filter
 
@@ -156,18 +154,18 @@ async function getLimitedEnglishProficiency(libraryData, done) {
         const numEnglishProficient = await sumCensusVariables(censusVars.speakEnglishOnlyOrVeryWell, area, censusDataset); // fetch the number of people who speak only English or speak English very well
         const numEnglishLessThanVeryWell = totalPop - numEnglishProficient; // calculate the number of people who speak English less than very well
     
-        done(null, {
+        return {
             ...libraryData,
             limitedEnglishPercent: (numEnglishLessThanVeryWell/totalPop*100).toFixed(1) // calculate and assign the percentage of people who speak English less than very well, up to one decimal place
-        });
+        }
     }
     catch(err) {
-        done(err);
+        console.error(`Error retrieving Census limited English language proficiency data: Status: ${err.status}. Error: ${err.statusText}`);
     }
 
 }
 
-async function getLessThanHighSchoolDiploma(libraryData, done) {
+async function getLessThanHighSchoolDiploma(libraryData) {
     const { censusDataset, zipCode} = libraryData;
     const area = `zip%20code%20tabulation%20area:${zipCode}`; // the ZIP code will be the area to filter
 
@@ -180,13 +178,13 @@ async function getLessThanHighSchoolDiploma(libraryData, done) {
     
         const numNoHighSchoolDiplomaOrEquivalent = age25PlusLessThan9thGrade + age25Plus9thTo12thGradeNoDiploma; // add up the number of people who do not possess a high school diplomam or its equivalent
     
-        done(null, {
+        return {
             ...libraryData,
             noHighSchoolDiplomaOrEquivalent: (numNoHighSchoolDiplomaOrEquivalent/totalPop*100).toFixed(1) // calculate and assign the percentage of people who do not possess a high school diploma or its equivalent
-        });
+        }
     }
     catch(err) {
-        done(err);
+        console.error(`Error retrieving Census educational attainment data: Status: ${err.status}. Error: ${err.statusText}`);
     }
 
 }

@@ -18,7 +18,7 @@ async function getSchoolDataByDbn(dbn, year) { //return data on a school, given 
     return await $.getJSON(`https://data.cityofnewyork.us/resource/45j8-f6um.json?dbn=${dbn}&year=${year}&$$app_token=${appToken}&$limit=1`);
 }
 
-async function getNycDoePoverty(libraryData, done) {
+async function getNycDoePoverty(libraryData) {
     const { zipCode, nycDoeDataset } = libraryData; //destructure libraryData to obtain the ZIP code and dataset year
     let povertyCountSum = 0;
     let enrollmentSum = 0;
@@ -39,19 +39,18 @@ async function getNycDoePoverty(libraryData, done) {
             )
         }
 
-        Promise.all(promises) //execute all of the promises in the array
+        return Promise.all(promises) //execute all of the promises in the array
             .then(() => {
-                done(null, { //execute the callback, passing along null for error and updated data
+                return { //execute the callback, passing along null for error and updated data
                     ...libraryData, //use the spread operator and avoid mutating libraryData
                     schoolsInZipCode: schools.length, //store the number of schools in the global variable
                     nycDoePovertyRate: (povertyCountSum/enrollmentSum*100).toFixed(1) //calculate the poverty percentage to one decimal place and pass it into the callback
-                }) 
+                }
             })
     }
     catch(err) {
-        done(err);
-    }
-
-};
+        console.error(`Error retrieving NYC DOE data. Status: ${err.status}. Error: ${err.statusText}`);
+    } 
+}
 
 export { getLibraryZipCode, getNycDoePoverty };
