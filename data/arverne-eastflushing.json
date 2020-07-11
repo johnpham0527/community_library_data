@@ -193,5 +193,30 @@
       "unemploymentRate":"4.5",
       "limitedEnglishPercent":"19.5",
       "noHighSchoolDiplomaOrEquivalent":"3.9"
+   },
+   "East Elmhurst":{
+      "schoolsInZipCode":6,
+      "nycDoeDataset":"2018-2019",
+      "censusDataset":"2018",
+      "shortLibraryName":"East Elmhurst",
+      "fullLibraryName":"East Elmhurst Community Library",
+      "zipCode":"11369",
+      "nycDoePovertyRate":"78.6",
+      "censusPovertyRate":"15.5",
+      "unemploymentRate":"6.8",
+      "limitedEnglishPercent":"41.6",
+      "noHighSchoolDiplomaOrEquivalent":"24.2"
+   },
+   "East Flushing":{      
+      "schoolsInZipCode":4,
+      "nycDoeDataset":"2018-2019",
+      "censusDataset":"2018",
+      "shortLibraryName":"East Flushing",
+      "fullLibraryName":"East Flushing Community Library",
+      "zipCode":"11358",
+      "nycDoePovertyRate":"63.6",
+      "censusPovertyRate":"9.9",
+      "unemploymentRate":"4.1",
+      "limitedEnglishPercent":"44.4"
    }
 }
