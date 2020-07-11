@@ -2,7 +2,7 @@
 
 import { getLibraryZipCode, getNycDoePoverty } from './components/nycDoeApi.js';
 import { getUnemployment, getCensusPoverty, getLimitedEnglishProficiency, getLessThanHighSchoolDiploma } from './components/censusApi.js';
-import getAllLibraries from './components/qplLibraries.js';
+import { getAllLibraries } from './components/qplLibraries.js';
 
 function outputProfile(libraryData) { // output profile to #Profile, given the library data
     const { fullLibraryName, zipCode, nycDoeDataset, nycDoePovertyRate, schoolsInZipCode, censusDataset, unemploymentRate, censusPovertyRate, limitedEnglishPercent, noHighSchoolDiplomaOrEquivalent } = libraryData; // destructure these variables to make it easier to reference

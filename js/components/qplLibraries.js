@@ -1,3 +1,6 @@
+import { getLibraryZipCode, getNycDoePoverty } from './nycDoeApi.js';
+import { getUnemployment, getCensusPoverty, getLimitedEnglishProficiency, getLessThanHighSchoolDiploma } from './censusApi.js';
+
 const getAllLibraries = () => {
     const qplLibraries = [
         'Arverne',
@@ -77,7 +80,7 @@ const getAllLibraries = () => {
                 shortLibraryName : shortLibraryName + ' Community Library' // generate the library's full name if it is not the Central Library
         }
     
-        getLibraryZipCode(libraryData) // query the NYC DOE data to obtain the ZIP code.
+        libraryData = getLibraryZipCode(libraryData) // query the NYC DOE data to obtain the ZIP code.
         .then(async zipCode => {
             libraryData.zipCode = zipCode;
     
@@ -86,9 +89,10 @@ const getAllLibraries = () => {
                 .then(libraryData => getUnemployment(libraryData))
                 .then(libraryData => getLimitedEnglishProficiency(libraryData))
                 .then(libraryData => getLessThanHighSchoolDiploma(libraryData))
-                .then(libraryData => outputProfile(libraryData));
         })
-    
+        
+        console.log(`libraryData is ${libraryData}`);
+
         allLibraryData.shortLibraryName = libraryData;
     })
     
