@@ -30,9 +30,9 @@ $(document).ready(function(){
             .then(async zipCode => {
                 libraryData.zipCode = zipCode;
 
-                libraryData = await getNycDoePoverty(libraryData);
-                libraryData = await getCensusPoverty(libraryData);
-                libraryData = await getUnemployment(libraryData);
+                libraryData = await getNycDoePoverty(libraryData) //assign this promise chain to libraryData object
+                                .then(libraryData => getCensusPoverty(libraryData))
+                                .then(libraryData => getUnemployment(libraryData))
                 console.log(`libraryData is ${JSON.stringify(libraryData)}`);
 
                 //         getUnemployment(libraryData, function(err, libraryData) { // query the Census API to obtain unemployment data
