@@ -71,7 +71,7 @@ const getAllLibraries = async (datasets) => {
     const { nycDoeDataset, censusDataset } = datasets; // destructure nycDoeDataset and censusDataset from datasets parameter
     let allLibraryData = {}; // this object will store a hash map of libraryData objects for each QPL community library
 
-    for (let i = 15; i < 17; i++) { // 
+    for (let i = 18; i < 30; i++) { // Elmhurst doesn't seem to work
         let shortLibraryName = qplLibraries[i];
 
         let libraryData = { // initialize the libraryData object
