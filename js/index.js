@@ -1,7 +1,8 @@
 'use strict';
 
 import { getLibraryZipCode, getNycDoePoverty } from './components/nycDoeApi.js';
-import { getUnemployment, getCensusPoverty, getLimitedEnglishProficiency, getLessThanHighSchoolDiploma } from './components/censusApi.js'
+import { getUnemployment, getCensusPoverty, getLimitedEnglishProficiency, getLessThanHighSchoolDiploma } from './components/censusApi.js';
+import getAllLibraries from './components/qplLibraries.js';
 
 function outputProfile(libraryData) { // output profile to #Profile, given the library data
     const { fullLibraryName, zipCode, nycDoeDataset, nycDoePovertyRate, schoolsInZipCode, censusDataset, unemploymentRate, censusPovertyRate, limitedEnglishPercent, noHighSchoolDiplomaOrEquivalent } = libraryData; // destructure these variables to make it easier to reference
@@ -40,4 +41,13 @@ $(document).ready(function(){
                     .then(libraryData => outputProfile(libraryData));
             })
     });
+
+    $("input[id='ViewAllLibraries']").click(function() { // this is the click handler for the ViewAllLibraries button
+        $('#AllLibraries').html(`<span class="spinner-border text-primary"></span> Retrieving data. Please wait... `); // let the user know that we are retrieving the data
+
+        const allLibraryData = getAllLibraries();
+        $('#AllLibraries').addClass("card");
+        $('#AllLibraries').html(`<div class="card-body">${JSON.stringify(allLibraryData)}</div>`);
+
+    })
 });
