@@ -27,11 +27,12 @@ $(document).ready(function(){
         };
 
         getLibraryZipCode(libraryData) // query the NYC DOE data to obtain the ZIP code.
-            .then(zipCode => {
+            .then(async zipCode => {
                 libraryData.zipCode = zipCode;
 
-                let doePovertyData = getNycDoePoverty2(libraryData);
-                console.log(`doePovertyData is ${doePovertyData}`);
+                libraryData = await getNycDoePoverty(libraryData);
+                console.log(`libraryData is ${JSON.stringify(libraryData)}`);
+
                 // getNycDoePoverty(libraryData, function(err, libraryData) { // pass an anonymous function to output data after the poverty rate is calculated
                 //     if (err) console.error(`Error retrieving NYC DOE data. Status: ${err.status}. Error: ${err.statusText}`);
 
