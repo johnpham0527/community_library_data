@@ -33,21 +33,16 @@ $(document).ready(function(){
                 libraryData = await getNycDoePoverty(libraryData) //assign this promise chain to libraryData object
                                 .then(libraryData => getCensusPoverty(libraryData))
                                 .then(libraryData => getUnemployment(libraryData))
+                                .then(libraryData => getLimitedEnglishProficiency(libraryData))
                 console.log(`libraryData is ${JSON.stringify(libraryData)}`);
 
-                //         getUnemployment(libraryData, function(err, libraryData) { // query the Census API to obtain unemployment data
-                //             if (err) console.error(`Error retrieving Census unemployment data: Status: ${err.status}. Error: ${err.statusText}`);
                             
-                //             getLimitedEnglishProficiency(libraryData, function(err, libraryData) { // query the Census API to obtain English language proficiency data
-                //                 if (err) console.error(`Error retrieving Census limited English language proficiency data: Status: ${err.status}. Error: ${err.statusText}`);
 
                 //                 getLessThanHighSchoolDiploma(libraryData, function(err, libraryData) { // query the Census API to obtain high school educational attainment data
                 //                     if (err) console.error(`Error retrieving Census educational attainment data: Status: ${err.status}. Error: ${err.statusText}`);
 
                 //                     outputProfile(libraryData);
                 //                 })
-                //             })
-                //         })
             })
     });
 });

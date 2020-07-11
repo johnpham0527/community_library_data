@@ -144,24 +144,7 @@ async function getUnemployment(libraryData) {
     }
 }
 
-// async function getUnemployment(libraryData, done) {
-//     const { censusDataset, zipCode } = libraryData;
-//     const area = `zip%20code%20tabulation%20area:${zipCode}`; // the ZIP code will be the area to filter
-
-//     try {
-//         const unemploymentRate = await calculateCensusRate(censusVars.unemployed, censusVars.laborForce, area, censusDataset) // calculate the unemployment rate, given the census variables for the number of unemployed and the total labor force participants
-
-//         done(null, { // execute the callback passing on the new libraryData state
-//         ...libraryData,
-//         unemploymentRate: unemploymentRate // assign the unemployment rate as a new property of libraryData
-//         });    
-//     }
-//     catch {
-//         done(err);
-//     }
-// }
-
-async function getLimitedEnglishProficiency(libraryData, done) {
+async function getLimitedEnglishProficiency(libraryData) {
     const { censusDataset, zipCode} = libraryData;
     const area = `zip%20code%20tabulation%20area:${zipCode}`; // the ZIP code will be the area to filter
 
@@ -171,13 +154,13 @@ async function getLimitedEnglishProficiency(libraryData, done) {
         const numEnglishProficient = await sumCensusVariables(censusVars.speakEnglishOnlyOrVeryWell, area, censusDataset); // fetch the number of people who speak only English or speak English very well
         const numEnglishLessThanVeryWell = totalPop - numEnglishProficient; // calculate the number of people who speak English less than very well
     
-        done(null, {
+        return {
             ...libraryData,
             limitedEnglishPercent: (numEnglishLessThanVeryWell/totalPop*100).toFixed(1) // calculate and assign the percentage of people who speak English less than very well, up to one decimal place
-        });
+        }
     }
     catch(err) {
-        done(err);
+        console.error(`Error retrieving Census limited English language proficiency data: Status: ${err.status}. Error: ${err.statusText}`);
     }
 
 }
