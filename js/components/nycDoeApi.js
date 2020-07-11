@@ -38,7 +38,7 @@ async function getNycDoePoverty(libraryData, done) {
                 })
             )
         }
-    
+
         Promise.all(promises) //execute all of the promises in the array
             .then(() => {
                 done(null, { //execute the callback, passing along null for error and updated data
