@@ -92,24 +92,6 @@ async function getCensusPoverty(libraryData) {
     }
 }
 
-// async function getCensusPoverty(libraryData, done) {
-//     const { censusDataset, zipCode } = libraryData; // destructure libraryData
-//     const area = `zip%20code%20tabulation%20area:${zipCode}`; // the ZIP code will be the area to filter
-
-//     try {
-//         const totalPop = await getCensusData(censusVars.totalPovertyPop, area, censusDataset); // get total population for poverty measure
-//         const numPoverty = await getCensusData(censusVars.numPoverty, area, censusDataset); // get number of individuals in poverty for past 12 months
-    
-//         done(null, { // execute the callback, passing along null for error and updated data
-//             ...libraryData, // use the spread operator and avoid mutating libraryData
-//             censusPovertyRate: (numPoverty/totalPop*100).toFixed(1) // calculate and assign censusPovertyRate property
-//         }); 
-//     }
-//     catch(err) {
-//         done(err);
-//     }
-// }
-
 async function sumCensusVariables(censusVarArray, area, censusDataset) { // given an array of census variables, find the sum
     let promises = []; // we will populate this array with promises returned by getCensusData
 
@@ -145,23 +127,39 @@ async function calculateCensusRate(numeratorArray, denominatorArray, area, censu
 
 }
 
-async function getUnemployment(libraryData, done) {
+async function getUnemployment(libraryData) {
     const { censusDataset, zipCode } = libraryData;
     const area = `zip%20code%20tabulation%20area:${zipCode}`; // the ZIP code will be the area to filter
 
     try {
         const unemploymentRate = await calculateCensusRate(censusVars.unemployed, censusVars.laborForce, area, censusDataset) // calculate the unemployment rate, given the census variables for the number of unemployed and the total labor force participants
 
-        done(null, { // execute the callback passing on the new libraryData state
-        ...libraryData,
-        unemploymentRate: unemploymentRate // assign the unemployment rate as a new property of libraryData
-        });    
+        return {
+            ...libraryData,
+            unemploymentRate: unemploymentRate // assign the unemployment rate as a new property of libraryData          
+        };  
     }
     catch {
-        done(err);
+        if (err) console.error(`Error retrieving Census unemployment data: Status: ${err.status}. Error: ${err.statusText}`);
     }
-
 }
+
+// async function getUnemployment(libraryData, done) {
+//     const { censusDataset, zipCode } = libraryData;
+//     const area = `zip%20code%20tabulation%20area:${zipCode}`; // the ZIP code will be the area to filter
+
+//     try {
+//         const unemploymentRate = await calculateCensusRate(censusVars.unemployed, censusVars.laborForce, area, censusDataset) // calculate the unemployment rate, given the census variables for the number of unemployed and the total labor force participants
+
+//         done(null, { // execute the callback passing on the new libraryData state
+//         ...libraryData,
+//         unemploymentRate: unemploymentRate // assign the unemployment rate as a new property of libraryData
+//         });    
+//     }
+//     catch {
+//         done(err);
+//     }
+// }
 
 async function getLimitedEnglishProficiency(libraryData, done) {
     const { censusDataset, zipCode} = libraryData;

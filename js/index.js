@@ -31,11 +31,9 @@ $(document).ready(function(){
                 libraryData.zipCode = zipCode;
 
                 libraryData = await getNycDoePoverty(libraryData);
-                libraryData = await(getCensusPoverty(libraryData));
+                libraryData = await getCensusPoverty(libraryData);
+                libraryData = await getUnemployment(libraryData);
                 console.log(`libraryData is ${JSON.stringify(libraryData)}`);
-
-                //     getCensusPoverty(libraryData, function(err, libraryData) { // query the Census API to obtain poverty data
-                //         if (err) console.error(`Error retrieving Census poverty data: Status: ${err.status}. Error: ${err.statusText}`);
 
                 //         getUnemployment(libraryData, function(err, libraryData) { // query the Census API to obtain unemployment data
                 //             if (err) console.error(`Error retrieving Census unemployment data: Status: ${err.status}. Error: ${err.statusText}`);
@@ -50,7 +48,6 @@ $(document).ready(function(){
                 //                 })
                 //             })
                 //         })
-                //     });
             })
     });
 });
