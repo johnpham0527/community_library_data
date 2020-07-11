@@ -45,7 +45,7 @@ $(document).ready(function(){
     $("input[id='ViewAllLibraries']").click(function() { // this is the click handler for the ViewAllLibraries button
         $('#AllLibraries').html(`<span class="spinner-border text-primary"></span> Retrieving data. Please wait... `); // let the user know that we are retrieving the data
 
-        const allLibraryData = getAllLibraries();
+        const allLibraryData = await getAllLibraries();
         $('#AllLibraries').addClass("card");
         $('#AllLibraries').html(`<div class="card-body">${JSON.stringify(allLibraryData)}</div>`);
 

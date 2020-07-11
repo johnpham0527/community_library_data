@@ -1,7 +1,7 @@
 import { getLibraryZipCode, getNycDoePoverty } from './nycDoeApi.js';
 import { getUnemployment, getCensusPoverty, getLimitedEnglishProficiency, getLessThanHighSchoolDiploma } from './censusApi.js';
 
-const getAllLibraries = () => {
+const getAllLibraries = async () => {
     const qplLibraries = [
         'Arverne',
         'Astoria',
@@ -70,7 +70,7 @@ const getAllLibraries = () => {
     
     let allLibraryData = {}; // this object will store a hash map of libraryData objects for each QPL community library
     
-    qplLibraries.forEach(shortLibraryName => { //for each library in the qplLibraries array
+    qplLibraries.forEach(async shortLibraryName => { //for each library in the qplLibraries array
         let libraryData = {
             schoolsInZipCode: 0, // variable for counting number of schools in a ZIP code
             nycDoeDataset: '2018-2019',
@@ -80,7 +80,7 @@ const getAllLibraries = () => {
                 shortLibraryName : shortLibraryName + ' Community Library' // generate the library's full name if it is not the Central Library
         }
     
-        libraryData = getLibraryZipCode(libraryData) // query the NYC DOE data to obtain the ZIP code.
+        libraryData = await getLibraryZipCode(libraryData) // query the NYC DOE data to obtain the ZIP code.
         .then(async zipCode => {
             libraryData.zipCode = zipCode;
     
