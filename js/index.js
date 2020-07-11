@@ -33,16 +33,20 @@ $(document).ready(function(){
             .then(async zipCode => {
                 libraryData.zipCode = zipCode;
 
-                return await getNycDoePoverty(libraryData) //assign this promise chain to libraryData object
+                libraryData = await getNycDoePoverty(libraryData) //assign this promise chain to libraryData object
                     .then(libraryData => getCensusPoverty(libraryData))
                     .then(libraryData => getUnemployment(libraryData))
                     .then(libraryData => getLimitedEnglishProficiency(libraryData))
                     .then(libraryData => getLessThanHighSchoolDiploma(libraryData))
                     .then(libraryData => outputProfile(libraryData));
+
+                console.log(`libraryData is ${JSON.stringify(libraryData)}`);
+
+                return libraryData;
             })
     });
 
-    $("input[id='ViewAllLibraries']").click(function() { // this is the click handler for the ViewAllLibraries button
+    $("input[id='ViewAllLibraries']").click(async function() { // this is the click handler for the ViewAllLibraries button
         $('#AllLibraries').html(`<span class="spinner-border text-primary"></span> Retrieving data. Please wait... `); // let the user know that we are retrieving the data
 
         const allLibraryData = await getAllLibraries();
