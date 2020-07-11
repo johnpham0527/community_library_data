@@ -49,7 +49,7 @@ async function getNycDoePoverty(libraryData) {
             })
     }
     catch(err) {
-        console.log(`Error retrieving NYC DOE data. Status: ${err.status}. Error: ${err.statusText}`);
+        console.error(`Error retrieving NYC DOE data. Status: ${err.status}. Error: ${err.statusText}`);
     } 
 }
 

@@ -74,7 +74,7 @@ async function getCensusData(censusVar, area, censusDataset, additional='') { //
 
 }
 
-async function getCensusPoverty(libraryData, done) {
+async function getCensusPoverty(libraryData) {
     const { censusDataset, zipCode } = libraryData; // destructure libraryData
     const area = `zip%20code%20tabulation%20area:${zipCode}`; // the ZIP code will be the area to filter
 
@@ -82,16 +82,33 @@ async function getCensusPoverty(libraryData, done) {
         const totalPop = await getCensusData(censusVars.totalPovertyPop, area, censusDataset); // get total population for poverty measure
         const numPoverty = await getCensusData(censusVars.numPoverty, area, censusDataset); // get number of individuals in poverty for past 12 months
     
-        done(null, { // execute the callback, passing along null for error and updated data
+        return {
             ...libraryData, // use the spread operator and avoid mutating libraryData
             censusPovertyRate: (numPoverty/totalPop*100).toFixed(1) // calculate and assign censusPovertyRate property
-        }); 
+        }
     }
     catch(err) {
-        done(err);
+        console.error(`Error retrieving Census poverty data: Status: ${err.status}. Error: ${err.statusText}`);
     }
-
 }
+
+// async function getCensusPoverty(libraryData, done) {
+//     const { censusDataset, zipCode } = libraryData; // destructure libraryData
+//     const area = `zip%20code%20tabulation%20area:${zipCode}`; // the ZIP code will be the area to filter
+
+//     try {
+//         const totalPop = await getCensusData(censusVars.totalPovertyPop, area, censusDataset); // get total population for poverty measure
+//         const numPoverty = await getCensusData(censusVars.numPoverty, area, censusDataset); // get number of individuals in poverty for past 12 months
+    
+//         done(null, { // execute the callback, passing along null for error and updated data
+//             ...libraryData, // use the spread operator and avoid mutating libraryData
+//             censusPovertyRate: (numPoverty/totalPop*100).toFixed(1) // calculate and assign censusPovertyRate property
+//         }); 
+//     }
+//     catch(err) {
+//         done(err);
+//     }
+// }
 
 async function sumCensusVariables(censusVarArray, area, censusDataset) { // given an array of census variables, find the sum
     let promises = []; // we will populate this array with promises returned by getCensusData

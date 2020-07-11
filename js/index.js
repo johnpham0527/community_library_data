@@ -31,10 +31,8 @@ $(document).ready(function(){
                 libraryData.zipCode = zipCode;
 
                 libraryData = await getNycDoePoverty(libraryData);
+                libraryData = await(getCensusPoverty(libraryData));
                 console.log(`libraryData is ${JSON.stringify(libraryData)}`);
-
-                // getNycDoePoverty(libraryData, function(err, libraryData) { // pass an anonymous function to output data after the poverty rate is calculated
-                //     if (err) console.error(`Error retrieving NYC DOE data. Status: ${err.status}. Error: ${err.statusText}`);
 
                 //     getCensusPoverty(libraryData, function(err, libraryData) { // query the Census API to obtain poverty data
                 //         if (err) console.error(`Error retrieving Census poverty data: Status: ${err.status}. Error: ${err.statusText}`);
@@ -53,7 +51,6 @@ $(document).ready(function(){
                 //             })
                 //         })
                 //     });
-                // })
             })
     });
 });
