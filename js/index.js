@@ -14,15 +14,23 @@ function outputProfile(libraryData) { // output profile to #Profile, given the l
 }
 
 $(document).ready(function(){
-    $("input[id='ViewCommunityProfile']").click(function() { // this is the click handler for the ViewCommunityProfile button
+    $("input[id='ViewCommunityProfile']").click(async function() { // this is the click handler for the ViewCommunityProfile button
         $("#Profile").html(`<span class="spinner-border text-primary"></span> Retrieving data. Please wait... `); // let the user know that we are retrieving the data
 
         let shortLibraryName = $("select.communityLibrary").val(); // NYC Open Data references each library's short name;
 
-        let nycDoeDataset = $("input[name='NYCDOEDataset']:checked").val();
-        let censusDataset = $("input[name='ACSDataset']:checked").val();
+        let nycDoeDataset = $("input[name='NYCDOEDataset']:checked").val(); // this variable specifies the select DOE dataset
+        let censusDataset = $("input[name='ACSDataset']:checked").val(); // this variable specifices the selected Census dataset
+        let libraryData;
 
-        let libraryData = { // this data structure will store all of the values that each callback finds
+        if (nycDoeDataset === '2018-2019' && censusDataset === '2018') { // if the client is requesting the most recent data...
+            let allLibraries = await $.getJSON(`./data/allLibraries.json`); // ... fetch data locally, which is much faster
+            libraryData = allLibraries[shortLibraryName]; // look up and assign the correct library to libraryData
+            outputProfile(libraryData); // output the data
+            return libraryData; // return libraryData to exit this function
+        }
+
+        libraryData = { // this data structure will store all of the values that each callback finds
             schoolsInZipCode: 0, // variable for counting number of schools in a ZIP code
             nycDoeDataset: nycDoeDataset,
             censusDataset: censusDataset,
@@ -41,8 +49,6 @@ $(document).ready(function(){
                     .then(libraryData => getLimitedEnglishProficiency(libraryData))
                     .then(libraryData => getLessThanHighSchoolDiploma(libraryData))
                     .then(libraryData => outputProfile(libraryData));
-
-                console.log(`libraryData is ${JSON.stringify(libraryData)}`);
 
                 return libraryData;
             })
