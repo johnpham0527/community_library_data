@@ -207,7 +207,7 @@
       "limitedEnglishPercent":"41.6",
       "noHighSchoolDiplomaOrEquivalent":"24.2"
    },
-   "East Flushing":{      
+   "East Flushing":{
       "schoolsInZipCode":4,
       "nycDoeDataset":"2018-2019",
       "censusDataset":"2018",
@@ -764,5 +764,44 @@
       "unemploymentRate":"5.5",
       "limitedEnglishPercent":"24.2",
       "noHighSchoolDiplomaOrEquivalent":"14.2"
+   },
+   "Windsor Park":{
+      "schoolsInZipCode":9,
+      "nycDoeDataset":"2018-2019",
+      "censusDataset":"2018",
+      "shortLibraryName":"Windsor Park",
+      "fullLibraryName":"Windsor Park Community Library",
+      "zipCode":"11364",
+      "nycDoePovertyRate":"51.7",
+      "censusPovertyRate":"8.2",
+      "unemploymentRate":"4.4",
+      "limitedEnglishPercent":"32.2",
+      "noHighSchoolDiplomaOrEquivalent":"10.6"
+   },
+   "Woodhaven":{
+      "schoolsInZipCode":3,
+      "nycDoeDataset":"2018-2019",
+      "censusDataset":"2018",
+      "shortLibraryName":"Woodhaven",
+      "fullLibraryName":"Woodhaven Community Library",
+      "zipCode":"11421",
+      "nycDoePovertyRate":"82.7",
+      "censusPovertyRate":"10.3",
+      "unemploymentRate":"6.9",
+      "limitedEnglishPercent":"31.5",
+      "noHighSchoolDiplomaOrEquivalent":"23.4"
+   },
+   "Woodside":{
+      "schoolsInZipCode":8,
+      "nycDoeDataset":"2018-2019",
+      "censusDataset":"2018",
+      "shortLibraryName":"Woodside",
+      "fullLibraryName":"Woodside Community Library",
+      "zipCode":"11377",
+      "nycDoePovertyRate":"74.6",
+      "censusPovertyRate":"11.2",
+      "unemploymentRate":"4.0",
+      "limitedEnglishPercent":"44.9",
+      "noHighSchoolDiplomaOrEquivalent":"22.6"
    }
 }
