@@ -219,6 +219,19 @@
       "unemploymentRate":"4.1",
       "limitedEnglishPercent":"44.4"
    },
+   "Elmhurst":{
+      "schoolsInZipCode":13,
+      "nycDoeDataset":"2018-2019",
+      "censusDataset":"2018",
+      "shortLibraryName":"Elmhurst",
+      "fullLibraryName":"Elmhurst Community Library",
+      "zipCode":"11373",
+      "nycDoePovertyRate":"75.7",
+      "censusPovertyRate":"15.6",
+      "unemploymentRate":"4.6",
+      "limitedEnglishPercent":"52.4",
+      "noHighSchoolDiplomaOrEquivalent":"24.8"
+   },
    "Far Rockaway":{
       "schoolsInZipCode":16,
       "nycDoeDataset":"2018-2019",
