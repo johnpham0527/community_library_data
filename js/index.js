@@ -19,11 +19,13 @@ $(document).ready(function(){
 
         let shortLibraryName = $("select.communityLibrary").val(); // NYC Open Data references each library's short name;
 
+        let nycDoeDataset = $("input[name='NYCDOEDataset']:checked").val();
+        let censusDataset = $("input[name='ACSDataset']:checked").val();
 
         let libraryData = { // this data structure will store all of the values that each callback finds
             schoolsInZipCode: 0, // variable for counting number of schools in a ZIP code
-            nycDoeDataset: $("input[name='NYCDOEDataset']:checked").val(),
-            censusDataset: $("input[name='ACSDataset']:checked").val(),
+            nycDoeDataset: nycDoeDataset,
+            censusDataset: censusDataset,
             shortLibraryName: shortLibraryName,
             fullLibraryName: shortLibraryName === 'Central Library' ? // generate each library's full name using a ternary operator
                 shortLibraryName : shortLibraryName + ' Community Library' // generate the library's full name if it is not the Central Library
